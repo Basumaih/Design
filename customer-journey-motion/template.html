@@ -9,7 +9,7 @@
 @font-face{font-family:"Thmanyah Sans";font-weight:700;font-display:block;src:local("Thmanyah Sans Bold"),local("ThmanyahSans-Bold"),url("https://cdn.jsdelivr.net/gh/engdawood/thmanyah-font-web@4266a9d/fonts/thmanyah-sans/woff2/thmanyah-sans-Bold.woff2") format("woff2")}
 @font-face{font-family:"Thmanyah Sans";font-weight:900;font-display:block;src:local("Thmanyah Sans Black"),local("ThmanyahSans-Black"),url("https://cdn.jsdelivr.net/gh/engdawood/thmanyah-font-web@4266a9d/fonts/thmanyah-sans/woff2/thmanyah-sans-Black.woff2") format("woff2")}
 
-/* Layout: 1920×1080 RTL stage; scenes live in a 0.8-scaled content frame, the narrator and subtitles own the bottom band. Single bright look from the team's deck tabs. */
+/* Layout: 1920×1080 RTL stage, nine timed scenes on one clock; a synthesized sound-effects track follows the same clock. Single bright look from the team's deck tabs. */
 :root{
   --ink:#14222a; --ink-2:#4a5b63; --paper:#f4f7ee; --card:#ffffff;
   --lime:#d4f26a; --sky:#bfe4fa; --rose:#ffc8da;
@@ -23,7 +23,7 @@ body{margin:0;font-family:var(--font);padding-inline:16px;padding-block:20px}
 .wrap{max-width:1280px;margin-inline:auto;display:flex;flex-direction:column;gap:12px}
 .viewport{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:14px;background:var(--paper);box-shadow:0 10px 40px rgba(20,34,42,.18)}
 #stage{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:0 0;direction:rtl;background:var(--paper);overflow:hidden;font-family:var(--font)}
-#content{position:absolute;top:0;left:0;width:1920px;height:1080px;transform:translate(192px,14px) scale(.8);transform-origin:0 0}
+#content{position:absolute;inset:0}
 .controls{direction:rtl;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .controls button{font:700 15px var(--font);border:0;border-radius:999px;padding:8px 18px;background:var(--ink);color:var(--paper);cursor:pointer}
 .controls button:focus-visible,.chips button:focus-visible,#scrub:focus-visible{outline:3px solid var(--go);outline-offset:2px}
@@ -134,14 +134,6 @@ svg text{font-family:var(--font)}
 .member b{font:900 38px var(--font)}
 .member span{font:500 24px var(--font);color:var(--ink-2)}
 
-/* narrator + subtitles */
-#host{position:absolute;left:28px;bottom:26px;width:236px;height:236px;border-radius:50%;background:var(--lime);border:8px solid var(--card);box-shadow:0 12px 36px rgba(20,34,42,.22);overflow:hidden}
-#host svg{width:100%;height:100%;display:block}
-#subbox{position:absolute;left:300px;right:40px;bottom:40px;min-height:96px;display:flex;align-items:center;gap:22px;background:var(--ink);color:var(--paper);border-radius:26px;padding:18px 34px}
-#subbox .who{flex:none;font:700 22px var(--font);color:var(--ink);background:var(--lime);border-radius:999px;padding:6px 16px}
-#sub{font:500 36px/1.45 var(--font);margin:0}
-#wave{flex:none;display:flex;gap:5px;align-items:center;height:40px;margin-inline-start:auto}
-#wave i{width:6px;border-radius:3px;background:var(--lime);height:8px}
 @media (prefers-reduced-motion: reduce){ .viewport{box-shadow:none} }
 </style>
 
@@ -489,35 +481,9 @@ svg text{font-family:var(--font)}
 
 </div><!-- /content -->
 
-<!-- Narrator -->
-<div id="host" aria-hidden="true">
-  <svg viewBox="0 0 240 240">
-    <rect width="240" height="240" fill="#d4f26a"/>
-    <g id="hostBody">
-      <path d="M22 250 Q30 176 120 170 Q210 176 218 250 Z" fill="#ffffff" stroke="#d7ddd2" stroke-width="3"/>
-      <path d="M120 176 V250" stroke="#d7ddd2" stroke-width="3"/>
-      <rect x="104" y="140" width="32" height="40" rx="10" fill="#b97d55"/>
-      <g id="hostHead">
-        <path d="M58 104 Q54 34 120 30 Q186 34 182 104 L200 200 Q160 176 150 150 L90 150 Q80 176 40 200 Z" fill="#fbfbf7" stroke="#e1e5dc" stroke-width="3"/>
-        <ellipse cx="120" cy="104" rx="42" ry="50" fill="#c98e62"/>
-        <path d="M76 86 Q120 50 164 86 Q162 58 120 48 Q78 58 76 86 Z" fill="#fbfbf7"/>
-        <ellipse cx="120" cy="54" rx="48" ry="11" fill="none" stroke="#14222a" stroke-width="7"/>
-        <path d="M80 118 Q84 150 120 158 Q156 150 160 118 Q150 138 120 140 Q90 138 80 118 Z" fill="#2f231b"/>
-        <path d="M98 128 Q120 120 142 128 Q120 134 98 128 Z" fill="#2f231b"/>
-        <ellipse id="mouth" cx="120" cy="137" rx="11" ry="2" fill="#5a1e1e"/>
-        <path d="M94 88 Q102 84 110 88" stroke="#2f231b" stroke-width="4" fill="none" stroke-linecap="round" id="browL"/>
-        <path d="M130 88 Q138 84 146 88" stroke="#2f231b" stroke-width="4" fill="none" stroke-linecap="round" id="browR"/>
-        <ellipse id="eyeL" cx="102" cy="100" rx="5" ry="5.5" fill="#14222a"/>
-        <ellipse id="eyeR" cx="138" cy="100" rx="5" ry="5.5" fill="#14222a"/>
-        <path d="M120 104 Q116 116 121 118" stroke="#a36d49" stroke-width="3" fill="none" stroke-linecap="round"/>
-      </g>
-    </g>
-  </svg>
-</div>
-<div id="subbox"><span class="who">الراوي</span><p id="sub"></p><div id="wave"><i></i><i></i><i></i><i></i><i></i></div></div>
 
 </div>
-<button id="bigplay" type="button" aria-label="تشغيل العرض بالصوت"><span>▶ تشغيل العرض بالصوت</span></button>
+<button id="bigplay" type="button" aria-label="تشغيل العرض مع المؤثرات الصوتية"><span>▶ تشغيل العرض مع المؤثرات الصوتية</span></button>
 </div>
 
 <div class="controls">
@@ -528,7 +494,7 @@ svg text{font-family:var(--font)}
 </div>
 <div class="chips" id="chips"></div>
 </div>
-<audio id="voice" src="narration.mp3" preload="auto"></audio>
+<audio id="sfx" src="sfx.mp3" preload="auto"></audio>
 
 <script>
 (() => {
@@ -669,12 +635,41 @@ const scrs = [...stage.querySelectorAll('[data-scr]')].map(el=>{const id=el.data
 const route=document.getElementById('route'), dot=document.getElementById('dot'), ring=document.getElementById('ring'), liters=document.getElementById('liters');
 route.setAttribute('stroke-dasharray','1'); const RL = route.getTotalLength();
 
-/* narrator */
-const mouth=document.getElementById('mouth'), eyeL=document.getElementById('eyeL'), eyeR=document.getElementById('eyeR'), head=document.getElementById('hostHead'), browL=document.getElementById('browL'), browR=document.getElementById('browR');
-head.style.transformBox='view-box'; head.style.transformOrigin='120px 170px';
-const subEl=document.getElementById('sub'), subbox=document.getElementById('subbox'), waveBars=[...document.querySelectorAll('#wave i')];
-const envAt = t => { const i=Math.floor(t*TL.fps); const c=TL.env[i]; return c ? parseInt(c,36)/35 : 0; };
-let lastSub = null;
+
+/* sound effects: one event per entrance, exit and on-screen action, read from the same timings as the visuals.
+   sfx.py renders these into sfx.mp3 (window.__sfx exposes the list). */
+const EV = [];
+const ev = (t,k,g=1,d=0) => { if (t>=0 && t<DUR) EV.push({t:+t.toFixed(3),k,g,d:+d.toFixed(3)}); };
+scenes.forEach((s,i)=>{ if (i) ev(s.s,'whoosh-l',.8,.9); });
+const BIG = new Set(['s3-art','s5-map','s6-art']);
+for (const a of anims){
+  const k = {fadeUp:'swish',slideIn:'swish',fadeDown:'whoosh',rise:'whoosh',drop:'thud',pop:'pop',grow:'rise',draw:'draw'}[a.type];
+  if (a.type==='fade'){ if ([...a.el.classList].some(c=>BIG.has(c))) ev(a.s,'air',.5,.8); continue; }
+  if (k) ev(a.s, k, {swish:.3,whoosh:.55,thud:.6,pop:.6,rise:.35,draw:.5}[k], a.d);
+}
+for (const m of marks) ev(m.s,'marker',.55,m.d);
+ev(SC.s1.s+2.8,'car-pass',.5,2.2);
+// challenges
+for (const c of chals) ev(c.s,'alert',.55);
+{ const v=vigs[0]; ev(v.s+0.3,'crowd',.4,v.e-v.s-0.3); [1.2,2.9,4.4].forEach((o,i)=>ev(v.s+o,'horn',.35-i*.05,.3+i*.1));
+  for (let x=Math.ceil(v.s+0.6); x<v.e; x++) ev(x,'tick',.22); }
+{ const v=vigs[1], d=v.e-v.s-1.2; ev(v.s+0.4,'engine',.4,d); cornerPts.forEach((_,i)=>ev(v.s+0.4+d*(i+0.5)/cornerPts.length,'screech',.3)); }
+{ const v=vigs[2]; qbs.forEach((_,i)=>ev(v.s+0.4+i*0.9,'pop',.5)); ev(v.s+1.2,'error',.7); }
+{ const v=vigs[3]; crowd.forEach(c=>ev(v.s+0.3+c.t0,'car-short',.2,1.4)); ev(v.s+1.4,'rise',.4,1.6); [0,1,2].forEach(i=>ev(v.s+1+i*0.3,'pop-s',.3)); }
+{ const v=vigs[4]; for (let x=v.s+Math.PI/7; x<v.e; x+=Math.PI/7) ev(x,'step',.28); ev(v.s+1.5,'horn',.35,.25); ev(v.s+3.6,'horn',.3,.5); }
+// redesign: lanes paint, cars roll in
+ev(S5.s+0.6,'draw',.45,1.7);
+for (const f of flow) if (f.t0<S5.e) ev(f.t0,'car-short',.16,1.2);
+// smart devices
+ev(CUE.cam,'shutter',.6); ev(CUE.cam+0.1,'scan',.35,CUE.bar+0.3-CUE.cam);
+ev(CUE.bar-0.1,'confirm',.55); ev(CUE.bar+0.2,'motor',.5,.9); ev(CUE.bar+0.9,'car-pass',.5,2.4);
+for (let x=CUE.lig; x<S6.e; x+=1.6) ev(x,'click',.3);
+ev(CUE.pay,'beep',.5); ev(CUE.obd,'data',.5);
+// app
+for (const s of stgs){ ev(s.s,'tap',.5); ev(s.s+0.05,'swipe',.4,.35); }
+ev(SEG.a2.s+0.3,'draw',.4,2.4); ev(SEG.a3.s+0.2,'pour',.4,SEG.a3.e-SEG.a3.s); ev(SEG.a4.s,'confirm',.5);
+EV.sort((a,b)=>a.t-b.t);
+window.__sfx = () => EV;
 
 function render(t){
   for (const s of scenes){ const o=win(t,s.s,s.e,.5); s.el.style.opacity=o; s.el.style.visibility=o>0?'visible':'hidden'; s.on=o>0; }
@@ -773,22 +768,10 @@ function render(t){
     const fp = eio(clamp((t-SEG.a3.s-0.2)/(SEG.a3.e-SEG.a3.s))); ring.style.strokeDashoffset = 1-fp; liters.textContent = `${AR(Math.round(48*fp))} لتر`;
   }
 
-  /* narrator */
-  const e = envAt(t), talking = e>0.05;
-  mouth.setAttribute('ry', 1.5 + e*10); mouth.setAttribute('rx', 11 - e*2);
-  const blink = (t%3.7)<0.12 ? 0.1 : 1; eyeL.setAttribute('ry',5.5*blink); eyeR.setAttribute('ry',5.5*blink);
-  const bob = Math.sin(t*1.7)*1.6 + (talking ? Math.sin(t*6.3)*1.4 : 0);
-  head.style.transform = `rotate(${bob}deg) translateY(${talking?-e*1.5:0}px)`;
-  const br = talking ? -e*3 : 0; browL.setAttribute('transform',`translate(0 ${br})`); browR.setAttribute('transform',`translate(0 ${br})`);
-  waveBars.forEach((b,i)=>{ b.style.height = (8 + envAt(t - i*0.06)*30)+'px'; });
-  const sub = TL.subs.find(s=>t>=s.s-0.1 && t<s.e+0.25);
-  const txt = sub ? sub.t : '';
-  if (txt!==lastSub){ subEl.textContent = txt; lastSub = txt; }
-  subbox.style.opacity = sub ? 1 : 0.55;
 }
 
-/* player with synced narration audio */
-const audio = document.getElementById('voice');
+/* player with synced sound-effects track */
+const audio = document.getElementById('sfx');
 let t = 0, playing = false, last = null;
 const playBtn=document.getElementById('play'), scrub=document.getElementById('scrub'), timeEl=document.getElementById('time'), chipsEl=document.getElementById('chips'), bigplay=document.getElementById('bigplay');
 scrub.max = DUR;

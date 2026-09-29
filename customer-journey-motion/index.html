@@ -9,7 +9,7 @@
 @font-face{font-family:"Thmanyah Sans";font-weight:700;font-display:block;src:local("Thmanyah Sans Bold"),local("ThmanyahSans-Bold"),url("https://cdn.jsdelivr.net/gh/engdawood/thmanyah-font-web@4266a9d/fonts/thmanyah-sans/woff2/thmanyah-sans-Bold.woff2") format("woff2")}
 @font-face{font-family:"Thmanyah Sans";font-weight:900;font-display:block;src:local("Thmanyah Sans Black"),local("ThmanyahSans-Black"),url("https://cdn.jsdelivr.net/gh/engdawood/thmanyah-font-web@4266a9d/fonts/thmanyah-sans/woff2/thmanyah-sans-Black.woff2") format("woff2")}
 
-/* Layout: 1920×1080 RTL stage; scenes live in a 0.8-scaled content frame, the narrator and subtitles own the bottom band. Single bright look from the team's deck tabs. */
+/* Layout: 1920×1080 RTL stage, nine timed scenes on one clock; a synthesized sound-effects track follows the same clock. Single bright look from the team's deck tabs. */
 :root{
   --ink:#14222a; --ink-2:#4a5b63; --paper:#f4f7ee; --card:#ffffff;
   --lime:#d4f26a; --sky:#bfe4fa; --rose:#ffc8da;
@@ -23,7 +23,7 @@ body{margin:0;font-family:var(--font);padding-inline:16px;padding-block:20px}
 .wrap{max-width:1280px;margin-inline:auto;display:flex;flex-direction:column;gap:12px}
 .viewport{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:14px;background:var(--paper);box-shadow:0 10px 40px rgba(20,34,42,.18)}
 #stage{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:0 0;direction:rtl;background:var(--paper);overflow:hidden;font-family:var(--font)}
-#content{position:absolute;top:0;left:0;width:1920px;height:1080px;transform:translate(192px,14px) scale(.8);transform-origin:0 0}
+#content{position:absolute;inset:0}
 .controls{direction:rtl;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .controls button{font:700 15px var(--font);border:0;border-radius:999px;padding:8px 18px;background:var(--ink);color:var(--paper);cursor:pointer}
 .controls button:focus-visible,.chips button:focus-visible,#scrub:focus-visible{outline:3px solid var(--go);outline-offset:2px}
@@ -134,14 +134,6 @@ svg text{font-family:var(--font)}
 .member b{font:900 38px var(--font)}
 .member span{font:500 24px var(--font);color:var(--ink-2)}
 
-/* narrator + subtitles */
-#host{position:absolute;left:28px;bottom:26px;width:236px;height:236px;border-radius:50%;background:var(--lime);border:8px solid var(--card);box-shadow:0 12px 36px rgba(20,34,42,.22);overflow:hidden}
-#host svg{width:100%;height:100%;display:block}
-#subbox{position:absolute;left:300px;right:40px;bottom:40px;min-height:96px;display:flex;align-items:center;gap:22px;background:var(--ink);color:var(--paper);border-radius:26px;padding:18px 34px}
-#subbox .who{flex:none;font:700 22px var(--font);color:var(--ink);background:var(--lime);border-radius:999px;padding:6px 16px}
-#sub{font:500 36px/1.45 var(--font);margin:0}
-#wave{flex:none;display:flex;gap:5px;align-items:center;height:40px;margin-inline-start:auto}
-#wave i{width:6px;border-radius:3px;background:var(--lime);height:8px}
 @media (prefers-reduced-motion: reduce){ .viewport{box-shadow:none} }
 </style>
 
@@ -489,35 +481,9 @@ svg text{font-family:var(--font)}
 
 </div><!-- /content -->
 
-<!-- Narrator -->
-<div id="host" aria-hidden="true">
-  <svg viewBox="0 0 240 240">
-    <rect width="240" height="240" fill="#d4f26a"/>
-    <g id="hostBody">
-      <path d="M22 250 Q30 176 120 170 Q210 176 218 250 Z" fill="#ffffff" stroke="#d7ddd2" stroke-width="3"/>
-      <path d="M120 176 V250" stroke="#d7ddd2" stroke-width="3"/>
-      <rect x="104" y="140" width="32" height="40" rx="10" fill="#b97d55"/>
-      <g id="hostHead">
-        <path d="M58 104 Q54 34 120 30 Q186 34 182 104 L200 200 Q160 176 150 150 L90 150 Q80 176 40 200 Z" fill="#fbfbf7" stroke="#e1e5dc" stroke-width="3"/>
-        <ellipse cx="120" cy="104" rx="42" ry="50" fill="#c98e62"/>
-        <path d="M76 86 Q120 50 164 86 Q162 58 120 48 Q78 58 76 86 Z" fill="#fbfbf7"/>
-        <ellipse cx="120" cy="54" rx="48" ry="11" fill="none" stroke="#14222a" stroke-width="7"/>
-        <path d="M80 118 Q84 150 120 158 Q156 150 160 118 Q150 138 120 140 Q90 138 80 118 Z" fill="#2f231b"/>
-        <path d="M98 128 Q120 120 142 128 Q120 134 98 128 Z" fill="#2f231b"/>
-        <ellipse id="mouth" cx="120" cy="137" rx="11" ry="2" fill="#5a1e1e"/>
-        <path d="M94 88 Q102 84 110 88" stroke="#2f231b" stroke-width="4" fill="none" stroke-linecap="round" id="browL"/>
-        <path d="M130 88 Q138 84 146 88" stroke="#2f231b" stroke-width="4" fill="none" stroke-linecap="round" id="browR"/>
-        <ellipse id="eyeL" cx="102" cy="100" rx="5" ry="5.5" fill="#14222a"/>
-        <ellipse id="eyeR" cx="138" cy="100" rx="5" ry="5.5" fill="#14222a"/>
-        <path d="M120 104 Q116 116 121 118" stroke="#a36d49" stroke-width="3" fill="none" stroke-linecap="round"/>
-      </g>
-    </g>
-  </svg>
-</div>
-<div id="subbox"><span class="who">الراوي</span><p id="sub"></p><div id="wave"><i></i><i></i><i></i><i></i><i></i></div></div>
 
 </div>
-<button id="bigplay" type="button" aria-label="تشغيل العرض بالصوت"><span>▶ تشغيل العرض بالصوت</span></button>
+<button id="bigplay" type="button" aria-label="تشغيل العرض مع المؤثرات الصوتية"><span>▶ تشغيل العرض مع المؤثرات الصوتية</span></button>
 </div>
 
 <div class="controls">
@@ -528,11 +494,11 @@ svg text{font-family:var(--font)}
 </div>
 <div class="chips" id="chips"></div>
 </div>
-<audio id="voice" src="narration.mp3" preload="auto"></audio>
+<audio id="sfx" src="sfx.mp3" preload="auto"></audio>
 
 <script>
 (() => {
-const TL = {"dur": 200.18, "fps": 30, "scenes": {"s1": {"s": 0.0, "e": 13.28}, "s2": {"s": 13.28, "e": 24.1}, "s3": {"s": 24.1, "e": 73.29}, "s4": {"s": 73.29, "e": 90.97}, "s5": {"s": 90.97, "e": 114.87}, "s6": {"s": 114.87, "e": 138.69}, "s7": {"s": 138.69, "e": 178.48}, "s8": {"s": 178.48, "e": 193.18}, "s9": {"s": 193.18, "e": 200.18}}, "cues": {"s1": 0.9, "s2": 14.18, "m1": 15.761, "m2": 20.842, "s3": 25.0, "c1": 32.13, "c2": 38.26, "c3": 46.47, "c4": 55.8, "c5": 64.67, "s4": 74.19, "p1": 79.41, "p2": 82.614, "p3": 85.817, "s5": 91.87, "b1": 95.966, "b2": 100.061, "b3": 103.455, "b4": 105.679, "b5": 107.785, "b6": 110.71, "s6": 115.77, "cam": 120.413, "bar": 123.221, "lig": 127.54, "pay": 131.967, "obd": 134.235, "a1": 139.59, "a2": 154.74, "a3": 161.35, "a4": 169.88, "s8": 179.38, "i1": 181.192, "i2": 184.477, "i3": 187.762, "s9": 194.08}, "segs": {"s1": {"s": 0.9, "e": 12.28}, "s2": {"s": 14.18, "e": 23.1}, "s3": {"s": 25.0, "e": 31.68}, "c1": {"s": 32.13, "e": 37.81}, "c2": {"s": 38.26, "e": 46.02}, "c3": {"s": 46.47, "e": 55.35}, "c4": {"s": 55.8, "e": 64.22}, "c5": {"s": 64.67, "e": 72.29}, "s4": {"s": 74.19, "e": 89.97}, "s5": {"s": 91.87, "e": 113.87}, "s6": {"s": 115.77, "e": 137.69}, "a1": {"s": 139.59, "e": 154.29}, "a2": {"s": 154.74, "e": 160.9}, "a3": {"s": 161.35, "e": 169.43}, "a4": {"s": 169.88, "e": 177.48}, "s8": {"s": 179.38, "e": 192.18}, "s9": {"s": 194.08, "e": 197.12}}, "subs": [{"s": 0.9, "e": 1.984, "t": "أهلاً بكم."}, {"s": 1.984, "e": 10.221, "t": "نقدّم لكم مقترح فريق جِذوة لتطوير رحلة العميل في المحطات البترولية بالمملكة،"}, {"s": 10.221, "e": 12.28, "t": "ضمن هاكاثون الطاقة."}, {"s": 14.18, "e": 19.898, "t": "رؤيتنا: إحداث نقلة نوعية في تجربة العميل بالمحطات،"}, {"s": 19.898, "e": 23.1, "t": "من خلال إعادة هندسة تجربتها."}, {"s": 25.0, "e": 31.68, "t": "لماذا هذا المقترح؟ لأن المحطات البترولية تواجه خمسة تحديات."}, {"s": 32.13, "e": 37.81, "t": "أولها: تكدّس المركبات في أوقات الذروة، بسبب العشوائية."}, {"s": 38.26, "e": 41.406, "t": "ثانيها: تصميم المسارات الحالي،"}, {"s": 41.406, "e": 46.02, "t": "الذي يطيل الطريق حتى يصل العميل إلى الكبينة."}, {"s": 46.47, "e": 51.38, "t": "ثالثها: ضعف التكامل الرقمي بين المحطة والعملاء،"}, {"s": 51.38, "e": 55.35, "t": "فالعميل لا يعرف حال المحطة قبل أن يصل."}, {"s": 55.8, "e": 60.544, "t": "رابعها: ضعف أدوات إدارة الحشود وتوجيهها،"}, {"s": 60.544, "e": 64.22, "t": "فتزدحم مسارات وتبقى أخرى فارغة."}, {"s": 64.67, "e": 69.677, "t": "وخامسها: الاعتماد على عنصر بشري محدود المهارة،"}, {"s": 69.677, "e": 72.29, "t": "يُبطئ الخدمة على الجميع."}, {"s": 74.19, "e": 79.37, "t": "لذلك نقترح نموذجاً تطويرياً من ثلاثة محاور:"}, {"s": 79.37, "e": 85.754, "t": "إعادة تصميم مسارات المحطة، وأجهزة ذكية لإدارة الحشود،"}, {"s": 85.754, "e": 89.97, "t": "وتطبيق جوال يدير رحلة العميل كاملة."}, {"s": 91.87, "e": 95.935, "t": "في المحور الأول نعيد تصميم المحطة:"}, {"s": 95.935, "e": 100.0, "t": "مسارات مستقلة للدخول وأخرى للخروج،"}, {"s": 100.0, "e": 103.348, "t": "وكبائن مائلة بانعطافات سلسة،"}, {"s": 103.348, "e": 110.642, "t": "تستوعب سيارات أكثر في المساحة نفسها، مع مخارج مباشرة للطوارئ،"}, {"s": 110.642, "e": 113.87, "t": "وخطوط أرضية ملوّنة للتوجيه."}, {"s": 115.77, "e": 120.396, "t": "وفي المحور الثاني أجهزة ذكية عند كل كبينة:"}, {"s": 120.396, "e": 123.15, "t": "كاميرا تقرأ لوحة السيارة،"}, {"s": 123.15, "e": 127.446, "t": "وحاجز لا يُفتح إلا بعد التحقق من الدفع،"}, {"s": 127.446, "e": 134.165, "t": "وإضاءات تُظهر الكبائن الشاغرة والمشغولة، وأجهزة للدفع الذاتي،"}, {"s": 134.165, "e": 137.69, "t": "وجهاز يقرأ بيانات حاسوب السيارة."}, {"s": 139.59, "e": 144.848, "t": "وفي المحور الثالث تطبيق يرافق العميل. قبل الوصول:"}, {"s": 144.848, "e": 150.32, "t": "ينبّهه بقرب نفاد الوقود، ويعرض أقرب محطة وازدحامها،"}, {"s": 150.32, "e": 154.29, "t": "ويتيح له اختيار الوقود والدفع مسبقاً."}, {"s": 154.74, "e": 160.9, "t": "عند الوصول: يوجّهه مباشرة إلى المسار والكبينة المناسبين."}, {"s": 161.35, "e": 166.995, "t": "أثناء التعبئة: يعدّل الكمية، ويعرض إرشادات السلامة،"}, {"s": 166.995, "e": 169.43, "t": "ويطلب من متاجر المحطة."}, {"s": 169.88, "e": 175.743, "t": "وعند المغادرة: تصله الفاتورة الإلكترونية ونقاط الولاء،"}, {"s": 175.743, "e": 177.48, "t": "ثم يقيّم تجربته."}, {"s": 179.38, "e": 184.454, "t": "والأثر المتوقع: تجربة أسرع ورضا أعلى للعميل،"}, {"s": 184.454, "e": 187.683, "t": "وكفاءة تشغيلية أكبر للمحطات،"}, {"s": 187.683, "e": 192.18, "t": "وتحوّل رقمي يوائم بين التقنية والأعمال."}, {"s": 194.08, "e": 197.12, "t": "شكراً لكم. معكم فريق جِذوة."}], "env": "00000000000000000000000000057wzzzvyzqzzooiejc878dccb9985579chli77tzodehrjqpqnion78aefcdefjgb65656zzwtf998fc67oqknrwvrd756mrvnehqpjd9jlotwd57hxzund6669ehe7cvrd679ggnrtuomovzqlkpb666iqsh65glollrzqmkjjlipwurkelkf769mnkljjlph87mqf97677mzzul96crnijggeih875ktioroqjjmqtqe79cotlhlnmmojfkruifippuwfacuk57gquutme98acelmjggjsvsmjuzzzxk779ptnf775flmnnsska76667yzztg68ll789ije966740000000000000000000000000000000000000000000000000000000009ljmledkokj87fovnkuzzzzwf68ehc75bbdozzwm65biolnoh9367kkzyf69dpkffdbnojpoqsknpqoj887mklgf8566fqujd96muga8gjhkifksh77knjjniflnhihousulgmnkfiomijgbghi876end76677mzzxo767glnqoh857dgnqkeb659ltqglwuzyhiotuvqppjgszzzjmwzc8fokgjogfhhgzvbciog67iqj98xxhablkhmlefom76ctshiklha66000000000000000000000000000000000000000000000000000000000469aegikrzzzzzmjooqqpggszzzvniiolbbfgkjgb6554mzzjtj5457985445479fggeyzkmkovrrhihfhh767ij966566ixuqjd56ge9edceh856kjhlpmhdjlnnh67enlb46dfjsxzzzjbaheccee867yxolab8hne7anke56pta77bnbceegipikrf766dgab99663000000000000136qxvlmqmknplozzzr99cpn778qlechikkia96enghigegntji769rnkelzzzyd478hd565irvpjowupic576zzzwd57kolfcccgoqqljkmog65dkorkb658chmgcafyumuqgdkkgfilmkkj8a86ainrplkehoopi875djfb76300000000000037jtwzzkhprxzrmjfruswtlb657huobb9bhjnssnjhjookgkhkmcbajpsspmhvzzvi67bpneeb5665hqqrpeeknprmkdceefb667kvpnpmnidjoorspojcf777hpsyrmnpnb7767nsqhimqnd569xpa99atob76667rqqponr9bbbohjyxkkfpnjmlniklqvtqkjjichlnonutjhe857kmihgquwnkhng867ggd985000000000000069mnmpoded754eihgflnrtnf86ccjwyrhb677ec74455bld878wzwtqmkpjhifcbabdd66bikquttjfhikvxrppzzmhea8dhj877ef8667bol76cmjglppgfhlohbhfgihefnuusvhgkkihb6569ojeikheegfefornedhegjijsvsstpouwzztuumg865eib577lzzzzzrzzomjeehma77cjd5769oj99hia58otkddfdhqpnlsompsuvoqaab89heccea7474000000000000049eovztnfdjmpmnmkhhhmrtqf758eclzyske767fkllpvjbfmjddjpyzzl669lroppsphdhzzzzztzn68allgd9448hf7668dfigddellfdkmd77ksplib7glquqnklhefjmllhc6546jl79sse9aeeqtc78flkhkkihiok8a9amqppqkuzztk76agfbccddjmj77jui85556arvsplhghc6745dgotvvrg765zzzzzqojkhlj957liab877400000000000004djni768zzvklknd988hlhefmttvske7hnqecbddeejlni777jqplnuzzzwhdlrtwyssnnzwwvqnigjhca9988isjkillicejrg988vummorunmhlk8555bdifhkmfchifchd8folifnzzzzqque66ainone966fghec7656aiebcjrlgeb5458kf9bdikrf57ntuzuvuhrunhif89ckokjjqtvtlff98554400000000000000000000000000000000000000000000000000000000147aciomfgpwzzzmpmc7fvzoppb66575zztmqi769gqtkpopifjiilomjlztc8gtxvvk98ctn766dcinpuulnjlquvvnqqosukglrngf979tujixzzzp77kn868mojhmg888frsypjkngkmvoc666gjikiblsywgmzl56mne9dzpca896ghoxuzvunrxrkkmeab9gpostulvzxuo858knhcdcegjb77lh8578cld677jmmka757dunoiplbbdcdhnnfdjta7bjdabffgirh67ckooja58klgihjjimrnrssutjfszyyzzzzyd57lkda9459gjb779gjkkhfkolla766jqqd7croa779cfhnrjd778inkkfkidfgjnpyzzzzsmommjjmoslledglpqqiijonokid9444efmoa69oqhfglhhgghbiqtsskefinm987kpsxwokljnjmtg67hkheca8755100000000000000000000000000000000000000000000000000000000466eosmoqlifljc7644eptqiilld89affisqkkooikorrolotomouukchjlh76urcdb9eimvtsjiotzumpmhijf88cof6777gqf67aknqpi644ckmodbc9nsqsuopzzvnc67nofbcbadhnda867dqob59lmjfea489jljgeghkjgceihfhb676ehiolhhnmlgkqvoefid759hknzzwthjnlkif7758iqpllifiga8gkmf866dpsk78crkfnzzzkqvxngkljfhnqolgdhnqjmuk78llfhjhffcgedggfmod98yzzung66nzzzzi48hrtqijf9aaorghomba8lo76annedcd7678ti9b967fswuqrqkjjgejppdcbesvuzvuwnlrqurozywxs787olhdeghwzc7566azunupc78kvpsurmoqcdadzzzzfca9sg87jtqntub7ab88dskekljhjg7547gknpkegheehf966xzzzzsuojdlwrkkmeifimsrpc866eqozzrb79onlcehjie95546antrxzzzzzntxwwstssla767htre9bfg78brtpok78imjgdddfjutinihfchnqla479nqlgfhjnilhiqmhmjpsqb79mtpnlikkg6676hroga8elpsqmeaaa7561000000000000000000000000000000000000000000000000000000007bbdlk969imhgiejka6537gntqkjd64346xzzzzzzxvxywtspfgebbfiosmeaiug87ggebbddjina57lrrpe678klhgeihgfdccefdkk885dcdfe759jnhfipsvzppuuc76ijcbcb755dnnsxukjjpyxqolsuuwmc69zyd669pngupcdopihpnnjb678ij79kziabb87irwzuyzzznzw967cnqsjb89hrpa9atzzzzvigoqc9ammggf9afppnqmjplie875575vzj77golhedbbdfkpqolieeerzzmknegom96567bj667dkd48dcdhg877mpiiilllumbdfd7555esrrmlc766bosngmqkdcvzxqopnwzzxv97ckgbb9b6almfighjighnjkib48hqifqzzxzmntwokrtha75667oruvrkfdlspquxl89dpohjknkpmkfimc768dcceehilnro86dqmg856bilflsicceeejosncagsp87cnhdfgeflkeafd8455fousmhedffmpuxzl868jmnh9755ciqpeagpyqjlvzzzdcbnqmiptwwqrg659ojwwiaffghlppwsoovyqgmyyzzq87eqk9888jngbc89eiigggljbaa87ktxxnyzzypmpi768fd96400000000000000000000000000000000000000000000000000000000128hlsh668gmjonggmha76bltspnhlf75555szzzzjmha68kprtuld7668rxf76agghmoib77hpkkpwmkprtmxyth769ha59gojjnlhdggijkuyxmdgif9654566kskefgiorwwsnklmqrhc88agjhjhjnooqme59cehmomlodcbfgdebb9788dhhhdii956hqslkggemmfjog666vxzzzqeilkgfgjpung578fimiefjppof6766bktvsuszzzzzromjbfnpomnga56ititsjfoqlijc88gl8657dsi58iqqtnjoklosvwhbcdnlc888lxuxokkqohhqrrokb77bmqmkppi98gmm885cnplkrffiond66546bntxytwzzzzzzzviiloupi599bjlkfkprnprida7565fnpqjcfnpfa88ddkma68jiga96000000000000005iljmniffgksynljilmqj9975fgimkhijnokd77gifefkngd877b9cec757acbaacffgfgszxqac9zzvzrd67zwoojijhnomhmzugqqnknfabbgtyzzwojmlifjppeea56amjfeiopnnntra56kmikkfjkmkmrtxn9a89mqgehmhpqsrkjeb6566000000000000023azp8888hgkxyzvvzzr86556eomhfcjmihrpc56cloqnlb64445fjjliqvussdbehzzuoqmie757ikegggiosslb67nxoje7569bhlmoktzzzxpmlgbhnrpkb87knimjddnsuyvi66jqd997764dzzzzzyyzm766jnppl8667bjrqqnsl956fghfdbaccdhiegfdgioh77ctzyzkb9dqqjimjjhiefc557jh6678jc66aec865000000000000026cenvhjjjgccghlzjkokkmimijjszzzzmfwzzpzua76bmpsoh95pwfcc8hriijd7djnjd7566ljiib56iiilpmwxl56blgfhegkmniiie6667lqlkhmnooqsuurkb779flpnuljiie657rztlb57nqkfhjqrnfnxyxyslopple7656ehfdfemnmdg88qvowvngeklg68gxtf9dleghhdktf76ntlgfba95740000000000000000000000000000000000000000000000000000000027dgsxjfqkszza8mzzqqollkfkki88hqnjqnd566jsrkoomi69ntj98cmgilhcmrk56ekdccacctraca8rnxwsplhjkiopgknkddmtxwusprzzzzzzrmyyqnk8hjjgihbdfeeintspjimlnli9769emme8dri875uzzzzsuwc7ajkb9ed89yq997bfdinniddjkonc57difccaeipwp76beeekmfkjehlkjilgfkd667hja6678uzzwqa47elmke768aji88kxh776hlfgfhijokklnjgintmpk8567edggpqqnmefinpqsqjhqmgdehggegimotuoikkf67bflrqrvtvlnd67hnolntmb8dgnssytljgdfnsstoc997556740000000000000000000000000000000000000000000000000000000025a7gd8688nxxzzzogkug689gfdbba86567ahhnzzxvyi6abgefcc987wxupqwskaa9kmeeanlbehoswq99lmja6556500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"};
+const TL = {"dur": 145.6, "scenes": {"s1": {"s": 0.0, "e": 9.233}, "s2": {"s": 9.233, "e": 16.6}, "s3": {"s": 16.6, "e": 57.633}, "s4": {"s": 57.633, "e": 68.6}, "s5": {"s": 68.6, "e": 84.6}, "s6": {"s": 84.6, "e": 100.6}, "s7": {"s": 100.6, "e": 129.967}, "s8": {"s": 129.967, "e": 139.6}, "s9": {"s": 139.6, "e": 145.6}}, "cues": {"s1": 0.9, "s2": 10.133, "m1": 11.067, "m2": 14.067, "s3": 17.5, "c1": 21.933, "c2": 28.933, "c3": 35.933, "c4": 42.933, "c5": 49.933, "s4": 58.533, "p1": 61.467, "p2": 63.267, "p3": 65.067, "s5": 69.5, "b1": 71.833, "b2": 74.167, "b3": 76.1, "b4": 77.367, "b5": 78.567, "b6": 80.233, "s6": 85.5, "cam": 88.367, "bar": 90.1, "lig": 92.767, "pay": 95.5, "obd": 96.9, "a1": 101.5, "a2": 111.267, "a3": 117.267, "a4": 123.267, "s8": 130.867, "i1": 131.933, "i2": 133.867, "i3": 135.8, "s9": 140.5}, "segs": {"s1": {"s": 0.9, "e": 8.033}, "s2": {"s": 10.133, "e": 15.4}, "s3": {"s": 17.5, "e": 21.433}, "c1": {"s": 21.933, "e": 28.433}, "c2": {"s": 28.933, "e": 35.433}, "c3": {"s": 35.933, "e": 42.433}, "c4": {"s": 42.933, "e": 49.433}, "c5": {"s": 49.933, "e": 56.433}, "s4": {"s": 58.533, "e": 67.4}, "s5": {"s": 69.5, "e": 82.033}, "s6": {"s": 85.5, "e": 99.033}, "a1": {"s": 101.5, "e": 110.767}, "a2": {"s": 111.267, "e": 116.767}, "a3": {"s": 117.267, "e": 122.767}, "a4": {"s": 123.267, "e": 128.767}, "s8": {"s": 130.867, "e": 138.4}, "s9": {"s": 140.5, "e": 143.5}}};
 const DUR = TL.dur;
 const stage = document.getElementById('stage'), vp = document.getElementById('vp');
 const REC = location.hash === '#rec';
@@ -669,12 +635,41 @@ const scrs = [...stage.querySelectorAll('[data-scr]')].map(el=>{const id=el.data
 const route=document.getElementById('route'), dot=document.getElementById('dot'), ring=document.getElementById('ring'), liters=document.getElementById('liters');
 route.setAttribute('stroke-dasharray','1'); const RL = route.getTotalLength();
 
-/* narrator */
-const mouth=document.getElementById('mouth'), eyeL=document.getElementById('eyeL'), eyeR=document.getElementById('eyeR'), head=document.getElementById('hostHead'), browL=document.getElementById('browL'), browR=document.getElementById('browR');
-head.style.transformBox='view-box'; head.style.transformOrigin='120px 170px';
-const subEl=document.getElementById('sub'), subbox=document.getElementById('subbox'), waveBars=[...document.querySelectorAll('#wave i')];
-const envAt = t => { const i=Math.floor(t*TL.fps); const c=TL.env[i]; return c ? parseInt(c,36)/35 : 0; };
-let lastSub = null;
+
+/* sound effects: one event per entrance, exit and on-screen action, read from the same timings as the visuals.
+   sfx.py renders these into sfx.mp3 (window.__sfx exposes the list). */
+const EV = [];
+const ev = (t,k,g=1,d=0) => { if (t>=0 && t<DUR) EV.push({t:+t.toFixed(3),k,g,d:+d.toFixed(3)}); };
+scenes.forEach((s,i)=>{ if (i) ev(s.s,'whoosh-l',.8,.9); });
+const BIG = new Set(['s3-art','s5-map','s6-art']);
+for (const a of anims){
+  const k = {fadeUp:'swish',slideIn:'swish',fadeDown:'whoosh',rise:'whoosh',drop:'thud',pop:'pop',grow:'rise',draw:'draw'}[a.type];
+  if (a.type==='fade'){ if ([...a.el.classList].some(c=>BIG.has(c))) ev(a.s,'air',.5,.8); continue; }
+  if (k) ev(a.s, k, {swish:.3,whoosh:.55,thud:.6,pop:.6,rise:.35,draw:.5}[k], a.d);
+}
+for (const m of marks) ev(m.s,'marker',.55,m.d);
+ev(SC.s1.s+2.8,'car-pass',.5,2.2);
+// challenges
+for (const c of chals) ev(c.s,'alert',.55);
+{ const v=vigs[0]; ev(v.s+0.3,'crowd',.4,v.e-v.s-0.3); [1.2,2.9,4.4].forEach((o,i)=>ev(v.s+o,'horn',.35-i*.05,.3+i*.1));
+  for (let x=Math.ceil(v.s+0.6); x<v.e; x++) ev(x,'tick',.22); }
+{ const v=vigs[1], d=v.e-v.s-1.2; ev(v.s+0.4,'engine',.4,d); cornerPts.forEach((_,i)=>ev(v.s+0.4+d*(i+0.5)/cornerPts.length,'screech',.3)); }
+{ const v=vigs[2]; qbs.forEach((_,i)=>ev(v.s+0.4+i*0.9,'pop',.5)); ev(v.s+1.2,'error',.7); }
+{ const v=vigs[3]; crowd.forEach(c=>ev(v.s+0.3+c.t0,'car-short',.2,1.4)); ev(v.s+1.4,'rise',.4,1.6); [0,1,2].forEach(i=>ev(v.s+1+i*0.3,'pop-s',.3)); }
+{ const v=vigs[4]; for (let x=v.s+Math.PI/7; x<v.e; x+=Math.PI/7) ev(x,'step',.28); ev(v.s+1.5,'horn',.35,.25); ev(v.s+3.6,'horn',.3,.5); }
+// redesign: lanes paint, cars roll in
+ev(S5.s+0.6,'draw',.45,1.7);
+for (const f of flow) if (f.t0<S5.e) ev(f.t0,'car-short',.16,1.2);
+// smart devices
+ev(CUE.cam,'shutter',.6); ev(CUE.cam+0.1,'scan',.35,CUE.bar+0.3-CUE.cam);
+ev(CUE.bar-0.1,'confirm',.55); ev(CUE.bar+0.2,'motor',.5,.9); ev(CUE.bar+0.9,'car-pass',.5,2.4);
+for (let x=CUE.lig; x<S6.e; x+=1.6) ev(x,'click',.3);
+ev(CUE.pay,'beep',.5); ev(CUE.obd,'data',.5);
+// app
+for (const s of stgs){ ev(s.s,'tap',.5); ev(s.s+0.05,'swipe',.4,.35); }
+ev(SEG.a2.s+0.3,'draw',.4,2.4); ev(SEG.a3.s+0.2,'pour',.4,SEG.a3.e-SEG.a3.s); ev(SEG.a4.s,'confirm',.5);
+EV.sort((a,b)=>a.t-b.t);
+window.__sfx = () => EV;
 
 function render(t){
   for (const s of scenes){ const o=win(t,s.s,s.e,.5); s.el.style.opacity=o; s.el.style.visibility=o>0?'visible':'hidden'; s.on=o>0; }
@@ -773,22 +768,10 @@ function render(t){
     const fp = eio(clamp((t-SEG.a3.s-0.2)/(SEG.a3.e-SEG.a3.s))); ring.style.strokeDashoffset = 1-fp; liters.textContent = `${AR(Math.round(48*fp))} لتر`;
   }
 
-  /* narrator */
-  const e = envAt(t), talking = e>0.05;
-  mouth.setAttribute('ry', 1.5 + e*10); mouth.setAttribute('rx', 11 - e*2);
-  const blink = (t%3.7)<0.12 ? 0.1 : 1; eyeL.setAttribute('ry',5.5*blink); eyeR.setAttribute('ry',5.5*blink);
-  const bob = Math.sin(t*1.7)*1.6 + (talking ? Math.sin(t*6.3)*1.4 : 0);
-  head.style.transform = `rotate(${bob}deg) translateY(${talking?-e*1.5:0}px)`;
-  const br = talking ? -e*3 : 0; browL.setAttribute('transform',`translate(0 ${br})`); browR.setAttribute('transform',`translate(0 ${br})`);
-  waveBars.forEach((b,i)=>{ b.style.height = (8 + envAt(t - i*0.06)*30)+'px'; });
-  const sub = TL.subs.find(s=>t>=s.s-0.1 && t<s.e+0.25);
-  const txt = sub ? sub.t : '';
-  if (txt!==lastSub){ subEl.textContent = txt; lastSub = txt; }
-  subbox.style.opacity = sub ? 1 : 0.55;
 }
 
-/* player with synced narration audio */
-const audio = document.getElementById('voice');
+/* player with synced sound-effects track */
+const audio = document.getElementById('sfx');
 let t = 0, playing = false, last = null;
 const playBtn=document.getElementById('play'), scrub=document.getElementById('scrub'), timeEl=document.getElementById('time'), chipsEl=document.getElementById('chips'), bigplay=document.getElementById('bigplay');
 scrub.max = DUR;
