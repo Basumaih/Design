@@ -10,13 +10,14 @@ const main = cv.getContext('2d');
 let ctx = main;
 
 const C = {
-  paper: '#F7F1E3', ink: '#23232E', cream: '#FFF7E8',
-  orange: '#FF5A1F', orange2: '#FF7A3D', yellow: '#FFC93C', teal: '#12B5A6',
-  blue: '#2D5BFF', pink: '#FF4D8D', green: '#22B36B', red: '#E63946',
-  purple: '#7C5CFF', navy: '#18215C', navy2: '#2A2F8A', asphalt: '#DCD5C6',
-  sky: '#BFE3FF', mint: '#7FE0C3', tan: '#E9B872', grey: '#9A98A6',
+  paper: '#F3F8FD', ink: '#0B2A5E', cream: '#FFFFFF',
+  orange: '#16A55A', orange2: '#22B868', yellow: '#5CC8F5', teal: '#2A9BE0',
+  blue: '#1E4FA6', pink: '#8ADCF9', green: '#16A55A', red: '#0B2A5E',
+  purple: '#1E4FA6', navy: '#0B2A5E', navy2: '#16407F', asphalt: '#DDE7F1',
+  sky: '#CDEFFF', mint: '#8FE3B5', tan: '#CFEFDC', grey: '#8CA3BF',
+  lime: '#6FD49A', pale: '#E6F5FD', paleG: '#E3F6EB',
 };
-const F = { disp: 'Lalezar', body: 'Cairo' };
+const F = { disp: 'Thmanyah Sans', serif: 'Thmanyah Serif Display', body: 'Thmanyah Sans' };
 let INKC = C.ink;
 
 /* ---------------- math ---------------- */
@@ -115,7 +116,7 @@ function fillPts(pts, color, p = 1, o = {}) {
     const [x0, y0, x1, y1] = bounds(pts), hh = y1 - y0 + 20, gap = o.gap || 13;
     const n = Math.ceil((x1 - x0 + hh) / gap) + 2, shown = Math.ceil(n * clamp(p * 1.3));
     ctx.globalAlpha = ga * (o.ha ?? 0.16) * clamp(p * 1.6);
-    ctx.strokeStyle = o.hc || '#1a1030'; ctx.lineWidth = o.hw || 2.2;
+    ctx.strokeStyle = o.hc || '#0B2A5E'; ctx.lineWidth = o.hw || 2.2;
     ctx.beginPath();
     for (let i = 0; i < shown; i++) {
       const sx = x0 - hh + i * gap + (hash(i * 3.1 + (o.seed || 0)) - .5) * 5;
@@ -194,7 +195,7 @@ function posOn(pi, s) {
 }
 
 /* ---------------- text ---------------- */
-function setFont(size, fam, weight = '') { ctx.font = `${weight} ${size}px "${fam}"`; }
+function setFont(size, fam, weight = '') { ctx.font = `${weight || (fam === F.body ? '700' : '900')} ${size}px "${fam}"`; }
 function txt(s, x, y, size, o = {}) {
   const fam = o.fam || F.disp;
   setFont(size, fam, o.weight || '');
@@ -293,7 +294,7 @@ function icoCarSide(p, col = C.orange, spin = 0) {
   fillPts(ellPts(-60, -2, 5, 4), C.yellow, seg(p, .6, .4), { hatch: false });
   return null;
 }
-function icoCamera(p, col = '#D9D6E3', rec = true) {
+function icoCamera(p, col = C.pale, rec = true) {
   pen([[22, 14], [22, 42]], p, { w: 6 });
   shape(rrPts(10, 40, 28, 10, 3), C.ink, p, { w: 3, hatch: false });
   shape(rrPts(-44, -18, 76, 34, 8), col, p, { w: 4, seed: 21 });
@@ -461,16 +462,16 @@ function drawPencil(x, y, ang = -0.75, s = 1, a = 1) {
   if (a <= 0) return;
   ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.scale(s, s);
   ctx.globalAlpha *= a;
-  ctx.fillStyle = 'rgba(20,10,30,0.18)';
+  ctx.fillStyle = 'rgba(11,42,94,0.18)';
   ctx.beginPath(); ctx.moveTo(10, 16); ctx.lineTo(60, 2 + 16); ctx.lineTo(230, 2 + 16); ctx.lineTo(230, 30 + 16); ctx.lineTo(60, 30 + 16); ctx.closePath(); ctx.fill();
   ctx.lineJoin = 'round'; ctx.lineWidth = 3; ctx.strokeStyle = C.ink;
   // wood cone
-  ctx.fillStyle = '#F2C98A'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(46, -15); ctx.lineTo(46, 15); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(46, -15); ctx.lineTo(46, 15); ctx.closePath(); ctx.fill(); ctx.stroke();
   ctx.fillStyle = C.ink; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(15, -5); ctx.lineTo(15, 5); ctx.closePath(); ctx.fill();
   // body
   ctx.fillStyle = C.yellow; ctx.fillRect(46, -15, 150, 30); ctx.strokeRect(46, -15, 150, 30);
   ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(46, 5, 150, 10);
-  ctx.fillStyle = '#B9B6C4'; ctx.fillRect(196, -15, 22, 30); ctx.strokeRect(196, -15, 22, 30);
+  ctx.fillStyle = C.grey; ctx.fillRect(196, -15, 22, 30); ctx.strokeRect(196, -15, 22, 30);
   ctx.fillStyle = C.pink; ctx.beginPath(); ctx.roundRect(218, -15, 30, 30, [0, 10, 10, 0]); ctx.fill(); ctx.stroke();
   ctx.restore();
 }
@@ -482,18 +483,18 @@ function buildFX() {
   const g = grainCv.getContext('2d'), r = mulberry(7);
   for (let i = 0; i < 110000; i++) {
     const x = r() * (W + 64), y = r() * (H + 64), v = r(), s = r() * 2 + 0.6;
-    g.fillStyle = v < .55 ? `rgba(30,20,10,${0.035 + r() * 0.06})` : `rgba(255,255,255,${0.04 + r() * 0.06})`;
+    g.fillStyle = v < .55 ? `rgba(11,42,94,${0.035 + r() * 0.06})` : `rgba(255,255,255,${0.04 + r() * 0.06})`;
     g.fillRect(x, y, s, s);
   }
   g.lineWidth = 1;
   for (let i = 0; i < 700; i++) {
     const x = r() * (W + 64), y = r() * (H + 64), a = r() * 6.28, l = 6 + r() * 16;
-    g.strokeStyle = `rgba(60,40,20,${0.03 + r() * 0.04})`;
+    g.strokeStyle = `rgba(11,42,94,${0.03 + r() * 0.04})`;
     g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(a) * l * .5 + 3, y + Math.sin(a) * l * .5, x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke();
   }
   vigCv = document.createElement('canvas'); vigCv.width = W; vigCv.height = H;
   const v = vigCv.getContext('2d'), gr = v.createRadialGradient(W / 2, H * .46, H * .3, W / 2, H / 2, H * .78);
-  gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(10,5,20,0.34)');
+  gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(4,19,48,0.2)');
   v.fillStyle = gr; v.fillRect(0, 0, W, H);
 }
 function bg(color) { ctx.fillStyle = color; ctx.fillRect(-100, -100, W + 200, H + 200); }
@@ -576,7 +577,7 @@ function s0(t) {
     pen([[cx + Math.cos(a) * r0, cy + Math.sin(a) * r0], [cx + Math.cos(a) * r1, cy + Math.sin(a) * r1]], kb, { w: 10, color: rayCols[i % 7], seed: i, passes: 1 });
   }
   // orbiting icons
-  const icons = [[icoPump, C.red], [icoCarTop, C.teal], [icoPhone, C.blue], [icoStar, C.yellow], [icoCup, C.orange], [icoCamera, '#D9D6E3']];
+  const icons = [[icoPump, C.red], [icoCarTop, C.teal], [icoPhone, C.blue], [icoStar, C.yellow], [icoCup, C.orange], [icoCamera, C.pale]];
   icons.forEach(([fn, col], i) => {
     const k = seg(t, 1.55 + i * .1, .5);
     if (k <= 0) return;
@@ -596,7 +597,7 @@ function s0(t) {
   });
   if (tip) drawPencil(cx + tip[0], cy + tip[1], -0.75, 1, 1 - seg(t, 1.2, .25));
   // brand
-  kLine('هاكاثون الطاقة ٢٠٢٦م', 540, 1400, 104, t, 1.9, { type: 'pop', stagger: .12, color: C.ink, shadow: C.yellow });
+  kLine('هاكاثون الطاقة ٢٠٢٦م', 540, 1400, 90, t, 1.9, { type: 'pop', stagger: .12, color: C.ink, shadow: C.yellow });
   pen(spline([[860, 1478], [700, 1492], [520, 1470], [360, 1490], [220, 1476]]), seg(t, 2.35, .45), { w: 9, color: C.orange, seed: 9 });
 }
 cue(0.12, 'pencil', { d: 1.1 });
@@ -611,7 +612,7 @@ function s1(t) {
   INKC = C.ink;
   bg(C.orange);
   sunburst(540, 900, 18, lt * 0.08, C.orange2, 0.55);
-  lightLeak(t, '#FFD27A', 0.35);
+  lightLeak(t, '#8FE3B5', 0.35);
   doodles(t, 21, [C.cream, C.yellow, C.ink], 16, seg(lt, .3, .5));
   const zoom = lerp(1.1, 1, E.outExpo(seg(lt, 0, 1.4))) + 0.03 * seg(lt, 1.4, 6);
   ctx.save(); ctx.translate(540, 960); ctx.scale(zoom, zoom); ctx.translate(-540, -960);
@@ -635,9 +636,9 @@ function s1(t) {
   }
   // title
   const tt = { shadow: C.ink, outline: C.ink, sx: .045, sy: .065 };
-  kLine('تطوير', 540, 520, 270, t, S.s1 + .25, { type: 'slam', ...tt, color: C.cream, dur: .45, pulse: .02 });
+  kLine('تطوير', 540, 520, 250, t, S.s1 + .25, { type: 'slam', ...tt, fam: F.serif, color: C.cream, dur: .45, pulse: .02 });
   const l2 = kLine('رحلة عميل', 540, 790, 200, t, S.s1 + .8, { type: 'drop', stagger: .16, ...tt, colors: [C.yellow, C.cream], pulse: .015 });
-  kLine('المحطات البترولية', 540, 1040, 150, t, S.s1 + 1.3, { type: 'rise', stagger: .14, ...tt, color: C.cream });
+  kLine('المحطات البترولية', 540, 1040, 128, t, S.s1 + 1.3, { type: 'rise', stagger: .14, ...tt, color: C.cream });
   // scribble circle around «رحلة»
   const w0 = l2.info[0];
   pen(ellPts(w0.cx, 790, w0.w * .72, 150, -Math.PI * .6, Math.PI * 2.15, 60, .06), seg(lt, 1.9, .6), { w: 8, color: C.ink, seed: 14 });
@@ -658,14 +659,14 @@ function s2(t) {
   bg(C.paper); dotGrid(C.ink, 0.06, lt * 10);
   doodles(t, 31, [C.orange, C.teal, C.blue, C.yellow], 12, seg(lt, .4, .6));
   kLine('تغيير نموذج عمل', 540, 330, 132, t, S.s2 + .15, { type: 'pop', stagger: .11, color: C.ink, shadow: C.teal });
-  const tw = measure('المحطات البترولية', 140) + 60;
+  const tw = measure('المحطات البترولية', 122) + 60;
   highlighter(540 + tw / 2, 505, tw, 120, seg(lt, .6, .45), C.yellow, 3);
-  kLine('المحطات البترولية', 540, 500, 140, t, S.s2 + .75, { type: 'rise', stagger: .12, color: C.orange, outline: C.ink, ow: 7, shadow: C.ink });
+  kLine('المحطات البترولية', 540, 500, 122, t, S.s2 + .75, { type: 'rise', stagger: .12, color: C.orange, outline: C.ink, ow: 7, shadow: C.ink });
   // blueprint panel
   const bx = 110, by = 650, bw = 860, bh = 660;
   const pb = seg(lt, 1.3, .5);
   if (pb > 0) {
-    fillPts(rrPts(bx, by, bw, bh, 28), '#DCE7FF', pb, { off: [12, 14], hatch: false });
+    fillPts(rrPts(bx, by, bw, bh, 28), C.pale, pb, { off: [12, 14], hatch: false });
     ctx.save(); ctx.clip(toPath(rrPts(bx, by, bw, bh, 28)));
     ctx.globalAlpha *= 0.35 * pb; ctx.strokeStyle = C.blue; ctx.lineWidth = 1.5;
     ctx.beginPath(); for (let x = bx; x < bx + bw; x += 40) { ctx.moveTo(x, by); ctx.lineTo(x, by + bh); } for (let y = by; y < by + bh; y += 40) { ctx.moveTo(bx, y); ctx.lineTo(bx + bw, y); } ctx.stroke();
@@ -696,8 +697,8 @@ function s2(t) {
     const k = seg(lt, 4.2 + i * .08, .5);
     withT(200 + i * 170, 1260 + Math.sin(t * 2 + i) * 10, popScale(k) * .3, t + i, () => shape(starPts(0, 0, 50, 14, 4), [C.yellow, C.teal, C.pink, C.blue, C.orange][i], 1, { w: 5, hatch: false }));
   }
-  kLine('من خلال إعادة هندستها', 540, 1450, 100, t, S.s2 + 2.3, { type: 'rise', stagger: .1, color: C.ink });
-  const l4 = kLine('من ناحية تصميمية ورقمية', 540, 1610, 108, t, S.s2 + 3.0, { type: 'pop', stagger: .12, colors: [C.ink, C.ink, C.teal, C.blue], shadow: 'rgba(35,35,46,.18)' });
+  kLine('من خلال إعادة هندستها', 540, 1450, 92, t, S.s2 + 2.3, { type: 'rise', stagger: .1, color: C.ink });
+  const l4 = kLine('من ناحية تصميمية ورقمية', 540, 1610, 90, t, S.s2 + 3.0, { type: 'pop', stagger: .12, colors: [C.ink, C.ink, C.teal, C.blue], shadow: 'rgba(11,42,94,.15)' });
   const wT = l4.info[2], wR = l4.info[3];
   pen(spline([[wT.cx + wT.w / 2, 1690], [wT.cx, 1702], [wT.cx - wT.w / 2, 1688]]), seg(lt, 3.7, .35), { w: 8, color: C.teal, seed: 51 });
   pen(spline([[wR.cx + wR.w / 2, 1690], [wR.cx, 1704], [wR.cx - wR.w / 2, 1688]]), seg(lt, 3.9, .35), { w: 8, color: C.blue, seed: 52 });
@@ -722,8 +723,8 @@ function s3(t) {
   INKC = C.ink;
   bg(C.paper); dotGrid(C.ink, 0.06);
   doodles(t, 41, [C.red, C.ink, C.yellow], 8, seg(lt, .4, .6) * .7);
-  kLine('تحديد التحدي', 540, 290, 136, t, S.s3 + .15, { type: 'pop', stagger: .12, color: C.ink, shadow: C.red });
-  kLine('في النموذج الحالي', 540, 450, 108, t, S.s3 + .55, { type: 'rise', stagger: .1, color: C.red });
+  kLine('تحديد التحدي', 540, 290, 136, t, S.s3 + .15, { type: 'pop', stagger: .12, color: C.ink, shadow: C.yellow });
+  kLine('في النموذج الحالي', 540, 450, 108, t, S.s3 + .55, { type: 'rise', stagger: .1, color: C.teal });
   pen(spline([[800, 525], [640, 540], [460, 522], [280, 536]]), seg(lt, 1.0, .4), { w: 8, color: C.red, seed: 3 });
   // top-down current station
   const shake = seg(lt, 3.6, 3) * (1 - seg(lt, 6.4, .3));
@@ -766,7 +767,7 @@ function s3(t) {
   withT(900, 690, popScale(seg(lt, 4.6, .5)) * .95, 0, () => icoClock(1, 3));
   withT(180, 690, popScale(seg(lt, 4.8, .5)) * .8, Math.sin(t * 6) * .12, () => icoWarn(1));
   // challenge cards
-  const cards = [['ازدحام', icoJam, '#FFE1DD'], ['تقاطع المسارات', icoArrowsX, '#E3E9FF'], ['انتظار طويل', t2 => icoClock(t2, 3), '#FFF1CC']];
+  const cards = [['ازدحام', icoJam, C.paleG], ['تقاطع المسارات', icoArrowsX, C.pale], ['انتظار طويل', t2 => icoClock(t2, 3), '#EAF7FF']];
   cards.forEach(([label, fn, col], i) => {
     const k = seg(lt, 5.2 + i * .25, .6);
     if (k <= 0) return;
@@ -881,7 +882,7 @@ function s4(t) {
   G.bays.forEach((b, i) => {
     if (kl <= 0) return;
     const lx = b.island[0] + Math.cos(G.ang) * 175, ly = b.island[1] + Math.sin(G.ang) * 175;
-    withT(lx, ly, popScale(seg(lt, 6.6 + i * .12, .45)) * .9, 0, () => icoLamp(1, 1, occ[i] ? C.red : C.green));
+    withT(lx, ly, popScale(seg(lt, 6.6 + i * .12, .45)) * .9, 0, () => icoLamp(1, occ[i] ? 0 : 1, occ[i] ? C.grey : C.green));
   });
   // slanted label
   const kb = seg(lt, 2.5, .5);
@@ -918,16 +919,16 @@ function s4(t) {
   if (kg > 0) withT(300, 1290, popScale(kg, 1.8), -.03, () => {
     shape(rrPts(-170, -70, 340, 140, 22), C.cream, 1, { w: 4, seed: 95, off: [6, 7], hatch: false });
     withT(110, -30, .5, 0, () => icoLamp(1, 1, C.green)); txt('شاغرة', 60, -30, 38, { fam: F.body, weight: '900', align: 'right', color: C.ink });
-    withT(110, 30, .5, 0, () => icoLamp(1, 1, C.red)); txt('مشغولة', 60, 30, 38, { fam: F.body, weight: '900', align: 'right', color: C.ink });
+    withT(110, 30, .5, 0, () => icoLamp(1, 0, C.grey)); txt('مشغولة', 60, 30, 38, { fam: F.body, weight: '900', align: 'right', color: C.ink });
   });
   ctx.restore();
 
   // ---- smart devices cards
   kLine('أجهزة ذكية تدير الحشود', 540, 1535, 68, t, S.s4 + 4.0, { type: 'rise', stagger: .08, color: C.ink, shadow: C.yellow, sx: .04, sy: .05 });
   const cards = [
-    ['حواجز آلية', () => withT(40, 10, .62, 0, () => icoBarrier(1, 0.5 + 0.35 * Math.sin(t * 2.4))), 4.4, '#E2F6EA'],
-    ['كاميرات مراقبة', () => withT(0, 0, .95, Math.sin(t * 1.5) * .25, () => icoCamera(1)), 5.6, '#E3E9FF'],
-    ['لمبات إرشادية', () => { withT(-34, 0, .78, 0, () => icoLamp(1, 1, C.green)); withT(34, 0, .78, 0, () => icoLamp(1, 1, C.red)); }, 6.8, '#FFF1CC'],
+    ['حواجز آلية', () => withT(40, 10, .62, 0, () => icoBarrier(1, 0.5 + 0.35 * Math.sin(t * 2.4))), 4.4, C.paleG],
+    ['كاميرات مراقبة', () => withT(0, 0, .95, Math.sin(t * 1.5) * .25, () => icoCamera(1)), 5.6, C.pale],
+    ['لمبات إرشادية', () => { withT(-34, 0, .78, 0, () => icoLamp(1, 1, C.green)); withT(34, 0, .78, 0, () => icoLamp(1, 0, C.grey)); }, 6.8, '#EAF7FF'],
   ];
   cards.forEach(([label, fn, a, col], i) => {
     const k = seg(lt, a, .55);
@@ -964,9 +965,9 @@ function screenF0(t, k) {
     if (kr <= 0) return;
     withT(0, y, 1, 0, () => {
       ctx.globalAlpha *= clamp(kr * 2);
-      shape(rrPts(20, -38, sw - 40, 76, 18), '#F2EEFF', 1, { w: 3, hatch: false, off: [3, 4] });
+      shape(rrPts(20, -38, sw - 40, 76, 18), C.pale, 1, { w: 3, hatch: false, off: [3, 4] });
       withT(sw - 64, 0, .5, 0, () => fn(1, col));
-      fillPts(rrPts(44, -9, sw - 170, 18, 9), '#DDD8EA', 1, { hatch: false });
+      fillPts(rrPts(44, -9, sw - 170, 18, 9), '#D3E3F2', 1, { hatch: false });
       fillPts(rrPts(44 + (sw - 170) * (1 - v * E.outCubic(kr)), -9, (sw - 170) * v * E.outCubic(kr), 18, 9), col, 1, { hatch: false });
     });
   });
@@ -976,8 +977,8 @@ function screenF1(t, k) {
   const sw = SCR.w;
   fillPts(rrPts(0, 0, sw, 130, 0), C.purple, 1, { hatch: false });
   txt('المحطات القريبة', sw - 28, 78, 40, { fam: F.body, weight: '900', color: C.cream, align: 'right' });
-  fillPts(rrPts(0, 130, sw, 400, 0), '#E4F4E7', 1, { hatch: false });
-  fillPts(unionOutline([[60, 200, 50], [110, 230, 40]], 80, 215), '#C5EBCB', 1, { hatch: false });
+  fillPts(rrPts(0, 130, sw, 400, 0), C.paleG, 1, { hatch: false });
+  fillPts(unionOutline([[60, 200, 50], [110, 230, 40]], 80, 215), '#BFE8CF', 1, { hatch: false });
   ctx.save(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 22; ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(-10, 330); ctx.bezierCurveTo(120, 300, 250, 420, sw + 10, 360); ctx.moveTo(210, 120); ctx.bezierCurveTo(190, 280, 280, 380, 240, 540); ctx.stroke();
   ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(-10, 460); ctx.lineTo(sw + 10, 200); ctx.stroke(); ctx.restore();
@@ -994,7 +995,7 @@ function screenF1(t, k) {
     if (kr <= 0) return;
     ctx.save(); ctx.globalAlpha *= clamp(kr * 2);
     withT(sw - 48, y, .36, 0, () => icoPin(1, col));
-    fillPts(rrPts(90, y - 22, sw - 180, 14, 7), '#CFC9DE', 1, { hatch: false });
+    fillPts(rrPts(90, y - 22, sw - 180, 14, 7), '#D3E3F2', 1, { hatch: false });
     fillPts(rrPts(90 + (sw - 180) * (1 - v), y + 4, (sw - 180) * v, 12, 6), col, 1, { hatch: false });
     fillPts(ellPts(50, y - 4, 13, 13), col, 1, { hatch: false });
     ctx.restore();
@@ -1005,7 +1006,7 @@ function screenF2(t, k) {
   fillPts(rrPts(0, 0, sw, 130, 0), C.orange, 1, { hatch: false });
   txt('الخدمات السحابية', sw - 28, 78, 40, { fam: F.body, weight: '900', color: C.cream, align: 'right' });
   withT(sw / 2, 225 + Math.sin(TIME * 2) * 8, 1.5 * popScale(seg(k, 0, .4)), 0, () => icoCloud(1, C.sky));
-  const tiles = [['بقالة', icoBasket, C.green, '#E2F6EA'], ['مقهى', icoCup, C.orange, '#FFE9DC'], ['آيسكريم', icoIce, null, '#FFE3EE']];
+  const tiles = [['بقالة', icoBasket, C.green, C.paleG], ['مقهى', icoCup, C.orange, C.paleG], ['آيسكريم', icoIce, null, C.pale]];
   tiles.forEach(([label, fn, col, bgc], i) => {
     const kr = seg(k, .15 + i * .12, .4);
     if (kr <= 0) return;
@@ -1035,10 +1036,10 @@ function s5(t) {
   const lt = t - S.s5;
   INKC = C.cream;
   bg(C.navy);
-  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, C.navy); g.addColorStop(1, '#3B1F8A');
+  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, C.navy); g.addColorStop(1, '#061A3E');
   ctx.fillStyle = g; ctx.fillRect(-100, -100, W + 200, H + 200);
   dotGrid(C.cream, 0.08, lt * 14);
-  lightLeak(t, '#5B7BFF', 0.35);
+  lightLeak(t, '#2A9BE0', 0.35);
   doodles(t, 61, [C.yellow, C.pink, C.teal, C.cream], 14, seg(lt, .3, .5));
   kLine('إدارة الرحلة', 540, 245, 136, t, S.s5 + .15, { type: 'pop', stagger: .12, color: C.yellow, outline: C.ink, ow: 8, shadow: C.ink });
   kLine('من خلال التطبيق', 540, 385, 88, t, S.s5 + .5, { type: 'rise', stagger: .1, color: C.cream });
@@ -1068,8 +1069,8 @@ function s5(t) {
   // phone
   const kp = seg(lt, 1.0, .9), fl = Math.sin(t * 1.3) * 10;
   ctx.save(); ctx.translate(0, fl);
-  glow(PH.cx, PH.cy, 560, 'rgba(120,140,255,0.55)', kp);
-  ctx.save(); ctx.globalAlpha *= .35 * kp; ctx.fillStyle = '#0B0F33'; ctx.beginPath(); ctx.ellipse(PH.cx, PH.cy + PH.h / 2 + 50 - fl, 230, 26, 0, 0, 7); ctx.fill(); ctx.restore();
+  glow(PH.cx, PH.cy, 560, 'rgba(92,200,245,0.45)', kp);
+  ctx.save(); ctx.globalAlpha *= .35 * kp; ctx.fillStyle = '#041330'; ctx.beginPath(); ctx.ellipse(PH.cx, PH.cy + PH.h / 2 + 50 - fl, 230, 26, 0, 0, 7); ctx.fill(); ctx.restore();
   const body = rrPts(PH.cx - PH.w / 2, PH.cy - PH.h / 2, PH.w, PH.h, 56);
   fillPts(body, C.ink, seg(lt, 1.3, .5), { hatch: false, off: [14, 16] });
   const scrPts = rrPts(SCR.x, SCR.y, SCR.w, SCR.h, 40);
@@ -1117,9 +1118,9 @@ function s6(t) {
   INKC = C.ink;
   bg(C.orange);
   sunburst(540, 860, 22, -lt * 0.12, C.orange2, 0.7);
-  lightLeak(t, '#FFE08A', 0.4);
+  lightLeak(t, '#8FE3B5', 0.4);
   doodles(t, 71, [C.cream, C.yellow, C.ink, C.pink], 18, seg(lt, .2, .5), 26);
-  const orb = [[icoPump, C.teal], [icoCamera, '#D9D6E3'], [icoPhone, C.blue], [icoCarTop, C.pink], [icoStar, C.yellow], [icoCup, C.cream], [icoIce, null], [icoBasket, C.green]];
+  const orb = [[icoPump, C.teal], [icoCamera, C.pale], [icoPhone, C.blue], [icoCarTop, C.pink], [icoStar, C.yellow], [icoCup, C.cream], [icoIce, null], [icoBasket, C.green]];
   orb.forEach(([fn, col], i) => {
     const k = seg(lt, .3 + i * .08, .5);
     if (k <= 0) return;
@@ -1127,9 +1128,9 @@ function s6(t) {
     withT(540 + Math.cos(a) * 470, 860 + Math.sin(a) * 600, .75 * popScale(k), Math.sin(t * 2 + i) * .15, () => fn(1, col));
   });
   const tt = { shadow: C.ink, outline: C.ink, sx: .045, sy: .065 };
-  kLine('تطوير', 540, 640, 220, t, S.s6 + .3, { type: 'slam', ...tt, color: C.cream, dur: .45, pulse: .02 });
+  kLine('تطوير', 540, 640, 210, t, S.s6 + .3, { type: 'slam', ...tt, fam: F.serif, color: C.cream, dur: .45, pulse: .02 });
   kLine('رحلة عميل', 540, 860, 168, t, S.s6 + .7, { type: 'drop', stagger: .14, ...tt, colors: [C.yellow, C.cream], pulse: .015 });
-  kLine('المحطات البترولية', 540, 1060, 132, t, S.s6 + 1.05, { type: 'rise', stagger: .12, ...tt, color: C.cream });
+  kLine('المحطات البترولية', 540, 1060, 116, t, S.s6 + 1.05, { type: 'rise', stagger: .12, ...tt, color: C.cream });
   const tw = measure('إعادة هندسة تصميمية ورقمية', 58, F.body, '900') + 60;
   highlighter(540 + tw / 2, 1210, tw, 92, seg(lt, 1.6, .4), C.yellow, 5);
   kLine('إعادة هندسة تصميمية ورقمية', 540, 1206, 58, t, S.s6 + 1.75, { type: 'pop', stagger: .07, fam: F.body, weight: '900', color: C.ink });
@@ -1210,7 +1211,7 @@ function transDeco(tr, k, t) {
       const q = posOn(L, L.len * p);
       if (tr.type === 'scribble') drawPencil(q.x, q.y, -0.75, 1.6);
       else {
-        withT(q.x, q.y, 1.4, 0.5, () => { shape(rrPts(-70, -40, 140, 80, 14), C.pink, 1, { w: 5, off: [8, 8] }); fillPts(rrPts(-70, -40, 40, 80, 10), '#6A7BD8', 1, { hatch: false }); });
+        withT(q.x, q.y, 1.4, 0.5, () => { shape(rrPts(-70, -40, 140, 80, 14), C.pink, 1, { w: 5, off: [8, 8] }); fillPts(rrPts(-70, -40, 40, 80, 10), C.navy2, 1, { hatch: false }); });
         const r = mulberry(Math.floor(t * 30));
         for (let i = 0; i < 8; i++) { ctx.fillStyle = C.pink; ctx.globalAlpha = .7; ctx.fillRect(q.x + (r() - .5) * 220, q.y + (r() - .5) * 220, 6 + r() * 6, 4 + r() * 4); }
         ctx.globalAlpha = 1;
@@ -1219,7 +1220,7 @@ function transDeco(tr, k, t) {
   } else if (tr.type === 'road') {
     const ex = W + 200 - (W + 500) * E.inOutCubic(k);
     for (let i = 0; i < 9; i++) { const y = 700 + i * 70 + Math.sin(i * 3) * 20; pen([[ex + 60 + hash(i) * 80, y], [ex + 260 + hash(i + 3) * 300, y]], 1, { w: 6, color: C.ink, passes: 1, alpha: .5, seed: i }); }
-    for (let i = 0; i < 6; i++) { const r = 30 + hash(i) * 40; fillPts(ellPts(ex + 120 + hash(i + 9) * 100, 1080 + (hash(i + 5) - .5) * 60, r, r * .8), '#E6DCC8', .9, { hatch: false }); }
+    for (let i = 0; i < 6; i++) { const r = 30 + hash(i) * 40; fillPts(ellPts(ex + 120 + hash(i + 9) * 100, 1080 + (hash(i + 5) - .5) * 60, r, r * .8), '#DDE7F1', .9, { hatch: false }); }
     withT(ex, 960, 2.6, 0, () => icoCarSide(1, C.red, -t * 25));
   } else if (tr.type === 'phone') {
     const r = phoneRect(k);
@@ -1304,7 +1305,7 @@ window.SFX = SFX;
 window.render = render;
 window.ready = (async () => {
   const sample = 'هاكاثون الطاقة ٢٠٢٦م رحلة abc 0123';
-  await Promise.all(['100px "Lalezar"', '900 40px "Cairo"', '800 40px "Cairo"', '700 40px "Cairo"'].map(f => document.fonts.load(f, sample)));
+  await Promise.all(['900 100px "Thmanyah Sans"', '700 40px "Thmanyah Sans"', '500 40px "Thmanyah Sans"', '900 100px "Thmanyah Serif Display"', '700 100px "Thmanyah Serif Display"'].map(f => document.fonts.load(f, sample)));
   await document.fonts.ready;
   buildFX();
   return true;

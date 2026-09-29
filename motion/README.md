@@ -17,7 +17,15 @@
 | 0:52.5 | Lockup + brand stamp |
 
 ## Rebuild
-Everything is procedural (canvas 2D + synthesized audio); fonts are local (Lalezar, Cairo — OFL).
+Everything is procedural (canvas 2D + synthesized audio).
+
+**Palette:** green `#16A55A`, light blue `#5CC8F5`, dark blue `#0B2A5E`, white `#FFFFFF` (plus tints).
+
+**Fonts — Thmanyah (خط ثمانية):** Thmanyah Sans (500/700/900) and Thmanyah Serif Display (700/900).
+The font license does not allow redistributing the files, so they are **not in this repo** (`*.woff2` is git-ignored).
+Download the family from https://font.thmanyah.com and save these files into `motion/fonts/`:
+`thmanyah-sans-Medium.woff2`, `thmanyah-sans-Bold.woff2`, `thmanyah-sans-Black.woff2`,
+`thmanyah-serif-display-Bold.woff2`, `thmanyah-serif-display-Black.woff2` (convert from OTF/TTF if needed).
 ```sh
 node render.mjs video out/v.mp4 4          # frames → x264 parts + cue sheet (needs Playwright/Chromium, ffmpeg)
 python3 audio.py out/v.mp4.sfx.json a.wav  # music + SFX from the same cue sheet (numpy)
