@@ -11,15 +11,15 @@ Usage: python3 build.py
 import json, pathlib
 
 HERE = pathlib.Path(__file__).parent
-CPS = 25            # brisk reading pace, characters per second
-LEAD, GAP, TAIL = 0.5, 0.25, 0.5
-MIN_SEG = {"c": 4.2, "a": 3.6}          # challenge vignettes and app screens need room to play
-MIN_SCENE = {"s1": 5.2, "s2": 4.6, "s5": 10.0, "s6": 10.0, "s9": 4.0}
+CPS = 40            # fast skim pace, characters per second
+LEAD, GAP, TAIL = 0.35, 0.12, 0.35
+MIN_SEG = {"c": 2.6, "a": 2.4}          # challenge vignettes and app screens need room to play
+MIN_SCENE = {"s1": 3.8, "s2": 3.4, "s5": 6.6, "s6": 7.0, "s9": 3.0}
 SCENE_ORDER = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"]
 
 segs = json.loads((HERE / "script.json").read_text())
 for s in segs:
-    s["dur"] = max(2.4, MIN_SEG.get(s["id"][0], 0), len(s["text"]) / CPS)
+    s["dur"] = max(1.8, MIN_SEG.get(s["id"][0], 0), len(s["text"]) / CPS)
 
 t, scenes = 0.0, {}
 for sc in SCENE_ORDER:

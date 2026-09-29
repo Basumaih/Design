@@ -224,23 +224,23 @@ svg text{font-family:var(--font)}
     <h1 class="h1" style="margin-top:30px" data-a="fadeUp 0.9 0.9">مقترح تطوير رحلة العميل في المحطات البترولية بالمملكة العربية السعودية</h1>
   </div>
   <div class="abs s1-meta">
-    <span class="pill sky" data-a="fadeUp 2.0 0.6">هاكاثون الطاقة ٢٠٢٦م</span>
-    <span class="pill" data-a="fadeUp 2.2 0.6">وزارة الطاقة</span>
-    <span class="pill" data-a="fadeUp 2.4 0.6">١٤٤٨هـ</span>
+    <span class="pill sky" data-a="fadeUp 1.4 0.5">هاكاثون الطاقة ٢٠٢٦م</span>
+    <span class="pill" data-a="fadeUp 1.55 0.5">وزارة الطاقة</span>
+    <span class="pill" data-a="fadeUp 1.7 0.5">١٤٤٨هـ</span>
   </div>
   <svg class="abs s1-art" viewBox="0 0 700 800" aria-hidden="true">
-    <rect x="30" y="700" width="640" height="10" rx="5" fill="#c9d3c2" data-a="grow 1.0 0.8"/>
-    <g data-a="fadeDown 1.2 0.9">
+    <rect x="30" y="700" width="640" height="10" rx="5" fill="#c9d3c2" data-a="grow 0.6 0.6"/>
+    <g data-a="fadeDown 0.7 0.7">
       <rect x="20" y="180" width="660" height="70" rx="12" fill="url(#canopy)"/>
       <rect x="20" y="250" width="660" height="14" fill="#0b5566"/>
     </g>
-    <g data-a="grow 1.5 0.8"><rect x="110" y="264" width="26" height="436" fill="#0e6f86"/><rect x="564" y="264" width="26" height="436" fill="#0e6f86"/></g>
-    <g data-a="pop 1.9 0.5"><use href="#pump" x="200" y="560" width="80" height="120"/></g>
-    <g data-a="pop 2.1 0.5"><use href="#pump" x="310" y="560" width="80" height="120"/></g>
-    <g data-a="pop 2.3 0.5"><use href="#pump" x="420" y="560" width="80" height="120"/></g>
+    <g data-a="grow 0.9 0.6"><rect x="110" y="264" width="26" height="436" fill="#0e6f86"/><rect x="564" y="264" width="26" height="436" fill="#0e6f86"/></g>
+    <g data-a="pop 1.2 0.4"><use href="#pump" x="200" y="560" width="80" height="120"/></g>
+    <g data-a="pop 1.35 0.4"><use href="#pump" x="310" y="560" width="80" height="120"/></g>
+    <g data-a="pop 1.5 0.4"><use href="#pump" x="420" y="560" width="80" height="120"/></g>
     <g id="s1car"><use href="#car" x="-26" y="-44" width="52" height="88" style="color:#e23b3e"/></g>
-    <path d="M 60 150 Q 350 40 640 150" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" pathLength="1" data-a="draw 2.6 1.2"/>
-    <path d="M 610 120 L 645 152 L 600 170" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" data-a="fade 3.6 0.4"/>
+    <path d="M 60 150 Q 350 40 640 150" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" pathLength="1" data-a="draw 1.8 0.9"/>
+    <path d="M 610 120 L 645 152 L 600 170" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" data-a="fade 2.6 0.3"/>
   </svg>
 </section>
 
@@ -519,12 +519,12 @@ svg text{font-family:var(--font)}
 <section class="scene" data-scene="s9">
   <div class="abs s9"><div class="inner">
     <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 0.3 0.6">فريق جِذوة</span>
-    <div class="ty" data-a="pop 0.6 0.8">شكرًا لكم</div>
+    <div class="ty" data-a="pop 0.45 0.6">شكرًا لكم</div>
     <div class="team">
-      <div class="member" data-a="rise 1.4 0.6"><b>عبدالرحمن عبدالله باسميح</b><span>مؤسس الفريق</span></div>
-      <div class="member" data-a="rise 1.7 0.6"><b>عبدالعزيز علي الهوسة</b><span>شريك مؤسس</span></div>
+      <div class="member" data-a="rise 0.9 0.5"><b>عبدالرحمن عبدالله باسميح</b><span>مؤسس الفريق</span></div>
+      <div class="member" data-a="rise 1.1 0.5"><b>عبدالعزيز علي الهوسة</b><span>شريك مؤسس</span></div>
     </div>
-    <div class="pill" style="direction:ltr" data-a="fadeUp 2.3 0.6">basumaih2009@gmail.com</div>
+    <div class="pill" style="direction:ltr" data-a="fadeUp 1.4 0.5">basumaih2009@gmail.com</div>
   </div></div>
 </section>
 
@@ -635,7 +635,7 @@ const crowdG = document.getElementById('crowdCars'), crowdQ = document.getElemen
 const laneX = [215,440,665], loads = [.96,.9,.06];
 const loadBars = laneX.map((x,i)=>{ const g=mk('g',{},loadG); mk('rect',{x:x-70,y:120,width:140,height:26,rx:13,fill:'#fff'},g); const f=mk('rect',{x:x-70,y:120,width:0,height:26,rx:13,fill:i<2?'#e23b3e':'#9aa7a0'},g); const t=mk('text',{x,y:108,'text-anchor':'middle','font-size':24,'font-weight':900,fill:i<2?'#e23b3e':'#4a5b63'},g); return {f,t,i}; });
 const crowd = [];
-for (let i=0;i<16;i++){ const lane = i%7===6 ? 2 : (i%2); crowd.push({g:useCar(crowdG,palette[i%palette.length],1.3), lane, slot: crowd.filter(c=>c.lane===lane).length, t0: i*0.18}); }
+for (let i=0;i<16;i++){ const lane = i%7===6 ? 2 : (i%2); crowd.push({g:useCar(crowdG,palette[i%palette.length],1.3), lane, slot: crowd.filter(c=>c.lane===lane).length, t0: i*0.09}); }
 const qMarks = [0,1,2].map(i=>{ const t=mk('text',{'text-anchor':'middle','font-size':44,'font-weight':900,fill:'#f2b632'},crowdQ); t.textContent='؟'; return t; });
 // V5
 const worker = document.getElementById('worker'), legL=document.getElementById('legL'), legR=document.getElementById('legR'), qCount=document.getElementById('qCount'), waitBubble=document.getElementById('waitBubble');
@@ -704,15 +704,15 @@ for (const a of anims){
   if (k) ev(a.s, k, {swish:.3,whoosh:.55,thud:.6,pop:.6,rise:.35,draw:.5}[k], a.d);
 }
 for (const m of marks) ev(m.s,'marker',.55,m.d);
-ev(SC.s1.s+2.8,'car-pass',.5,2.2);
+ev(SC.s1.s+1.6,'car-pass',.5,1.6);
 // challenges
 for (const c of chals) ev(c.s,'alert',.55);
-{ const v=vigs[0]; ev(v.s+0.3,'crowd',.4,v.e-v.s-0.3); [1.2,2.9,4.4].forEach((o,i)=>ev(v.s+o,'horn',.35-i*.05,.3+i*.1));
+{ const v=vigs[0]; ev(v.s+0.3,'crowd',.4,v.e-v.s-0.3); [1.0,2.3,3.6].forEach((o,i)=>ev(v.s+o,'horn',.35-i*.05,.3+i*.1));
   for (let x=Math.ceil(v.s+0.6); x<v.e; x++) ev(x,'tick',.22); }
-{ const v=vigs[1], d=v.e-v.s-1.2; ev(v.s+0.4,'engine',.4,d); cornerPts.forEach((_,i)=>ev(v.s+0.4+d*(i+0.5)/cornerPts.length,'screech',.3)); }
-{ const v=vigs[2]; qbs.forEach((_,i)=>ev(v.s+0.4+i*0.9,'pop',.5)); ev(v.s+1.2,'error',.7); }
-{ const v=vigs[3]; crowd.forEach(c=>ev(v.s+0.3+c.t0,'car-short',.2,1.4)); ev(v.s+1.4,'rise',.4,1.6); [0,1,2].forEach(i=>ev(v.s+1+i*0.3,'pop-s',.3)); }
-{ const v=vigs[4]; for (let x=v.s+Math.PI/7; x<v.e; x+=Math.PI/7) ev(x,'step',.28); ev(v.s+1.5,'horn',.35,.25); ev(v.s+3.6,'horn',.3,.5); }
+{ const v=vigs[1], d=v.e-v.s-0.8; ev(v.s+0.3,'engine',.4,d); cornerPts.forEach((_,i)=>ev(v.s+0.3+d*(i+0.5)/cornerPts.length,'screech',.3)); }
+{ const v=vigs[2]; qbs.forEach((_,i)=>ev(v.s+0.2+i*0.5,'pop',.5)); ev(v.s+0.8,'error',.7); }
+{ const v=vigs[3]; crowd.forEach(c=>ev(v.s+0.2+c.t0,'car-short',.2,1.0)); ev(v.s+0.8,'rise',.4,1.2); [0,1,2].forEach(i=>ev(v.s+0.6+i*0.2,'pop-s',.3)); }
+{ const v=vigs[4]; for (let x=v.s+Math.PI/7; x<v.e; x+=Math.PI/7) ev(x,'step',.28); ev(v.s+1.0,'horn',.35,.25); ev(v.s+2.2,'horn',.3,.4); }
 // redesign: lanes paint, cars roll in
 ev(S5.s+0.6,'draw',.45,1.7);
 for (const f of flow) if (f.t0<S5.e) ev(f.t0,'car-short',.16,1.2);
@@ -723,7 +723,7 @@ for (let x=CUE.lig; x<S6.e; x+=1.6) ev(x,'click',.3);
 ev(CUE.pay,'beep',.5); ev(CUE.obd,'data',.5);
 // app
 for (const s of stgs){ ev(s.s,'tap',.5); ev(s.s+0.05,'swipe',.4,.35); }
-ev(SEG.a2.s+0.3,'draw',.4,2.4); ev(SEG.a3.s+0.2,'pour',.4,SEG.a3.e-SEG.a3.s); ev(SEG.a4.s,'confirm',.5);
+ev(SEG.a2.s+0.2,'draw',.4,1.6); ev(SEG.a3.s+0.2,'pour',.4,SEG.a3.e-SEG.a3.s); ev(SEG.a4.s,'confirm',.5);
 EV.sort((a,b)=>a.t-b.t);
 window.__sfx = () => EV;
 
@@ -736,7 +736,7 @@ function render(t){
   }
   for (const m of marks) m.el.style.setProperty('--w', (eio(clamp((t-m.s)/m.d))*100)+'%');
 
-  if (scenes[0].on){ const p=eio(clamp((t-SC.s1.s-2.8)/2.2)); s1car.setAttribute('transform',`translate(${lerp(-80,350,p)} ${lerp(760,470,p)}) rotate(${lerp(40,0,p)})`); }
+  if (scenes[0].on){ const p=eio(clamp((t-SC.s1.s-1.6)/1.6)); s1car.setAttribute('transform',`translate(${lerp(-80,350,p)} ${lerp(760,470,p)}) rotate(${lerp(40,0,p)})`); }
 
   if (scenes[2].on){
     const lt = t-S3.s;
@@ -752,12 +752,12 @@ function render(t){
     const secs = Math.floor(clamp(lt-0.5,0,S3.e-S3.s)*22);
     waitClock.textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
     if (vigs[0].on){
-      for (const c of chaos){ const p=eo(clamp((lt-0.3-c.delay*0.4)/2.5)); const j=Math.sin((t+c.ph)*9)*2.2*(p>=1?1:0);
+      for (const c of chaos){ const p=eo(clamp((lt-0.2-c.delay*0.25)/1.8)); const j=Math.sin((t+c.ph)*9)*2.2*(p>=1?1:0);
         c.g.setAttribute('transform',`translate(${lerp(c.fx,c.tx,p)+j} ${lerp(c.fy,c.ty,p)}) rotate(${c.a+Math.sin(t*3+c.ph)*3})`); }
       for (const q of pings){ const f=((t+q.o)%2)/2; q.c.setAttribute('cx',q.x); q.c.setAttribute('cy',q.y); q.c.setAttribute('r',10+f*40); q.c.setAttribute('opacity',(1-f)*clamp(lt-2)); }
     }
     if (vigs[1].on){
-      const v=vigs[1], p=clamp((t-v.s-0.4)/(v.e-v.s-1.2));
+      const v=vigs[1], p=clamp((t-v.s-0.3)/(v.e-v.s-0.8));
       longRoute.style.strokeDashoffset = 1-p;
       const pt = longRoute.getPointAtLength(LR*p), pt2 = longRoute.getPointAtLength(Math.min(LR,LR*p+2)), pt0 = longRoute.getPointAtLength(Math.max(0,LR*p-2));
       routeCar.setAttribute('transform',`translate(${pt.x} ${pt.y}) rotate(${Math.atan2(pt2.y-pt0.y,pt2.x-pt0.x)*180/Math.PI+90})`);
@@ -766,16 +766,16 @@ function render(t){
     }
     if (vigs[2].on){
       const v=vigs[2], lt3=t-v.s;
-      qbs.forEach((q,i)=>{ const p=clamp((lt3-0.4-i*0.9)/0.5); q.style.opacity=p; q.style.transformBox='fill-box'; q.style.transformOrigin='center'; q.style.scale = String(0.7+0.3*back(p)); });
-      const bx = clamp((lt3-1.2)/0.5); breakX.style.opacity=bx; breakX.style.transformBox='fill-box'; breakX.style.transformOrigin='center'; breakX.style.scale=String(0.4+0.6*back(bx)+0.05*Math.sin(t*6)*bx);
+      qbs.forEach((q,i)=>{ const p=clamp((lt3-0.2-i*0.5)/0.4); q.style.opacity=p; q.style.transformBox='fill-box'; q.style.transformOrigin='center'; q.style.scale = String(0.7+0.3*back(p)); });
+      const bx = clamp((lt3-0.8)/0.4); breakX.style.opacity=bx; breakX.style.transformBox='fill-box'; breakX.style.transformOrigin='center'; breakX.style.scale=String(0.4+0.6*back(bx)+0.05*Math.sin(t*6)*bx);
       noSignal.style.opacity = 0.5+0.5*Math.abs(Math.sin(t*3));
     }
     if (vigs[3].on){
       const v=vigs[3], lt4=t-v.s;
-      for (const c of crowd){ const p=eo(clamp((lt4-0.3-c.t0)/1.4)); const x=laneX[c.lane], yT=680-c.slot*78;
+      for (const c of crowd){ const p=eo(clamp((lt4-0.2-c.t0)/0.9)); const x=laneX[c.lane], yT=680-c.slot*78;
         c.g.setAttribute('transform',`translate(${lerp(440,x,p)} ${lerp(900,yT,p)}) rotate(${c.lane===1?0:(1-p)*(c.lane===0?-35:35)})`); }
-      loadBars.forEach(b=>{ const p=eo(clamp((lt4-1.4)/1.6)); b.f.setAttribute('width',140*loads[b.i]*p); b.t.textContent=`${AR(Math.round(loads[b.i]*100*p))}٪`; });
-      qMarks.forEach((q,i)=>{ q.setAttribute('x',[250,470,380][i]); q.setAttribute('y',[560+Math.sin(t*4+i)*8, 400+Math.sin(t*4+i)*8, 780][i]); q.setAttribute('opacity', clamp(lt4-1-i*0.3)); });
+      loadBars.forEach(b=>{ const p=eo(clamp((lt4-0.8)/1.2)); b.f.setAttribute('width',140*loads[b.i]*p); b.t.textContent=`${AR(Math.round(loads[b.i]*100*p))}٪`; });
+      qMarks.forEach((q,i)=>{ q.setAttribute('x',[250,470,380][i]); q.setAttribute('y',[560+Math.sin(t*4+i)*8, 400+Math.sin(t*4+i)*8, 780][i]); q.setAttribute('opacity', clamp((lt4-0.6-i*0.2)/0.4)); });
     }
     if (vigs[4].on){
       const v=vigs[4], lt5=t-v.s;
@@ -785,7 +785,7 @@ function render(t){
       worker.setAttribute('transform',`translate(${wx} ${wy})`);
       legL.setAttribute('transform',`rotate(${step*18} -10 12)`); legR.setAttribute('transform',`rotate(${-step*18} 10 12)`);
       q5.forEach((g,i)=>g.setAttribute('transform',`translate(${290+Math.sin(t*9+i)*1.2} ${470+i*110})`));
-      qCount.textContent = AR(3+Math.floor(clamp(lt5/2.2,0,4)));
+      qCount.textContent = AR(3+Math.floor(clamp(lt5/0.8,0,4)));
       waitBubble.style.opacity = 0.6+0.4*Math.abs(Math.sin(t*2));
     }
   }
@@ -806,7 +806,7 @@ function render(t){
     const lp = t>=CUE.lig-0.2;
     const pat = lightPattern[Math.floor(Math.max(0,t-CUE.lig)/1.6)%4];
     lights.forEach((l,i)=>l.setAttribute('fill', lp ? (pat[i]?'#1c9a52':'#e23b3e') : '#56646b'));
-    const cy = t<CUE.bar+0.9 ? lerp(900,700,eo(clamp((t-S6.s-0.4)/1.8))) : lerp(700,330,eio(clamp((t-CUE.bar-0.9)/2.4)));
+    const cy = t<CUE.bar+0.9 ? lerp(900,700,eo(clamp((t-S6.s-0.3)/1.0))) : lerp(700,330,eio(clamp((t-CUE.bar-0.9)/2.4)));
     devCar.setAttribute('transform',`translate(390 ${cy})`);
     beam.setAttribute('opacity', (0.35+0.2*Math.sin(t*12))*win(t,CUE.cam,CUE.bar+0.4,.3));
     paid.setAttribute('opacity', win(t,CUE.bar-0.1,CUE.lig,.3));
@@ -819,7 +819,7 @@ function render(t){
     for (const s of stgs) s.el.classList.toggle('on', t>=s.s && t<s.e);
     scrs.forEach((s,i)=>{ const o = i===0 ? clamp((s.e-t)/0.35) : win(t,s.s,s.e,.35);
       s.el.style.opacity=o; s.el.style.visibility=o>0?'visible':'hidden'; s.el.style.transform=`translateX(${(1-eo(clamp((t-s.s)/0.5)))*(i?-40:0)}px)`; });
-    const rp = eio(clamp((t-SEG.a2.s-0.3)/2.4)); route.style.strokeDashoffset = 1-rp;
+    const rp = eio(clamp((t-SEG.a2.s-0.2)/1.6)); route.style.strokeDashoffset = 1-rp;
     const pt = route.getPointAtLength(RL*rp); dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
     const fp = eio(clamp((t-SEG.a3.s-0.2)/(SEG.a3.e-SEG.a3.s))); ring.style.strokeDashoffset = 1-fp; liters.textContent = `${AR(Math.round(48*fp))} لتر`;
   }
