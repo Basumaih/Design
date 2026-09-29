@@ -1,0 +1,865 @@
+<title>رحلة العميل في المحطات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Thmanyah Sans: used from the viewer's device when installed, otherwise from the community CDN; IBM Plex Sans Arabic is the fallback. */
+@font-face{font-family:"Thmanyah Sans";font-weight:400;font-display:block;src:local("Thmanyah Sans"),local("ThmanyahSans-Regular"),url("https://cdn.jsdelivr.net/gh/engdawood/thmanyah-font-web@4266a9d/fonts/thmanyah-sans/woff2/thmanyah-sans-Regular.woff2") format("woff2")}
+@font-face{font-family:"Thmanyah Sans";font-weight:500;font-display:block;src:local("Thmanyah Sans Medium"),local("ThmanyahSans-Medium"),url("https://cdn.jsdelivr.net/gh/engdawood/thmanyah-font-web@4266a9d/fonts/thmanyah-sans/woff2/thmanyah-sans-Medium.woff2") format("woff2")}
+@font-face{font-family:"Thmanyah Sans";font-weight:700;font-display:block;src:local("Thmanyah Sans Bold"),local("ThmanyahSans-Bold"),url("https://cdn.jsdelivr.net/gh/engdawood/thmanyah-font-web@4266a9d/fonts/thmanyah-sans/woff2/thmanyah-sans-Bold.woff2") format("woff2")}
+@font-face{font-family:"Thmanyah Sans";font-weight:900;font-display:block;src:local("Thmanyah Sans Black"),local("ThmanyahSans-Black"),url("https://cdn.jsdelivr.net/gh/engdawood/thmanyah-font-web@4266a9d/fonts/thmanyah-sans/woff2/thmanyah-sans-Black.woff2") format("woff2")}
+
+/* Layout: 1920×1080 RTL stage, nine timed scenes on one clock; a synthesized sound-effects track follows the same clock. Single bright look from the team's deck tabs. */
+:root{
+  --ink:#14222a; --ink-2:#4a5b63; --paper:#f4f7ee; --card:#ffffff;
+  --lime:#d4f26a; --sky:#bfe4fa; --rose:#ffc8da;
+  --go:#1c9a52; --stop:#e23b3e; --amber:#f2b632;
+  --teal:#0e7a8a; --slate:#768c96;
+  --font:"Thmanyah Sans","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color-scheme:light;
+}
+html,body{background:#e6ebe0;color:var(--ink)}
+body{margin:0;font-family:var(--font);padding-inline:16px;padding-block:20px}
+.wrap{max-width:1280px;margin-inline:auto;display:flex;flex-direction:column;gap:12px}
+.viewport{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:14px;background:var(--paper);box-shadow:0 10px 40px rgba(20,34,42,.18)}
+#stage{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:0 0;direction:rtl;background:var(--paper);overflow:hidden;font-family:var(--font)}
+#content{position:absolute;inset:0}
+.controls{direction:rtl;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.controls button{font:700 15px var(--font);border:0;border-radius:999px;padding:8px 18px;background:var(--ink);color:var(--paper);cursor:pointer}
+.controls button:focus-visible,.chips button:focus-visible,#scrub:focus-visible{outline:3px solid var(--go);outline-offset:2px}
+#scrub{flex:1;min-width:160px;accent-color:var(--go)}
+.controls a{font:700 15px var(--font);color:var(--ink);background:var(--lime);border-radius:999px;padding:8px 16px;text-decoration:none}
+.controls a:focus-visible{outline:3px solid var(--go);outline-offset:2px}
+#time{font:500 14px var(--font);font-variant-numeric:tabular-nums;min-width:96px;text-align:center}
+.chips{direction:rtl;display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:500 14px var(--font);border:1px solid #c9d3c2;background:var(--card);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chips button.on{background:var(--lime);border-color:var(--lime)}
+#bigplay{position:absolute;inset:0;display:grid;place-items:center;background:rgba(20,34,42,.28);border:0;cursor:pointer;z-index:5}
+#bigplay span{font:700 22px var(--font);background:var(--lime);color:var(--ink);padding:16px 34px;border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+body.rec{padding:0;background:var(--paper)} body.rec .controls,body.rec .chips,body.rec #bigplay{display:none}
+body.rec .wrap{max-width:none} body.rec .viewport{border-radius:0;box-shadow:none;width:1920px}
+body.rec.portrait .viewport{width:1080px}
+
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden}
+[data-a]{will-change:transform,opacity}
+.tabs{position:absolute;top:0;right:120px;display:flex}
+.tab{height:62px;padding:0 70px;display:grid;place-items:center;font:700 26px var(--font);border-radius:40px 40px 0 0;margin-left:-26px}
+.h1{font:900 80px/1.3 var(--font);text-wrap:balance;margin:0}
+.h2{font:900 64px/1.3 var(--font);text-wrap:balance;margin:0}
+.eyebrow{display:inline-block;font:700 28px var(--font);padding:10px 26px;border-radius:999px;background:var(--rose)}
+.lead{font:500 36px/1.6 var(--font);color:var(--ink-2);margin:0}
+.abs{position:absolute}
+svg text{font-family:var(--font)}
+
+/* S1 */
+.s1-title{right:130px;top:190px;width:1080px}
+.s1-meta{right:130px;top:720px;display:flex;gap:18px;flex-wrap:wrap;width:1100px}
+.pill{font:700 28px var(--font);padding:12px 28px;border-radius:999px;background:var(--card);border:2px solid #dbe4d3}
+.pill.sky{background:var(--sky);border-color:var(--sky)}
+.s1-art{left:60px;top:170px;width:700px;height:800px}
+/* S2 */
+.s2-box{inset:0;display:grid;place-items:center;text-align:center}
+.s2-quote{font:900 90px/1.4 var(--font);width:1500px;text-wrap:balance;margin:0}
+.mark{background:linear-gradient(transparent 58%,var(--lime) 58%,var(--lime) 92%,transparent 92%);background-repeat:no-repeat;background-size:var(--w,0%) 100%;background-position:right}
+/* S3 */
+.s3-text{right:110px;top:110px;width:800px;display:flex;flex-direction:column;gap:26px}
+.chal{display:flex;align-items:center;gap:26px;font:700 33px/1.4 var(--font)}
+.chal i{flex:none;width:44px;height:44px;border-radius:50%;background:var(--stop);box-shadow:0 0 0 var(--ring,8px) rgba(226,59,62,.18)}
+.chal b{font:900 22px var(--font);color:var(--stop);display:block;letter-spacing:.02em}
+.s3-art{left:70px;top:110px;width:880px;height:860px;border-radius:36px;background:#e9ece5;overflow:hidden}
+.vig{position:absolute;inset:0}
+.vtag{position:absolute;right:28px;top:26px;background:var(--ink);color:var(--paper);font:700 26px var(--font);padding:10px 22px;border-radius:16px}
+.clock{left:28px;top:26px;background:var(--ink);color:var(--paper);border-radius:22px;padding:14px 24px;font:700 24px var(--font);display:flex;flex-direction:column;gap:0}
+.clock b{font:900 50px var(--font);font-variant-numeric:tabular-nums;direction:ltr;color:#ff8b8d}
+/* S4 */
+.s4-head{right:120px;top:110px}
+.pillars{right:120px;left:120px;top:330px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.pillar{border-radius:36px;padding:48px 44px;display:flex;flex-direction:column;gap:22px;min-height:560px}
+.pillar h3{font:900 44px/1.3 var(--font);margin:0}
+.pillar p{font:500 30px/1.6 var(--font);margin:0;color:var(--ink-2)}
+.pillar svg{width:120px;height:120px}
+.p-lime{background:var(--lime)} .p-sky{background:var(--sky)} .p-rose{background:var(--rose)}
+/* S5 */
+.s5-head{right:110px;top:120px;width:720px}
+.s5-map{left:70px;top:130px;width:980px;height:900px;border-radius:36px;background:#dfe4db;overflow:hidden}
+.s5-list{right:110px;top:350px;width:720px;display:flex;flex-direction:column;gap:26px}
+.ben{display:flex;gap:22px;align-items:flex-start;font:500 32px/1.5 var(--font)}
+.ben i{flex:none;margin-top:12px;width:22px;height:22px;border-radius:6px;background:var(--go);transform:rotate(45deg)}
+/* S6 */
+.s6-head{right:120px;top:120px}
+.devs{right:120px;top:300px;width:900px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.dev{background:var(--card);border-radius:28px;padding:30px 32px;display:flex;gap:24px;align-items:flex-start;border:3px solid transparent}
+.dev.hl{border-color:var(--go);box-shadow:0 10px 30px rgba(28,154,82,.18)}
+.dev svg{flex:none;width:76px;height:76px}
+.dev h4{font:900 32px/1.3 var(--font);margin:0 0 8px}
+.dev p{font:500 24px/1.55 var(--font);margin:0;color:var(--ink-2)}
+.dev.wide{grid-column:1/-1}
+.s6-art{left:70px;top:150px;width:780px;height:860px;border-radius:36px;background:#dfe4db;overflow:hidden}
+/* S7 */
+.s7-head{right:120px;top:100px}
+.stages{right:120px;top:270px;width:900px;display:flex;flex-direction:column;gap:18px}
+.stg{border-radius:28px;padding:22px 32px;background:rgba(255,255,255,.55);display:flex;flex-direction:column;gap:10px}
+.stg h4{margin:0;font:900 36px var(--font);display:flex;align-items:center;gap:18px}
+.stg h4 span{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font:900 26px var(--font)}
+.stg ul{margin:0;padding:0 70px 0 0;display:none;font:500 26px/1.6 var(--font);color:var(--ink-2)}
+.stg.on{background:var(--card);box-shadow:0 12px 40px rgba(20,34,42,.12)}
+.stg.on ul{display:block}
+.stg.on h4 span{background:var(--go)}
+.phone{left:260px;top:120px;width:440px;height:880px;border-radius:64px;background:var(--ink);padding:18px}
+.screen{position:relative;width:100%;height:100%;border-radius:48px;background:var(--paper);overflow:hidden}
+.scr{position:absolute;inset:0;padding:70px 30px 30px;display:flex;flex-direction:column;gap:18px;direction:rtl}
+.notch{position:absolute;top:14px;left:50%;width:130px;height:30px;margin-left:-65px;border-radius:20px;background:var(--ink);z-index:3}
+.appbar{font:900 28px var(--font);display:flex;justify-content:space-between;align-items:center}
+.appbar small{font:500 18px var(--font);color:var(--ink-2)}
+.ucard{background:var(--card);border-radius:24px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;font:500 21px/1.5 var(--font)}
+.ucard b{font:900 24px var(--font)}
+.alert{background:var(--rose)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip{font:700 20px var(--font);padding:8px 16px;border-radius:999px;background:#e7ece2}
+.chip.on{background:var(--ink);color:var(--paper)}
+.bar{height:14px;border-radius:8px;background:#e5e9e0;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:8px}
+.btn{font:900 24px var(--font);text-align:center;background:var(--go);color:#fff;border-radius:18px;padding:16px}
+/* S8 */
+.s8-head{right:120px;top:130px}
+.impacts{right:120px;left:120px;top:340px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.imp{background:var(--slate);border-radius:36px;padding:26px}
+.imp > div{background:var(--card);border-radius:22px;padding:36px 34px;min-height:430px;display:flex;flex-direction:column;gap:20px}
+.imp .n{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;color:#fff;font:900 30px var(--font)}
+.imp h3{font:900 42px/1.35 var(--font);margin:0}
+.imp p{font:500 30px/1.6 var(--font);margin:0;color:var(--ink-2)}
+.imp .big{font:900 30px var(--font);margin-top:auto;padding-top:14px;border-top:3px dashed #d7ddd2}
+/* S9 */
+.s9{inset:0;display:grid;place-items:center;text-align:center}
+.s9 .inner{display:flex;flex-direction:column;align-items:center;gap:30px}
+.s9 .ty{font:900 150px/1.45 var(--font)}
+.team{display:flex;gap:28px;justify-content:center}
+.member{background:var(--card);border-radius:28px;padding:26px 40px;display:flex;flex-direction:column;gap:6px;min-width:440px}
+.member b{font:900 38px var(--font)}
+.member span{font:500 24px var(--font);color:var(--ink-2)}
+
+/* Portrait (1080×1920, phones): text on top, the drawing below; wide drawings scale via --base */
+.portrait .wrap{max-width:460px}
+.portrait .viewport{aspect-ratio:9/16}
+.portrait #stage{width:1080px;height:1920px}
+.portrait .tabs{right:50px}
+.portrait .tab{height:56px;padding:0 40px;font-size:22px;margin-left:-20px}
+.portrait .h2{font-size:62px}
+.portrait .s1-title{right:70px;top:230px;width:940px}
+.portrait .s1-title .h1{font-size:74px}
+.portrait .s1-meta{right:70px;top:760px;width:940px}
+.portrait .s1-art{left:190px;top:960px}
+.portrait .s2-quote{width:940px;font-size:78px}
+.portrait .s3-text{right:60px;top:110px;width:960px;gap:20px}
+.portrait .chal{font-size:31px}
+.portrait .s3-art{left:100px;top:1010px;--base:scale(.96);transform:var(--base);transform-origin:top center}
+.portrait .s4-head{right:70px;top:150px;width:940px}
+.portrait .pillars{right:70px;left:70px;top:430px;grid-template-columns:1fr;gap:30px}
+.portrait .pillar{min-height:0;padding:36px 40px;gap:14px}
+.portrait .pillar svg{width:96px;height:96px}
+.portrait .s5-head{right:70px;top:120px;width:940px}
+.portrait .s5-list{right:70px;top:330px;width:940px;gap:18px}
+.portrait .ben{font-size:29px}
+.portrait .s5-map{left:50px;top:1040px;--base:scale(.86);transform:var(--base);transform-origin:top center}
+.portrait .s6-head{right:70px;top:120px;width:940px}
+.portrait .devs{right:70px;top:330px;width:940px;gap:18px}
+.portrait .dev{padding:22px 24px;gap:18px}
+.portrait .dev svg{width:60px;height:60px}
+.portrait .dev h4{font-size:28px}
+.portrait .dev p{font-size:22px}
+.portrait .s6-art{left:150px;top:1080px;--base:scale(.92);transform:var(--base);transform-origin:top center}
+.portrait .s7-head{right:70px;top:110px;width:940px}
+.portrait .stages{right:70px;top:340px;width:940px;gap:12px}
+.portrait .stg{padding:16px 26px}
+.portrait .stg h4{font-size:32px}
+.portrait .stg ul{font-size:24px}
+.portrait .phone{left:320px;top:1070px;--base:scale(.9);transform:var(--base);transform-origin:top center}
+.portrait .s8-head{right:70px;top:150px;width:940px}
+.portrait .impacts{right:70px;left:70px;top:430px;grid-template-columns:1fr;gap:30px}
+.portrait .imp{padding:18px}
+.portrait .imp > div{min-height:0;padding:28px 32px;gap:12px}
+.portrait .imp h3{font-size:38px}
+.portrait .imp p{font-size:27px}
+.portrait .s9 .ty{font-size:130px}
+.portrait .team{flex-direction:column;gap:20px}
+.portrait .member{min-width:0;width:760px}
+@media (prefers-reduced-motion: reduce){ .viewport{box-shadow:none} }
+</style>
+
+<div class="wrap">
+<div class="viewport" id="vp"><div id="stage">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="car" viewBox="-13 -22 26 44" overflow="visible">
+      <rect x="-12" y="-21" width="24" height="42" rx="8" fill="currentColor"/>
+      <rect x="-9" y="-12" width="18" height="9" rx="3" fill="#14222a" opacity=".75"/>
+      <rect x="-9" y="8" width="18" height="6" rx="2.5" fill="#14222a" opacity=".55"/>
+      <rect x="-10" y="-21" width="5" height="3" rx="1.5" fill="#fff7c2"/>
+      <rect x="5" y="-21" width="5" height="3" rx="1.5" fill="#fff7c2"/>
+    </symbol>
+    <linearGradient id="canopy" x1="0" x2="1">
+      <stop offset="0" stop-color="#0e6f86"/><stop offset=".55" stop-color="#1c9a52"/><stop offset="1" stop-color="#9fd84a"/>
+    </linearGradient>
+    <symbol id="pump" viewBox="0 0 40 60">
+      <rect x="4" y="4" width="32" height="52" rx="6" fill="#14222a"/>
+      <rect x="9" y="10" width="22" height="14" rx="3" fill="#bfe4fa"/>
+      <rect x="9" y="30" width="22" height="4" rx="2" fill="#1c9a52"/>
+      <rect x="9" y="38" width="22" height="4" rx="2" fill="#f2b632"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="content">
+
+<!-- S1 · Title -->
+<section class="scene" data-scene="s1">
+  <div class="tabs">
+    <div class="tab" style="background:var(--rose)" data-a="drop 0.2 0.6">تطبيق الجوال</div>
+    <div class="tab" style="background:var(--lime)" data-a="drop 0.35 0.6">إعادة التصميم</div>
+    <div class="tab" style="background:var(--sky)" data-a="drop 0.5 0.6">الأجهزة الذكية</div>
+  </div>
+  <div class="abs s1-title">
+    <div class="eyebrow" style="background:var(--lime)" data-a="fadeUp 0.6 0.7">فريق جِذوة</div>
+    <h1 class="h1" style="margin-top:30px" data-a="fadeUp 0.9 0.9">مقترح تطوير رحلة العميل في المحطات البترولية بالمملكة العربية السعودية</h1>
+  </div>
+  <div class="abs s1-meta">
+    <span class="pill sky" data-a="fadeUp 1.4 0.5">هاكاثون الطاقة ٢٠٢٦م</span>
+    <span class="pill" data-a="fadeUp 1.55 0.5">وزارة الطاقة</span>
+    <span class="pill" data-a="fadeUp 1.7 0.5">١٤٤٨هـ</span>
+  </div>
+  <svg class="abs s1-art" viewBox="0 0 700 800" aria-hidden="true">
+    <rect x="30" y="700" width="640" height="10" rx="5" fill="#c9d3c2" data-a="grow 0.6 0.6"/>
+    <g data-a="fadeDown 0.7 0.7">
+      <rect x="20" y="180" width="660" height="70" rx="12" fill="url(#canopy)"/>
+      <rect x="20" y="250" width="660" height="14" fill="#0b5566"/>
+    </g>
+    <g data-a="grow 0.9 0.6"><rect x="110" y="264" width="26" height="436" fill="#0e6f86"/><rect x="564" y="264" width="26" height="436" fill="#0e6f86"/></g>
+    <g data-a="pop 1.2 0.4"><use href="#pump" x="200" y="560" width="80" height="120"/></g>
+    <g data-a="pop 1.35 0.4"><use href="#pump" x="310" y="560" width="80" height="120"/></g>
+    <g data-a="pop 1.5 0.4"><use href="#pump" x="420" y="560" width="80" height="120"/></g>
+    <g id="s1car"><use href="#car" x="-26" y="-44" width="52" height="88" style="color:#e23b3e"/></g>
+    <path d="M 60 150 Q 350 40 640 150" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" pathLength="1" data-a="draw 1.8 0.9"/>
+    <path d="M 610 120 L 645 152 L 600 170" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" data-a="fade 2.6 0.3"/>
+  </svg>
+</section>
+
+<!-- S2 · Vision -->
+<section class="scene" data-scene="s2">
+  <div class="abs s2-box">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:40px">
+      <span class="eyebrow" data-a="fadeUp 0.3 0.6">رؤيتنا في المقترح</span>
+      <p class="s2-quote" data-a="fadeUp 0.6 0.9">إحداث <span class="mark" data-mark="@m1 1.0">نقلة نوعية</span> في تجربة العميل بالمحطات البترولية من خلال <span class="mark" data-mark="@m2 1.0">إعادة هندسة تجربتها</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- S3 · Challenges: each point drives its own vignette -->
+<section class="scene" data-scene="s3">
+  <div class="abs s3-text">
+    <span class="eyebrow" style="align-self:flex-start" data-a="fadeUp 0.3 0.6">لماذا نقدّم هذا المقترح؟</span>
+    <p class="lead" data-a="fadeUp 0.6 0.6">لأن المحطات البترولية تواجه التحديات التالية…</p>
+    <div class="chal" data-chal="c1"><i></i><div><b>التحدي الأول</b>تكدّس المركبات في أوقات الذروة بسبب العشوائية.</div></div>
+    <div class="chal" data-chal="c2"><i></i><div><b>التحدي الثاني</b>تصميم المسارات الحالي يطيل انتظار العميل للوصول إلى الكبينة.</div></div>
+    <div class="chal" data-chal="c3"><i></i><div><b>التحدي الثالث</b>ضعف التكامل الرقمي بين المحطة والعملاء.</div></div>
+    <div class="chal" data-chal="c4"><i></i><div><b>التحدي الرابع</b>ضعف أدوات إدارة الحشود وتوجيهها.</div></div>
+    <div class="chal" data-chal="c5"><i></i><div><b>التحدي الخامس</b>الاعتماد على العنصر البشري ذي المهارة المتدنية.</div></div>
+  </div>
+  <div class="abs s3-art" data-a="fade 0.2 0.6">
+    <!-- V0 intro: an ordinary station, calm -->
+    <!-- V1 congestion -->
+    <svg class="vig" data-vig="c1" viewBox="0 0 880 860" width="880" height="860" aria-hidden="true">
+      <rect width="880" height="860" fill="#d9ddd4"/>
+      <rect x="80" y="250" width="720" height="60" rx="10" fill="#b7c0b3"/>
+      <rect x="80" y="540" width="720" height="60" rx="10" fill="#b7c0b3"/>
+      <g><use href="#pump" x="150" y="245" width="46" height="70"/><use href="#pump" x="330" y="245" width="46" height="70"/><use href="#pump" x="510" y="245" width="46" height="70"/><use href="#pump" x="690" y="245" width="46" height="70"/>
+      <use href="#pump" x="150" y="535" width="46" height="70"/><use href="#pump" x="330" y="535" width="46" height="70"/><use href="#pump" x="510" y="535" width="46" height="70"/><use href="#pump" x="690" y="535" width="46" height="70"/></g>
+      <g id="chaosCars"></g><g id="chaosPings"></g>
+    </svg>
+    <!-- V2 long winding route -->
+    <svg class="vig" data-vig="c2" viewBox="0 0 880 860" width="880" height="860" aria-hidden="true">
+      <rect width="880" height="860" fill="#d9ddd4"/>
+      <g fill="#b7c0b3"><rect x="90" y="570" width="440" height="36" rx="8"/><rect x="330" y="390" width="470" height="36" rx="8"/><rect x="90" y="210" width="440" height="36" rx="8"/></g>
+      <path id="longRoute" d="M820 800 H240 V680 H760 V500 H180 V320 H720 V150 H420" fill="none" stroke="#e23b3e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1" pathLength="1" opacity=".85"/>
+      <g id="corners"></g>
+      <g><use href="#pump" x="360" y="100" width="56" height="84"/></g>
+      <text x="388" y="80" text-anchor="middle" font-size="26" font-weight="700" fill="#14222a">الكبينة</text>
+      <text x="820" y="770" text-anchor="middle" font-size="24" font-weight="700" fill="#14222a">المدخل</text>
+      <g id="routeCar"><use href="#car" x="-19" y="-32" width="38" height="64" style="color:#0e7a8a"/></g>
+      <g transform="translate(40 790)"><rect width="330" height="52" rx="14" fill="#14222a"/><text id="distTxt" x="165" y="35" text-anchor="middle" font-size="26" font-weight="700" fill="#f4f7ee">المسافة: ٠ م</text></g>
+    </svg>
+    <!-- V3 digital gap -->
+    <svg class="vig" data-vig="c3" viewBox="0 0 880 860" width="880" height="860" aria-hidden="true">
+      <rect width="880" height="860" fill="#d9ddd4"/>
+      <g transform="translate(90 300)"><rect width="190" height="360" rx="30" fill="#14222a"/><rect x="12" y="14" width="166" height="332" rx="20" fill="#f4f7ee"/>
+        <g id="noSignal"><path d="M60 170 a50 50 0 0 1 70 0" fill="none" stroke="#9aa7a0" stroke-width="10" stroke-linecap="round"/><path d="M75 190 a28 28 0 0 1 40 0" fill="none" stroke="#9aa7a0" stroke-width="10" stroke-linecap="round"/><circle cx="95" cy="212" r="8" fill="#9aa7a0"/><path d="M50 140 L140 230" stroke="#e23b3e" stroke-width="10" stroke-linecap="round"/></g></g>
+      <g transform="translate(560 330)"><rect x="-10" y="0" width="250" height="44" rx="10" fill="url(#canopy)"/><rect x="20" y="44" width="16" height="240" fill="#0e6f86"/><rect x="194" y="44" width="16" height="240" fill="#0e6f86"/><use href="#pump" x="80" y="170" width="70" height="105"/>
+        <text x="115" y="330" text-anchor="middle" font-size="26" font-weight="700" fill="#4a5b63">لا توجد بيانات</text></g>
+      <path id="link1" d="M290 480 H400" stroke="#1c9a52" stroke-width="10" stroke-dasharray="16 14" stroke-linecap="round"/>
+      <path id="link2" d="M470 480 H550" stroke="#1c9a52" stroke-width="10" stroke-dasharray="16 14" stroke-linecap="round"/>
+      <g id="breakX" transform="translate(435 480)"><circle r="36" fill="#e23b3e"/><path d="M-14 -14 L14 14 M14 -14 L-14 14" stroke="#fff" stroke-width="9" stroke-linecap="round"/></g>
+      <g class="qb" transform="translate(330 100)"><rect width="330" height="66" rx="22" fill="#fff"/><text x="165" y="43" text-anchor="middle" font-size="28" font-weight="700" fill="#14222a">هل يتوفر وقود ٩٥؟</text></g>
+      <g class="qb" transform="translate(480 190)"><rect width="340" height="66" rx="22" fill="#fff"/><text x="170" y="43" text-anchor="middle" font-size="28" font-weight="700" fill="#14222a">كم مدة الانتظار؟</text></g>
+      <g class="qb" transform="translate(150 700)"><rect width="330" height="66" rx="22" fill="#fff"/><text x="165" y="43" text-anchor="middle" font-size="28" font-weight="700" fill="#14222a">أي كبينة شاغرة؟</text></g>
+    </svg>
+    <!-- V4 crowd management -->
+    <svg class="vig" data-vig="c4" viewBox="0 0 880 860" width="880" height="860" aria-hidden="true">
+      <rect width="880" height="860" fill="#d9ddd4"/>
+      <g fill="#c4cbbf"><rect x="130" y="170" width="170" height="560" rx="12"/><rect x="355" y="170" width="170" height="560" rx="12"/><rect x="580" y="170" width="170" height="560" rx="12"/></g>
+      <rect x="60" y="730" width="760" height="110" fill="#3a474f"/>
+      <g id="loadBars"></g>
+      <g transform="translate(690 14)"><rect width="160" height="84" rx="14" fill="#14222a"/><text x="80" y="62" text-anchor="middle" font-size="54" font-weight="900" fill="#f2b632">؟</text></g>
+      <g id="crowdCars"></g><g id="crowdQ"></g>
+    </svg>
+    <!-- V5 low-skill manual service -->
+    <svg class="vig" data-vig="c5" viewBox="0 0 880 860" width="880" height="860" aria-hidden="true">
+      <rect width="880" height="860" fill="#d9ddd4"/>
+      <rect x="380" y="140" width="120" height="440" rx="12" fill="#b7c0b3"/>
+      <use href="#pump" x="405" y="200" width="70" height="105"/><use href="#pump" x="405" y="420" width="70" height="105"/>
+      <g transform="translate(290 280)"><use href="#car" x="-30" y="-50" width="60" height="100" style="color:#e23b3e"/></g>
+      <g transform="translate(590 460)"><use href="#car" x="-30" y="-50" width="60" height="100" style="color:#1a9ad6"/></g>
+      <g id="queue5"></g>
+      <g id="worker">
+        <circle cx="0" cy="-58" r="18" fill="#c98e62"/><path d="M-20 -66 Q0 -92 20 -66 Z" fill="#1c9a52"/>
+        <rect x="-20" y="-40" width="40" height="56" rx="12" fill="#1c9a52"/>
+        <rect id="legL" x="-16" y="12" width="12" height="40" rx="6" fill="#14222a"/><rect id="legR" x="4" y="12" width="12" height="40" rx="6" fill="#14222a"/>
+      </g>
+      <g id="waitBubble"><rect x="260" y="40" width="380" height="70" rx="24" fill="#fff"/><text x="450" y="86" text-anchor="middle" font-size="30" font-weight="700" fill="#14222a">بانتظار العامل…</text></g>
+      <g transform="translate(560 690)"><rect width="280" height="110" rx="18" fill="#14222a"/><text x="140" y="44" text-anchor="middle" font-size="24" font-weight="500" fill="#f4f7ee">سيارات في الطابور</text><text id="qCount" x="140" y="92" text-anchor="middle" font-size="40" font-weight="900" fill="#ff8b8d">٣</text></g>
+    </svg>
+    <div class="abs clock" id="clockBox"><span>وقت الانتظار</span><b id="waitClock">00:00</b></div>
+  </div>
+</section>
+
+<!-- S4 · Model -->
+<section class="scene" data-scene="s4">
+  <div class="abs s4-head">
+    <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 0.3 0.6">النموذج التطويري المقترح</span>
+    <h2 class="h2" style="margin-top:22px" data-a="fadeUp 0.6 0.7">ثلاثة محاور تعيد بناء الرحلة</h2>
+  </div>
+  <div class="abs pillars">
+    <div class="pillar p-lime" data-a="rise @p1-0.2 0.8">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><path d="M30 110 V20" stroke="#1c9a52" stroke-width="12" stroke-linecap="round"/><path d="M14 36 L30 16 L46 36" fill="none" stroke="#1c9a52" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M90 110 V20" stroke="#e23b3e" stroke-width="12" stroke-linecap="round"/><path d="M74 36 L90 16 L106 36" fill="none" stroke="#e23b3e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 90 L84 50" stroke="#14222a" stroke-width="8" stroke-dasharray="8 8"/></svg>
+      <h3>إعادة تصميم مسارات المحطة</h3>
+      <p>تحسين انسيابية دخول المركبات وخروجها وضمانها بأعلى كفاءة وأمان.</p>
+    </div>
+    <div class="pillar p-sky" data-a="rise @p2-0.2 0.8">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><rect x="20" y="30" width="62" height="44" rx="12" fill="#14222a"/><circle cx="51" cy="52" r="14" fill="#bfe4fa"/><circle cx="51" cy="52" r="6" fill="#14222a"/><rect x="82" y="44" width="22" height="16" rx="4" fill="#14222a"/><path d="M40 74 L34 104 M62 74 L68 104" stroke="#14222a" stroke-width="8" stroke-linecap="round"/></svg>
+      <h3>أجهزة ذكية لإدارة الحشود</h3>
+      <p>تقنيات وأجهزة تنظّم تدفق السيارات وتقلّل أوقات الانتظار داخل المحطة.</p>
+    </div>
+    <div class="pillar p-rose" data-a="rise @p3-0.2 0.8">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><rect x="32" y="8" width="56" height="104" rx="14" fill="#14222a"/><rect x="38" y="20" width="44" height="80" rx="6" fill="#f4f7ee"/><rect x="44" y="30" width="32" height="10" rx="4" fill="#1c9a52"/><rect x="44" y="48" width="32" height="8" rx="4" fill="#ffc8da"/><rect x="44" y="62" width="22" height="8" rx="4" fill="#bfe4fa"/></svg>
+      <h3>تطبيق جوال</h3>
+      <p>منصة رقمية موحّدة تدير رحلة العميل كاملة، من الحاجة إلى التعبئة حتى ما بعد مغادرة المحطة.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S5 · Redesign -->
+<section class="scene" data-scene="s5">
+  <div class="tabs">
+    <div class="tab" style="background:var(--rose);opacity:.5">تطبيق الجوال</div>
+    <div class="tab" style="background:var(--lime)">إعادة التصميم</div>
+    <div class="tab" style="background:var(--sky);opacity:.5">الأجهزة الذكية</div>
+  </div>
+  <div class="abs s5-head">
+    <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 0.3 0.6">المحور الأول</span>
+    <h2 class="h2" style="margin-top:18px" data-a="fadeUp 0.6 0.7">المخطط المقترح</h2>
+  </div>
+  <div class="abs s5-list">
+    <div class="ben" data-a="slideIn @b1 0.6"><i></i>مسارات مستقلة للدخول وأخرى للخروج تسرّع رحلة التعبئة.</div>
+    <div class="ben" data-a="slideIn @b2 0.6"><i></i>انعطافات سلسة لا حادة، تضمن انسيابية حركة المركبات.</div>
+    <div class="ben" data-a="slideIn @b3 0.6"><i></i>استيعاب عدد أكبر من السيارات في وقت واحد وبنفس المساحات المعتمدة.</div>
+    <div class="ben" data-a="slideIn @b4 0.6"><i></i>تعامل كفء مع السيارات عبر المسارات المتعددة.</div>
+    <div class="ben" data-a="slideIn @b5 0.6"><i></i>خروج سريع في حالات الطوارئ عبر مسارات خروج مباشرة.</div>
+    <div class="ben" data-a="slideIn @b6 0.6"><i></i>خطوط أرضية ملوّنة للتوجيه السريع.</div>
+  </div>
+  <div class="abs s5-map" data-a="fade 0.2 0.6">
+    <svg viewBox="0 0 980 900" width="980" height="900" aria-hidden="true">
+      <rect width="980" height="900" fill="#d3d9cf"/>
+      <rect x="0" y="820" width="980" height="80" fill="#3a474f"/>
+      <text x="490" y="870" text-anchor="middle" fill="#f4f7ee" font-size="26" font-weight="700">شارع الدخول</text>
+      <rect x="0" y="0" width="980" height="60" fill="#3a474f"/>
+      <text x="490" y="40" text-anchor="middle" fill="#f4f7ee" font-size="26" font-weight="700">شارع الخروج</text>
+      <g id="lanes"></g><g id="flowCars"></g><g id="laneLabels"></g>
+    </svg>
+  </div>
+</section>
+
+<!-- S6 · Smart devices -->
+<section class="scene" data-scene="s6">
+  <div class="tabs">
+    <div class="tab" style="background:var(--rose);opacity:.5">تطبيق الجوال</div>
+    <div class="tab" style="background:var(--lime);opacity:.5">إعادة التصميم</div>
+    <div class="tab" style="background:var(--sky)">الأجهزة الذكية</div>
+  </div>
+  <div class="abs s6-head">
+    <span class="eyebrow" style="background:var(--sky)" data-a="fadeUp 0.3 0.6">المحور الثاني</span>
+    <h2 class="h2" style="margin-top:18px" data-a="fadeUp 0.6 0.7">أجهزة ذكية عند كل كبينة</h2>
+  </div>
+  <div class="abs devs">
+    <div class="dev" data-dev="cam bar" data-a="rise @cam-0.2 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="8" y="18" width="44" height="30" rx="8" fill="#14222a"/><circle cx="30" cy="33" r="10" fill="#bfe4fa"/><circle cx="30" cy="33" r="4" fill="#14222a"/><path d="M52 26 L70 18 V48 L52 40 Z" fill="#14222a"/><rect x="20" y="54" width="40" height="14" rx="3" fill="#f2b632"/></svg>
+      <div><h4>كاميرات قارئة</h4><p>تتعرّف على اللوحة وتفتح الحاجز إن دفع العميل مسبقًا عبر التطبيق.</p></div>
+    </div>
+    <div class="dev" data-dev="bar lig" data-a="rise @bar-0.2 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="6" y="40" width="14" height="30" rx="3" fill="#14222a"/><rect x="18" y="42" width="54" height="10" rx="5" fill="#e23b3e"/><rect x="34" y="42" width="10" height="10" fill="#fff"/><rect x="54" y="42" width="10" height="10" fill="#fff"/></svg>
+      <div><h4>حواجز السيارات</h4><p>عند كل كبينة، ولا تُفتح إلا بعد التحقق من الدفع.</p></div>
+    </div>
+    <div class="dev" data-dev="lig pay" data-a="rise @lig-0.2 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="8" y="10" width="26" height="56" rx="13" fill="#14222a"/><circle cx="21" cy="26" r="8" fill="#1c9a52"/><circle cx="21" cy="50" r="8" fill="#56646b"/><rect x="42" y="10" width="26" height="56" rx="13" fill="#14222a"/><circle cx="55" cy="26" r="8" fill="#56646b"/><circle cx="55" cy="50" r="8" fill="#e23b3e"/></svg>
+      <div><h4>نظام الإضاءات الإرشادية</h4><p>فوق جميع الكبائن، يوضّح للعميل الشاغرة من المشغولة مباشرة.</p></div>
+    </div>
+    <div class="dev" data-dev="pay obd" data-a="rise @pay-0.2 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="14" y="6" width="48" height="64" rx="8" fill="#14222a"/><rect x="20" y="12" width="36" height="20" rx="3" fill="#bfe4fa"/><rect x="20" y="40" width="36" height="6" rx="3" fill="#56646b"/><rect x="4" y="50" width="40" height="24" rx="4" fill="#1c9a52"/><rect x="4" y="56" width="40" height="5" fill="#14222a"/></svg>
+      <div><h4>أجهزة الدفع الذاتي</h4><p>بدلًا من الاعتماد على العامل وتأخير العملاء الآخرين.</p></div>
+    </div>
+    <div class="dev wide" data-dev="obd end" data-a="rise @obd-0.2 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="10" y="20" width="56" height="36" rx="8" fill="#14222a"/><rect x="18" y="28" width="26" height="12" rx="3" fill="#d4f26a"/><circle cx="54" cy="34" r="5" fill="#1c9a52"/><path d="M24 56 V68 M38 56 V68 M52 56 V68" stroke="#14222a" stroke-width="5" stroke-linecap="round"/></svg>
+      <div><h4>جهاز فحص حاسوب السيارة</h4><p>يربط معلومات السيارة بتطبيق الجوال أو الأنظمة المساندة.</p></div>
+    </div>
+  </div>
+  <div class="abs s6-art" data-a="fade 0.2 0.6">
+    <svg viewBox="0 0 780 860" width="780" height="860" aria-hidden="true">
+      <rect width="780" height="860" fill="#d3d9cf"/>
+      <rect x="40" y="70" width="700" height="56" rx="12" fill="url(#canopy)"/>
+      <g id="cabins"></g>
+      <rect x="260" y="400" width="260" height="440" fill="#c4cbbf"/>
+      <path d="M290 820 V420" stroke="#1c9a52" stroke-width="8" stroke-dasharray="20 18" opacity=".7"/>
+      <use href="#pump" x="540" y="470" width="90" height="135"/>
+      <g><rect x="120" y="440" width="90" height="56" rx="12" fill="#14222a"/><circle cx="150" cy="468" r="16" fill="#bfe4fa"/><circle cx="150" cy="468" r="7" fill="#14222a"/><rect x="156" y="496" width="12" height="150" fill="#14222a"/>
+        <path id="beam" d="M200 468 L380 690 L300 740 Z" fill="#f2b632" opacity="0"/></g>
+      <rect x="230" y="560" width="30" height="80" rx="6" fill="#14222a"/>
+      <g id="arm"><rect x="240" y="566" width="300" height="20" rx="10" fill="#e23b3e"/><rect x="300" y="566" width="30" height="20" fill="#fff"/><rect x="380" y="566" width="30" height="20" fill="#fff"/><rect x="460" y="566" width="30" height="20" fill="#fff"/></g>
+      <g id="devCar"><use href="#car" x="-38" y="-64" width="76" height="128" style="color:#0e6f86"/><rect x="-24" y="46" width="48" height="16" rx="3" fill="#fff" stroke="#14222a" stroke-width="2"/></g>
+      <g id="paidTag" opacity="0"><rect x="560" y="660" width="190" height="64" rx="32" fill="#1c9a52"/><text x="655" y="702" text-anchor="middle" fill="#fff" font-size="28" font-weight="700">تم الدفع ✓</text></g>
+      <g id="payTerm" opacity="0" transform="translate(640 300)"><rect width="90" height="120" rx="12" fill="#14222a"/><rect x="12" y="14" width="66" height="40" rx="6" fill="#bfe4fa"/><rect x="-26" y="70" width="70" height="44" rx="8" fill="#1c9a52"/></g>
+      <g id="obdTag" opacity="0"><rect x="300" y="250" width="190" height="96" rx="20" fill="#14222a"/><rect x="318" y="270" width="80" height="26" rx="6" fill="#d4f26a"/><text x="395" y="330" text-anchor="middle" font-size="22" font-weight="700" fill="#f4f7ee">الوقود ١٢٪ · ٩٥</text></g>
+    </svg>
+  </div>
+</section>
+
+<!-- S7 · App -->
+<section class="scene" data-scene="s7">
+  <div class="tabs">
+    <div class="tab" style="background:var(--rose)">تطبيق الجوال</div>
+    <div class="tab" style="background:var(--lime);opacity:.5">إعادة التصميم</div>
+    <div class="tab" style="background:var(--sky);opacity:.5">الأجهزة الذكية</div>
+  </div>
+  <div class="abs s7-head">
+    <span class="eyebrow" data-a="fadeUp 0.3 0.6">المحور الثالث</span>
+    <h2 class="h2" style="margin-top:18px" data-a="fadeUp 0.6 0.7">تطبيق يرافق العميل في كل مرحلة</h2>
+  </div>
+  <div class="abs stages">
+    <div class="stg" data-stage="a1" data-a="fadeUp 0.8 0.5"><h4><span>١</span>ما قبل الوصول</h4>
+      <ul><li>تنبيه بقرب انتهاء خزان الوقود، ومعلومات مباشرة عن الوقود المتاح في السيارة.</li><li>أقرب محطة وحالتها: الازدحام، الكبائن الشاغرة، كميات الوقود، ازدحام المرافق كالبقالة والمصلى.</li><li>تحديد نوع الوقود ونوع التعبئة والدفع، مع إتاحة الدفع المسبق.</li></ul></div>
+    <div class="stg" data-stage="a2" data-a="fadeUp 1.0 0.5"><h4><span>٢</span>الوصول</h4>
+      <ul><li>إشعار بوصول العميل إلى المحطة.</li><li>توجيهه إلى المسار والكبينة المناسبين.</li></ul></div>
+    <div class="stg" data-stage="a3" data-a="fadeUp 1.2 0.5"><h4><span>٣</span>التعبئة</h4>
+      <ul><li>تعديل حجم التعبئة وقيمتها إن غيّر العميل رأيه.</li><li>إرشادات السلامة الواجب اتباعها أثناء التعبئة.</li><li>الطلب من محلات المحطة واستلامه من نوافذ السيارات، وألعاب قصيرة لكسر ملل الانتظار.</li></ul></div>
+    <div class="stg" data-stage="a4" data-a="fadeUp 1.4 0.5"><h4><span>٤</span>مغادرة الكبينة</h4>
+      <ul><li>وصول الفاتورة الإلكترونية، والتوجيه إلى مسار المغادرة.</li><li>معلومات عن الخدمات والمرافق المساندة بالمحطة.</li><li>نقاط برنامج الولاء والمكافآت، وتقييم التجربة.</li></ul></div>
+  </div>
+  <div class="abs phone" data-a="rise 0.5 0.8"><div class="screen"><div class="notch"></div>
+    <div class="scr" data-scr="a1">
+      <div class="appbar">صباح الخير <small>السيارة: كامري ٢٠٢٣</small></div>
+      <div class="ucard alert"><b>الخزان قارب على النفاد</b>المتبقي يكفي لنحو ٤٢ كم</div>
+      <div class="ucard"><b>أقرب محطة · ١٫٨ كم</b>
+        <div class="row" style="justify-content:space-between"><span>الازدحام</span><span style="color:var(--go);font-weight:700">منخفض</span></div>
+        <div class="bar"><i style="width:28%;background:var(--go)"></i></div>
+        <div class="row" style="justify-content:space-between"><span>الكبائن الشاغرة</span><b>٧ من ١٢</b></div>
+        <div class="row" style="justify-content:space-between"><span>البقالة · المصلى</span><span>هادئ</span></div></div>
+      <div class="ucard"><span>نوع الوقود</span><div class="row"><span class="chip">٩١</span><span class="chip on">٩٥</span><span class="chip">ديزل</span></div>
+        <span>التعبئة</span><div class="row"><span class="chip on">كامل</span><span class="chip">مبلغ محدد</span></div></div>
+      <div class="btn">ادفع مسبقًا</div>
+    </div>
+    <div class="scr" data-scr="a2">
+      <div class="appbar">وصلت إلى المحطة <small>الآن</small></div>
+      <div class="ucard" style="background:var(--lime)"><b>توجّه إلى المسار ٢</b>الكبينة ٥ بانتظارك · الحاجز سيفتح تلقائيًا</div>
+      <svg viewBox="0 0 360 380" width="100%" style="background:#dfe4db;border-radius:24px" aria-hidden="true">
+        <rect x="40" y="20" width="12" height="340" fill="#1c9a52" opacity=".35"/><rect x="175" y="20" width="12" height="340" fill="#1c9a52" opacity=".35"/><rect x="310" y="20" width="12" height="340" fill="#e23b3e" opacity=".35"/>
+        <path id="route" d="M181 360 L181 190 Q181 150 240 120" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" pathLength="1"/>
+        <circle cx="250" cy="112" r="22" fill="#1c9a52"/><text x="250" y="121" text-anchor="middle" fill="#fff" font-size="26" font-weight="700">٥</text>
+        <circle id="dot" cx="181" cy="360" r="12" fill="#14222a"/>
+      </svg>
+    </div>
+    <div class="scr" data-scr="a3">
+      <div class="appbar">جارٍ التعبئة <small>الكبينة ٥</small></div>
+      <div class="ucard" style="align-items:center">
+        <svg viewBox="0 0 200 200" width="200" height="200" aria-hidden="true"><circle cx="100" cy="100" r="80" fill="none" stroke="#e5e9e0" stroke-width="20"/><circle id="ring" cx="100" cy="100" r="80" fill="none" stroke="#1c9a52" stroke-width="20" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" transform="rotate(-90 100 100)"/><text id="liters" x="100" y="114" text-anchor="middle" font-size="42" font-weight="900" fill="#14222a">٠ لتر</text></svg>
+        <div class="row"><span class="chip">تعديل الكمية</span></div></div>
+      <div class="ucard" style="background:var(--sky)"><b>السلامة أولًا</b>أطفئ المحرك ولا تستخدم الولاعة</div>
+      <div class="ucard"><b>اطلب من البقالة</b>قهوة · ماء · وجبة خفيفة ← استلم من نافذة السيارات</div>
+    </div>
+    <div class="scr" data-scr="a4">
+      <div class="appbar">شكرًا لزيارتك <small>الفاتورة</small></div>
+      <div class="ucard"><b>فاتورة إلكترونية</b><div class="row" style="justify-content:space-between"><span>٤٨ لتر · ٩٥</span><b>١٠٤٫١٦ ر.س</b></div></div>
+      <div class="ucard" style="background:var(--lime)"><b>مسار المغادرة: الخروج ٢</b>طريقك واضح إلى الشارع</div>
+      <div class="ucard"><b>+٢٥ نقطة ولاء</b><div class="bar"><i style="width:68%;background:var(--amber)"></i></div></div>
+      <div class="ucard" style="align-items:center"><span>قيّم تجربتك</span><div id="stars" style="font-size:40px;letter-spacing:6px;color:var(--amber)">★★★★★</div></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- S8 · Impact -->
+<section class="scene" data-scene="s8">
+  <div class="abs s8-head">
+    <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 0.3 0.6">الأثر المتوقع</span>
+    <h2 class="h2" style="margin-top:18px" data-a="fadeUp 0.6 0.7">الأثر المتوقع والقيمة المضافة</h2>
+  </div>
+  <div class="abs impacts">
+    <div class="imp" data-a="rise @i1-0.2 0.8"><div><span class="n" style="background:var(--go)">01</span><h3>تحسين تجربة العميل ورفع رضاه</h3><p>رفع مستويات الرضا من خلال خدمة أسرع وأكثر سلاسة.</p><div class="big" style="color:var(--go)">خدمة أسرع وأسلس</div></div></div>
+    <div class="imp" data-a="rise @i2-0.2 0.8"><div><span class="n" style="background:#1a9ad6">02</span><h3>زيادة الكفاءة التشغيلية للمحطات</h3><p>تقليل أوقات الانتظار وزيادة الطاقة الاستيعابية للمحطات.</p><div class="big" style="color:#1a9ad6">انتظار أقل · استيعاب أكبر</div></div></div>
+    <div class="imp" data-a="rise @i3-0.2 0.8"><div><span class="n" style="background:var(--ink)">03</span><h3>تعزيز التحول الرقمي</h3><p>المساهمة في تعديل نموذج عمل المحطات ليوائم بين التقنية والأعمال.</p><div class="big">تقنية تخدم الأعمال</div></div></div>
+  </div>
+</section>
+
+<!-- S9 · Close -->
+<section class="scene" data-scene="s9">
+  <div class="abs s9"><div class="inner">
+    <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 0.3 0.6">فريق جِذوة</span>
+    <div class="ty" data-a="pop 0.45 0.6">شكرًا لكم</div>
+    <div class="team">
+      <div class="member" data-a="rise 0.9 0.5"><b>عبدالرحمن عبدالله باسميح</b><span>مؤسس الفريق</span></div>
+      <div class="member" data-a="rise 1.1 0.5"><b>عبدالعزيز علي الهوسة</b><span>شريك مؤسس</span></div>
+    </div>
+    <div class="pill" style="direction:ltr" data-a="fadeUp 1.4 0.5">basumaih2009@gmail.com</div>
+  </div></div>
+</section>
+
+</div><!-- /content -->
+
+
+</div>
+<button id="bigplay" type="button" aria-label="تشغيل العرض مع المؤثرات الصوتية"><span>▶ تشغيل العرض مع المؤثرات الصوتية</span></button>
+</div>
+
+<div class="controls">
+  <button id="play" type="button">تشغيل</button>
+  <button id="restart" type="button">من البداية</button>
+  <input id="scrub" type="range" min="0" max="100" step="0.01" value="0" aria-label="موضع العرض">
+  <span id="time">0:00</span>
+  <a id="orient" href="#v">نسخة الجوال (عمودية)</a>
+</div>
+<div class="chips" id="chips"></div>
+</div>
+<audio id="sfx" src="sfx.mp3" preload="auto"></audio>
+
+<script>
+(() => {
+const TL = {"dur": 59.185, "scenes": {"s1": {"s": 0.0, "e": 3.8}, "s2": {"s": 3.8, "e": 7.2}, "s3": {"s": 7.2, "e": 23.3}, "s4": {"s": 23.3, "e": 27.325}, "s5": {"s": 27.325, "e": 33.925}, "s6": {"s": 33.925, "e": 40.925}, "s7": {"s": 40.925, "e": 52.66}, "s8": {"s": 52.66, "e": 56.185}, "s9": {"s": 56.185, "e": 59.185}}, "cues": {"s1": 0.35, "s2": 4.15, "m1": 4.5, "m2": 5.625, "s3": 7.55, "c1": 9.47, "c2": 12.19, "c3": 14.91, "c4": 17.63, "c5": 20.35, "s4": 23.65, "p1": 24.75, "p2": 25.425, "p3": 26.1, "s5": 27.675, "b1": 28.55, "b2": 29.425, "b3": 30.15, "b4": 30.625, "b5": 31.075, "b6": 31.7, "s6": 34.275, "cam": 35.35, "bar": 36.0, "lig": 37.0, "pay": 38.025, "obd": 38.55, "a1": 41.275, "a2": 44.87, "a3": 47.39, "a4": 49.91, "s8": 53.01, "i1": 53.41, "i2": 54.135, "i3": 54.86, "s9": 56.535}, "segs": {"s1": {"s": 0.35, "e": 3.025}, "s2": {"s": 4.15, "e": 6.125}, "s3": {"s": 7.55, "e": 9.35}, "c1": {"s": 9.47, "e": 12.07}, "c2": {"s": 12.19, "e": 14.79}, "c3": {"s": 14.91, "e": 17.51}, "c4": {"s": 17.63, "e": 20.23}, "c5": {"s": 20.35, "e": 22.95}, "s4": {"s": 23.65, "e": 26.975}, "s5": {"s": 27.675, "e": 32.375}, "s6": {"s": 34.275, "e": 39.35}, "a1": {"s": 41.275, "e": 44.75}, "a2": {"s": 44.87, "e": 47.27}, "a3": {"s": 47.39, "e": 49.79}, "a4": {"s": 49.91, "e": 52.31}, "s8": {"s": 53.01, "e": 55.835}, "s9": {"s": 56.535, "e": 58.335}}};
+const DUR = TL.dur;
+const stage = document.getElementById('stage'), vp = document.getElementById('vp');
+const REC = /rec$/.test(location.hash);
+const PORTRAIT = /^#v/.test(location.hash);
+if (REC) document.body.classList.add('rec');
+if (PORTRAIT) document.body.classList.add('portrait');
+const W = PORTRAIT ? 1080 : 1920;
+addEventListener('hashchange', () => location.reload());
+if (PORTRAIT){ const o=document.getElementById('orient'); o.href='#h'; o.textContent='النسخة الأفقية'; }
+const fit = () => { stage.style.transform = `scale(${vp.clientWidth/W})`; };
+new ResizeObserver(fit).observe(vp); fit();
+
+const clamp = (x,a=0,b=1) => Math.max(a,Math.min(b,x));
+const eo = p => 1-Math.pow(1-p,3);
+const eio = p => p<.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2;
+const back = p => { const c=1.7; return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2); };
+const lerp = (a,b,p) => a+(b-a)*p;
+const win = (t,s,e,f=.35) => Math.min(clamp((t-s)/f), clamp((e-t)/f));
+const NS = 'http://www.w3.org/2000/svg';
+const mk = (tag, attrs, parent) => { const e=document.createElementNS(NS,tag); for (const k in attrs) e.setAttribute(k,attrs[k]); parent && parent.appendChild(e); return e; };
+const useCar = (parent, color, s=1) => { const g=mk('g',{},parent); const u=mk('use',{href:'#car',x:-13*s,y:-22*s,width:26*s,height:44*s},g); u.style.color=color; return g; };
+const AR = n => String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const SC = TL.scenes, CUE = TL.cues, SEG = TL.segs;
+
+/* time expressions: "1.2" = seconds after scene start, "@cue±x" = cue time, "%0.5" = fraction of scene */
+function when(expr, scene){
+  if (expr[0]==='@'){ const m=expr.slice(1).match(/^([a-z0-9]+)([+-][\d.]+)?$/); return CUE[m[1]] + (m[2]?+m[2]:0); }
+  if (expr[0]==='%') return scene.s + (scene.e-scene.s)*(+expr.slice(1));
+  return scene.s + (+expr);
+}
+const sceneOf = el => SC[el.closest('[data-scene]').dataset.scene];
+
+const FX = {
+  fade:    p => [p, ''],
+  fadeUp:  p => [p, `translateY(${(1-eo(p))*50}px)`],
+  fadeDown:p => [p, `translateY(${-(1-eo(p))*50}px)`],
+  slideIn: p => [p, `translateX(${-(1-eo(p))*80}px)`],
+  rise:    p => [p, `translateY(${(1-eo(p))*120}px)`],
+  drop:    p => [1, `translateY(${(1-eo(p))*-70}px)`],
+  pop:     p => [clamp(p*2), `scale(${0.6+0.4*back(p)})`],
+  grow:    p => [p, `scaleY(${eo(p)})`],
+};
+const anims = [...stage.querySelectorAll('[data-a]')].map(el => {
+  const [type,s,d] = el.dataset.a.split(' ');
+  if (type==='draw') el.setAttribute('stroke-dasharray','1');
+  if (el instanceof SVGElement){ el.style.transformBox='fill-box'; el.style.transformOrigin= type==='grow'?'center bottom':'center'; }
+  // --base lets a layout (portrait) scale an element that also animates
+  return {el,type,s:when(s,sceneOf(el)),d:+d,base:getComputedStyle(el).getPropertyValue('--base').trim()};
+});
+const scenes = [...stage.querySelectorAll('[data-scene]')].map(el => ({el, ...SC[el.dataset.scene]}));
+const marks = [...stage.querySelectorAll('[data-mark]')].map(el => { const [s,d]=el.dataset.mark.split(' '); return {el,s:when(s,sceneOf(el)),d:+d}; });
+
+/* S1 */
+const s1car = document.getElementById('s1car');
+
+/* S3: challenge list + vignettes */
+const S3 = SC.s3;
+const chalIds = ['c1','c2','c3','c4','c5'];
+const chalWin = id => { const i=chalIds.indexOf(id); return {s: SEG[id].s-0.25, e: i<4 ? SEG[chalIds[i+1]].s-0.25 : S3.e}; };
+const chals = [...stage.querySelectorAll('[data-chal]')].map(el=>({el, id:el.dataset.chal, ...chalWin(el.dataset.chal)}));
+const vigs = [...stage.querySelectorAll('[data-vig]')].map(el=>({el, id:el.dataset.vig, ...chalWin(el.dataset.vig)}));
+vigs[0].s = S3.s; // congestion is also the scene's opening picture
+let seed = 7; const rnd = () => (seed = (seed*16807)%2147483647, (seed-1)/2147483646);
+const palette = ['#e23b3e','#0e7a8a','#f2b632','#14222a','#768c96','#1a9ad6','#9aa7a0','#c75d9b'];
+const chaosG = document.getElementById('chaosCars'), pingG = document.getElementById('chaosPings');
+const chaos = [];
+for (let i=0;i<34;i++){
+  const tx = 70+rnd()*740, ty = 150+rnd()*660;
+  if (((ty>220&&ty<340)||(ty>510&&ty<630)) && rnd()<.6) continue;
+  chaos.push({g: useCar(chaosG, palette[i%palette.length], 1.35), tx, ty, fx: tx+(rnd()-.5)*300, fy: 950+rnd()*200, a:(rnd()-.5)*160, delay:rnd()*4, ph:rnd()*6});
+}
+const pings = []; for (let i=0;i<7;i++){ pings.push({c:mk('circle',{r:20,fill:'none',stroke:'#e23b3e','stroke-width':6},pingG), x:100+rnd()*680, y:170+rnd()*600, o:rnd()*2}); }
+const waitClock = document.getElementById('waitClock'), clockBox = document.getElementById('clockBox');
+// V2
+const longRoute = document.getElementById('longRoute'), routeCar = document.getElementById('routeCar'), distTxt = document.getElementById('distTxt');
+const LR = longRoute.getTotalLength();
+const cornersG = document.getElementById('corners');
+const cornerPts = [[240,800],[240,680],[760,680],[760,500],[180,500],[180,320],[720,320],[720,150]];
+const corners = cornerPts.map(([x,y])=>mk('circle',{cx:x,cy:y,r:18,fill:'#e23b3e',opacity:0},cornersG));
+// V3
+const qbs = [...stage.querySelectorAll('.qb')], breakX = document.getElementById('breakX'), noSignal = document.getElementById('noSignal');
+// V4
+const crowdG = document.getElementById('crowdCars'), crowdQ = document.getElementById('crowdQ'), loadG = document.getElementById('loadBars');
+const laneX = [215,440,665], loads = [.96,.9,.06];
+const loadBars = laneX.map((x,i)=>{ const g=mk('g',{},loadG); mk('rect',{x:x-70,y:120,width:140,height:26,rx:13,fill:'#fff'},g); const f=mk('rect',{x:x-70,y:120,width:0,height:26,rx:13,fill:i<2?'#e23b3e':'#9aa7a0'},g); const t=mk('text',{x,y:108,'text-anchor':'middle','font-size':24,'font-weight':900,fill:i<2?'#e23b3e':'#4a5b63'},g); return {f,t,i}; });
+const crowd = [];
+for (let i=0;i<16;i++){ const lane = i%7===6 ? 2 : (i%2); crowd.push({g:useCar(crowdG,palette[i%palette.length],1.3), lane, slot: crowd.filter(c=>c.lane===lane).length, t0: i*0.09}); }
+const qMarks = [0,1,2].map(i=>{ const t=mk('text',{'text-anchor':'middle','font-size':44,'font-weight':900,fill:'#f2b632'},crowdQ); t.textContent='؟'; return t; });
+// V5
+const worker = document.getElementById('worker'), legL=document.getElementById('legL'), legR=document.getElementById('legR'), qCount=document.getElementById('qCount'), waitBubble=document.getElementById('waitBubble');
+const queue5 = document.getElementById('queue5');
+const q5 = [0,1,2,3].map(i=>{ const g=useCar(queue5,palette[(i+2)%palette.length],1.5); g.setAttribute('transform',`translate(${290} ${470+i*110})`); return g; });
+
+/* S5: lanes + flow */
+const S5 = SC.s5;
+const lanesG = document.getElementById('lanes'), flowG = document.getElementById('flowCars'), lblG = document.getElementById('laneLabels');
+const LW = 980/3, bays = [650,510,370,230], carPaths = [], laneDraw = [];
+for (let k=0;k<3;k++){
+  const x0=k*LW, ex=x0+58, xo=x0+LW-58, px=x0+LW/2-18;
+  const lane = mk('g',{},lanesG);
+  mk('rect',{x:x0+14,y:60,width:LW-28,height:760,rx:14,fill:'#c4cbbf'},lane);
+  laneDraw.push([mk('path',{d:`M${ex} 820 V120`,stroke:'#1c9a52','stroke-width':14,fill:'none','stroke-linecap':'round',opacity:.85,pathLength:1,'stroke-dasharray':1},lane),
+                 mk('path',{d:`M${xo} 820 V70`,stroke:'#e23b3e','stroke-width':14,fill:'none','stroke-linecap':'round',opacity:.85,pathLength:1,'stroke-dasharray':1},lane)]);
+  mk('path',{d:`M${ex-16} 150 L${ex} 118 L${ex+16} 150`,stroke:'#1c9a52','stroke-width':10,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},lane);
+  mk('path',{d:`M${xo-16} 102 L${xo} 70 L${xo+16} 102`,stroke:'#e23b3e','stroke-width':10,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},lane);
+  mk('circle',{cx:xo,cy:790,r:16,fill:'#e23b3e'},lane); mk('rect',{x:xo-9,y:787,width:18,height:6,fill:'#fff'},lane);
+  bays.forEach((yb,b)=>{
+    mk('path',{d:`M${ex} ${yb+70} Q${ex} ${yb+30} ${px} ${yb}`,stroke:'#1c9a52','stroke-width':5,fill:'none','stroke-dasharray':'10 10',opacity:.6},lane);
+    mk('path',{d:`M${px} ${yb} Q${xo} ${yb-40} ${xo} ${yb-90}`,stroke:'#e23b3e','stroke-width':5,fill:'none','stroke-dasharray':'10 10',opacity:.6},lane);
+    const pg = mk('g',{transform:`translate(${px+38} ${yb-8}) rotate(35)`},lane); mk('use',{href:'#pump',x:-12,y:-18,width:24,height:36},pg);
+    const lt = mk('circle',{cx:px+62,cy:yb-40,r:8,fill:'#1c9a52'},lane);
+    const pIn = mk('path',{d:`M${ex} 900 L${ex} ${yb+70} Q${ex} ${yb+30} ${px} ${yb}`,fill:'none'},lanesG);
+    const pOut = mk('path',{d:`M${px} ${yb} Q${xo} ${yb-40} ${xo} ${yb-90} L${xo} -60`,fill:'none'},lanesG);
+    carPaths.push({k,b,pIn,pOut,Lin:pIn.getTotalLength(),Lout:pOut.getTotalLength(),lt});
+  });
+  const t = mk('text',{x:x0+LW/2,y:800,'text-anchor':'middle',fill:'#14222a','font-size':26,'font-weight':700},lblG); t.textContent=`المسار ${['١','٢','٣'][k]}`;
+}
+const flow = [], cols = ['#0e7a8a','#e23b3e','#f2b632','#14222a','#1a9ad6','#768c96','#c75d9b','#fdfdfd'];
+const nFlow = Math.ceil((S5.e-S5.s-3)/1.3);
+for (let k=0;k<3;k++) for (let i=0;i<nFlow;i++){
+  const b=[3,2,1,0][i%4]; flow.push({cp:carPaths.find(c=>c.k===k&&c.b===b), t0:S5.s+1.4+i*1.3+k*0.4, g:useCar(flowG, cols[(i+k*3)%cols.length], 1.25)});
+}
+const SPD=300, DWELL=2.2;
+const pose = (path,L,d) => { const l=clamp(d,0,L); const a=path.getPointAtLength(l), b=path.getPointAtLength(clamp(l+2,0,L)), c=path.getPointAtLength(clamp(l-2,0,L)); return {x:a.x,y:a.y,ang:Math.atan2(b.y-c.y,b.x-c.x)*180/Math.PI+90}; };
+
+/* S6 */
+const S6 = SC.s6;
+const cabinsG = document.getElementById('cabins'); const lights=[];
+for (let i=0;i<6;i++){ const x=80+i*112; mk('rect',{x,y:140,width:84,height:40,rx:20,fill:'#14222a'},cabinsG); lights.push(mk('circle',{cx:x+42,cy:160,r:13,fill:'#56646b'},cabinsG));
+  const t=mk('text',{x:x+42,y:222,'text-anchor':'middle','font-size':24,'font-weight':700,fill:'#14222a'},cabinsG); t.textContent=['١','٢','٣','٤','٥','٦'][i]; }
+const lightPattern = [[1,0,1,1,0,1],[1,1,0,1,0,1],[0,1,0,1,1,1],[0,1,1,0,1,0]];
+const arm=document.getElementById('arm'), devCar=document.getElementById('devCar'), beam=document.getElementById('beam'), paid=document.getElementById('paidTag'), payTerm=document.getElementById('payTerm'), obdTag=document.getElementById('obdTag');
+arm.style.transformBox='view-box'; arm.style.transformOrigin='245px 576px';
+const cueEnd = n => n==='end' ? S6.e : CUE[n];
+const devs = [...stage.querySelectorAll('[data-dev]')].map(el=>{const [a,b]=el.dataset.dev.split(' ');return{el,s:CUE[a]-0.2,e:cueEnd(b)-0.2};});
+
+/* S7 */
+const stgs = [...stage.querySelectorAll('[data-stage]')].map(el=>{const id=el.dataset.stage, nx={a1:'a2',a2:'a3',a3:'a4'}[id]; return {el,s:SEG[id].s-0.3,e:nx?SEG[nx].s-0.3:SC.s7.e};});
+const scrs = [...stage.querySelectorAll('[data-scr]')].map(el=>{const id=el.dataset.scr, nx={a1:'a2',a2:'a3',a3:'a4'}[id]; return {el,s:SEG[id].s-0.3,e:nx?SEG[nx].s-0.3:SC.s7.e+1};});
+const route=document.getElementById('route'), dot=document.getElementById('dot'), ring=document.getElementById('ring'), liters=document.getElementById('liters');
+route.setAttribute('stroke-dasharray','1'); const RL = route.getTotalLength();
+
+
+/* sound effects: one event per entrance, exit and on-screen action, read from the same timings as the visuals.
+   sfx.py renders these into sfx.mp3 (window.__sfx exposes the list). */
+const EV = [];
+const ev = (t,k,g=1,d=0) => { if (t>=0 && t<DUR) EV.push({t:+t.toFixed(3),k,g,d:+d.toFixed(3)}); };
+scenes.forEach((s,i)=>{ if (i) ev(s.s,'whoosh-l',.8,.9); });
+const BIG = new Set(['s3-art','s5-map','s6-art']);
+for (const a of anims){
+  const k = {fadeUp:'swish',slideIn:'swish',fadeDown:'whoosh',rise:'whoosh',drop:'thud',pop:'pop',grow:'rise',draw:'draw'}[a.type];
+  if (a.type==='fade'){ if ([...a.el.classList].some(c=>BIG.has(c))) ev(a.s,'air',.5,.8); continue; }
+  if (k) ev(a.s, k, {swish:.3,whoosh:.55,thud:.6,pop:.6,rise:.35,draw:.5}[k], a.d);
+}
+for (const m of marks) ev(m.s,'marker',.55,m.d);
+ev(SC.s1.s+1.6,'car-pass',.5,1.6);
+// challenges
+for (const c of chals) ev(c.s,'alert',.55);
+{ const v=vigs[0]; ev(v.s+0.3,'crowd',.4,v.e-v.s-0.3); [1.0,2.3,3.6].forEach((o,i)=>ev(v.s+o,'horn',.35-i*.05,.3+i*.1));
+  for (let x=Math.ceil(v.s+0.6); x<v.e; x++) ev(x,'tick',.22); }
+{ const v=vigs[1], d=v.e-v.s-0.8; ev(v.s+0.3,'engine',.4,d); cornerPts.forEach((_,i)=>ev(v.s+0.3+d*(i+0.5)/cornerPts.length,'screech',.3)); }
+{ const v=vigs[2]; qbs.forEach((_,i)=>ev(v.s+0.2+i*0.5,'pop',.5)); ev(v.s+0.8,'error',.7); }
+{ const v=vigs[3]; crowd.forEach(c=>ev(v.s+0.2+c.t0,'car-short',.2,1.0)); ev(v.s+0.8,'rise',.4,1.2); [0,1,2].forEach(i=>ev(v.s+0.6+i*0.2,'pop-s',.3)); }
+{ const v=vigs[4]; for (let x=v.s+Math.PI/7; x<v.e; x+=Math.PI/7) ev(x,'step',.28); ev(v.s+1.0,'horn',.35,.25); ev(v.s+2.2,'horn',.3,.4); }
+// redesign: lanes paint, cars roll in
+ev(S5.s+0.6,'draw',.45,1.7);
+for (const f of flow) if (f.t0<S5.e) ev(f.t0,'car-short',.16,1.2);
+// smart devices
+ev(CUE.cam,'shutter',.6); ev(CUE.cam+0.1,'scan',.35,CUE.bar+0.3-CUE.cam);
+ev(CUE.bar-0.1,'confirm',.55); ev(CUE.bar+0.2,'motor',.5,.9); ev(CUE.bar+0.9,'car-pass',.5,2.4);
+for (let x=CUE.lig; x<S6.e; x+=1.6) ev(x,'click',.3);
+ev(CUE.pay,'beep',.5); ev(CUE.obd,'data',.5);
+// app
+for (const s of stgs){ ev(s.s,'tap',.5); ev(s.s+0.05,'swipe',.4,.35); }
+ev(SEG.a2.s+0.2,'draw',.4,1.6); ev(SEG.a3.s+0.2,'pour',.4,SEG.a3.e-SEG.a3.s); ev(SEG.a4.s,'confirm',.5);
+EV.sort((a,b)=>a.t-b.t);
+window.__sfx = () => EV;
+
+function render(t){
+  for (const s of scenes){ const o=win(t,s.s,s.e,.5); s.el.style.opacity=o; s.el.style.visibility=o>0?'visible':'hidden'; s.on=o>0; }
+  for (const a of anims){
+    const p = clamp((t-a.s)/a.d);
+    if (a.type==='draw'){ a.el.style.strokeDashoffset = 1-eio(p); continue; }
+    const [o,tr] = FX[a.type](p); a.el.style.opacity=o; a.el.style.transform=`${a.base} ${tr}`.trim();
+  }
+  for (const m of marks) m.el.style.setProperty('--w', (eio(clamp((t-m.s)/m.d))*100)+'%');
+
+  if (scenes[0].on){ const p=eio(clamp((t-SC.s1.s-1.6)/1.6)); s1car.setAttribute('transform',`translate(${lerp(-80,350,p)} ${lerp(760,470,p)}) rotate(${lerp(40,0,p)})`); }
+
+  if (scenes[2].on){
+    const lt = t-S3.s;
+    for (const c of chals){
+      const appear = eo(clamp((t-c.s)/0.6)), active = t>=c.s && t<c.e;
+      c.el.style.opacity = t<c.s ? 0 : (active ? 1 : 0.38);
+      c.el.style.transform = `translateX(${-(1-appear)*80}px)`;
+      c.el.style.transformOrigin = 'right center';
+      c.el.style.setProperty('--ring', active ? `${8+6*Math.abs(Math.sin(t*4))}px` : '0px');
+    }
+    for (const v of vigs){ const o=win(t,v.s,v.e,.45); v.el.style.opacity=o; v.el.style.visibility=o>0?'visible':'hidden'; v.on=o>0; }
+    clockBox.style.opacity = vigs[0].el.style.opacity;
+    const secs = Math.floor(clamp(lt-0.5,0,S3.e-S3.s)*22);
+    waitClock.textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+    if (vigs[0].on){
+      for (const c of chaos){ const p=eo(clamp((lt-0.2-c.delay*0.25)/1.8)); const j=Math.sin((t+c.ph)*9)*2.2*(p>=1?1:0);
+        c.g.setAttribute('transform',`translate(${lerp(c.fx,c.tx,p)+j} ${lerp(c.fy,c.ty,p)}) rotate(${c.a+Math.sin(t*3+c.ph)*3})`); }
+      for (const q of pings){ const f=((t+q.o)%2)/2; q.c.setAttribute('cx',q.x); q.c.setAttribute('cy',q.y); q.c.setAttribute('r',10+f*40); q.c.setAttribute('opacity',(1-f)*clamp(lt-2)); }
+    }
+    if (vigs[1].on){
+      const v=vigs[1], p=clamp((t-v.s-0.3)/(v.e-v.s-0.8));
+      longRoute.style.strokeDashoffset = 1-p;
+      const pt = longRoute.getPointAtLength(LR*p), pt2 = longRoute.getPointAtLength(Math.min(LR,LR*p+2)), pt0 = longRoute.getPointAtLength(Math.max(0,LR*p-2));
+      routeCar.setAttribute('transform',`translate(${pt.x} ${pt.y}) rotate(${Math.atan2(pt2.y-pt0.y,pt2.x-pt0.x)*180/Math.PI+90})`);
+      distTxt.textContent = `المسافة: ${AR(Math.round(p*420))} م`;
+      corners.forEach((c,i)=>{ const cp=(i+0.5)/cornerPts.length; c.setAttribute('opacity', p>cp ? 0.9 : 0); c.setAttribute('r', p>cp ? 14+4*Math.sin(t*6+i) : 0); });
+    }
+    if (vigs[2].on){
+      const v=vigs[2], lt3=t-v.s;
+      qbs.forEach((q,i)=>{ const p=clamp((lt3-0.2-i*0.5)/0.4); q.style.opacity=p; q.style.transformBox='fill-box'; q.style.transformOrigin='center'; q.style.scale = String(0.7+0.3*back(p)); });
+      const bx = clamp((lt3-0.8)/0.4); breakX.style.opacity=bx; breakX.style.transformBox='fill-box'; breakX.style.transformOrigin='center'; breakX.style.scale=String(0.4+0.6*back(bx)+0.05*Math.sin(t*6)*bx);
+      noSignal.style.opacity = 0.5+0.5*Math.abs(Math.sin(t*3));
+    }
+    if (vigs[3].on){
+      const v=vigs[3], lt4=t-v.s;
+      for (const c of crowd){ const p=eo(clamp((lt4-0.2-c.t0)/0.9)); const x=laneX[c.lane], yT=680-c.slot*78;
+        c.g.setAttribute('transform',`translate(${lerp(440,x,p)} ${lerp(900,yT,p)}) rotate(${c.lane===1?0:(1-p)*(c.lane===0?-35:35)})`); }
+      loadBars.forEach(b=>{ const p=eo(clamp((lt4-0.8)/1.2)); b.f.setAttribute('width',140*loads[b.i]*p); b.t.textContent=`${AR(Math.round(loads[b.i]*100*p))}٪`; });
+      qMarks.forEach((q,i)=>{ q.setAttribute('x',[250,470,380][i]); q.setAttribute('y',[560+Math.sin(t*4+i)*8, 400+Math.sin(t*4+i)*8, 780][i]); q.setAttribute('opacity', clamp((lt4-0.6-i*0.2)/0.4)); });
+    }
+    if (vigs[4].on){
+      const v=vigs[4], lt5=t-v.s;
+      const ph = (lt5*0.35)%2, f = ph<1 ? ph : 2-ph;
+      const wx = lerp(340,540,eio(f)), wy = lerp(330,520,eio(f));
+      const step = Math.sin(lt5*7);
+      worker.setAttribute('transform',`translate(${wx} ${wy})`);
+      legL.setAttribute('transform',`rotate(${step*18} -10 12)`); legR.setAttribute('transform',`rotate(${-step*18} 10 12)`);
+      q5.forEach((g,i)=>g.setAttribute('transform',`translate(${290+Math.sin(t*9+i)*1.2} ${470+i*110})`));
+      qCount.textContent = AR(3+Math.floor(clamp(lt5/0.8,0,4)));
+      waitBubble.style.opacity = 0.6+0.4*Math.abs(Math.sin(t*2));
+    }
+  }
+  if (scenes[4].on){
+    laneDraw.forEach((ds,i)=>{ const p=eio(clamp((t-S5.s-0.6-i*0.25)/1.2)); ds.forEach(d=>d.style.strokeDashoffset=1-p); });
+    const busy = new Set();
+    for (const f of flow){
+      const {cp}=f, lt=t-f.t0, tin=cp.Lin/SPD, tout=cp.Lout/SPD; let P;
+      if (lt<0 || lt>=tin+DWELL+tout){ f.g.style.display='none'; continue; }
+      if (lt<tin) P=pose(cp.pIn,cp.Lin,lt*SPD);
+      else if (lt<tin+DWELL){ P=pose(cp.pIn,cp.Lin,cp.Lin); busy.add(cp); }
+      else { const q=(lt-tin-DWELL)/tout; P=pose(cp.pOut,cp.Lout,cp.Lout*(q*q*.35+q*.65)); }
+      f.g.style.display=''; f.g.setAttribute('transform',`translate(${P.x} ${P.y}) rotate(${P.ang})`);
+    }
+    for (const cp of carPaths) cp.lt.setAttribute('fill', busy.has(cp)?'#e23b3e':'#1c9a52');
+  }
+  if (scenes[5].on){
+    const lp = t>=CUE.lig-0.2;
+    const pat = lightPattern[Math.floor(Math.max(0,t-CUE.lig)/1.6)%4];
+    lights.forEach((l,i)=>l.setAttribute('fill', lp ? (pat[i]?'#1c9a52':'#e23b3e') : '#56646b'));
+    const cy = t<CUE.bar+0.9 ? lerp(900,700,eo(clamp((t-S6.s-0.3)/1.0))) : lerp(700,330,eio(clamp((t-CUE.bar-0.9)/2.4)));
+    devCar.setAttribute('transform',`translate(390 ${cy})`);
+    beam.setAttribute('opacity', (0.35+0.2*Math.sin(t*12))*win(t,CUE.cam,CUE.bar+0.4,.3));
+    paid.setAttribute('opacity', win(t,CUE.bar-0.1,CUE.lig,.3));
+    arm.style.transform = `rotate(${-80*eio(clamp((t-CUE.bar-0.2)/0.9))}deg)`;
+    payTerm.setAttribute('opacity', clamp((t-CUE.pay)/0.4));
+    obdTag.setAttribute('opacity', clamp((t-CUE.obd)/0.4));
+    for (const d of devs) d.el.classList.toggle('hl', t>=d.s && t<d.e);
+  }
+  if (scenes[6].on){
+    for (const s of stgs) s.el.classList.toggle('on', t>=s.s && t<s.e);
+    scrs.forEach((s,i)=>{ const o = i===0 ? clamp((s.e-t)/0.35) : win(t,s.s,s.e,.35);
+      s.el.style.opacity=o; s.el.style.visibility=o>0?'visible':'hidden'; s.el.style.transform=`translateX(${(1-eo(clamp((t-s.s)/0.5)))*(i?-40:0)}px)`; });
+    const rp = eio(clamp((t-SEG.a2.s-0.2)/1.6)); route.style.strokeDashoffset = 1-rp;
+    const pt = route.getPointAtLength(RL*rp); dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
+    const fp = eio(clamp((t-SEG.a3.s-0.2)/(SEG.a3.e-SEG.a3.s))); ring.style.strokeDashoffset = 1-fp; liters.textContent = `${AR(Math.round(48*fp))} لتر`;
+  }
+
+}
+
+/* player with synced sound-effects track */
+const audio = document.getElementById('sfx');
+let t = 0, playing = false, last = null;
+const playBtn=document.getElementById('play'), scrub=document.getElementById('scrub'), timeEl=document.getElementById('time'), chipsEl=document.getElementById('chips'), bigplay=document.getElementById('bigplay');
+scrub.max = DUR;
+const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+const chapters = [['المقدمة','s1'],['الرؤية','s2'],['التحديات','s3'],['النموذج','s4'],['إعادة التصميم','s5'],['الأجهزة الذكية','s6'],['تطبيق الجوال','s7'],['الأثر','s8'],['الختام','s9']];
+const chipBtns = chapters.map(([n,id])=>{ const b=document.createElement('button'); b.type='button'; b.textContent=n; b.onclick=()=>{ seek(SC[id].s+0.01, true); if(!playing) setPlaying(true); }; chipsEl.appendChild(b); return [b,SC[id].s]; });
+function seek(x, syncAudio){
+  t=clamp(x,0,DUR); render(t); scrub.value=t; timeEl.textContent=`${fmt(t)} / ${fmt(DUR)}`;
+  chipBtns.forEach(([b,s],i)=>b.classList.toggle('on', t>=s && (i===chipBtns.length-1 || t<chipBtns[i+1][1])));
+  if (syncAudio && !REC){ try{ audio.currentTime = t; }catch(e){} }
+}
+function setPlaying(on){
+  playing = on; last = null; bigplay.hidden = true;
+  if (on && t>=DUR) seek(0,true);
+  playBtn.textContent = on ? 'إيقاف مؤقت' : 'تشغيل';
+  if (!REC){ if (on){ audio.currentTime = t; audio.play().catch(()=>{}); } else audio.pause(); }
+}
+playBtn.onclick=()=>{ if(!bigplay.hidden) seek(0,true); setPlaying(!playing); }; bigplay.onclick=()=>{ seek(0,true); setPlaying(true); };
+document.getElementById('restart').onclick=()=>{ seek(0,true); setPlaying(true); };
+scrub.oninput=()=>seek(+scrub.value, true);
+function loop(ts){
+  if (playing){
+    if (!audio.paused && !audio.ended && Math.abs(audio.currentTime - t) < 1) seek(audio.currentTime);
+    else if (last!==null) seek(t+(ts-last)/1000);
+    last=ts;
+    if (t>=DUR){ setPlaying(false); }
+  }
+  requestAnimationFrame(loop);
+}
+if (REC) bigplay.hidden = true;
+seek(REC ? 0 : SC.s1.s+4.5);
+requestAnimationFrame(loop);
+window.__seek = x => seek(x); window.__DUR = DUR;
+})();
+</script>
