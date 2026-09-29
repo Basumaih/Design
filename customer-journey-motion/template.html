@@ -28,6 +28,8 @@ body{margin:0;font-family:var(--font);padding-inline:16px;padding-block:20px}
 .controls button{font:700 15px var(--font);border:0;border-radius:999px;padding:8px 18px;background:var(--ink);color:var(--paper);cursor:pointer}
 .controls button:focus-visible,.chips button:focus-visible,#scrub:focus-visible{outline:3px solid var(--go);outline-offset:2px}
 #scrub{flex:1;min-width:160px;accent-color:var(--go)}
+.controls a{font:700 15px var(--font);color:var(--ink);background:var(--lime);border-radius:999px;padding:8px 16px;text-decoration:none}
+.controls a:focus-visible{outline:3px solid var(--go);outline-offset:2px}
 #time{font:500 14px var(--font);font-variant-numeric:tabular-nums;min-width:96px;text-align:center}
 .chips{direction:rtl;display:flex;flex-wrap:wrap;gap:6px}
 .chips button{font:500 14px var(--font);border:1px solid #c9d3c2;background:var(--card);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
@@ -36,6 +38,7 @@ body{margin:0;font-family:var(--font);padding-inline:16px;padding-block:20px}
 #bigplay span{font:700 22px var(--font);background:var(--lime);color:var(--ink);padding:16px 34px;border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.2)}
 body.rec{padding:0;background:var(--paper)} body.rec .controls,body.rec .chips,body.rec #bigplay{display:none}
 body.rec .wrap{max-width:none} body.rec .viewport{border-radius:0;box-shadow:none;width:1920px}
+body.rec.portrait .viewport{width:1080px}
 
 .scene{position:absolute;inset:0;opacity:0;visibility:hidden}
 [data-a]{will-change:transform,opacity}
@@ -77,6 +80,7 @@ svg text{font-family:var(--font)}
 .pillar svg{width:120px;height:120px}
 .p-lime{background:var(--lime)} .p-sky{background:var(--sky)} .p-rose{background:var(--rose)}
 /* S5 */
+.s5-head{right:110px;top:120px;width:720px}
 .s5-map{left:70px;top:130px;width:980px;height:900px;border-radius:36px;background:#dfe4db;overflow:hidden}
 .s5-list{right:110px;top:350px;width:720px;display:flex;flex-direction:column;gap:26px}
 .ben{display:flex;gap:22px;align-items:flex-start;font:500 32px/1.5 var(--font)}
@@ -134,6 +138,51 @@ svg text{font-family:var(--font)}
 .member b{font:900 38px var(--font)}
 .member span{font:500 24px var(--font);color:var(--ink-2)}
 
+/* Portrait (1080×1920, phones): text on top, the drawing below; wide drawings scale via --base */
+.portrait .wrap{max-width:460px}
+.portrait .viewport{aspect-ratio:9/16}
+.portrait #stage{width:1080px;height:1920px}
+.portrait .tabs{right:50px}
+.portrait .tab{height:56px;padding:0 40px;font-size:22px;margin-left:-20px}
+.portrait .h2{font-size:62px}
+.portrait .s1-title{right:70px;top:230px;width:940px}
+.portrait .s1-title .h1{font-size:74px}
+.portrait .s1-meta{right:70px;top:760px;width:940px}
+.portrait .s1-art{left:190px;top:960px}
+.portrait .s2-quote{width:940px;font-size:78px}
+.portrait .s3-text{right:60px;top:110px;width:960px;gap:20px}
+.portrait .chal{font-size:31px}
+.portrait .s3-art{left:100px;top:1010px;--base:scale(.96);transform:var(--base);transform-origin:top center}
+.portrait .s4-head{right:70px;top:150px;width:940px}
+.portrait .pillars{right:70px;left:70px;top:430px;grid-template-columns:1fr;gap:30px}
+.portrait .pillar{min-height:0;padding:36px 40px;gap:14px}
+.portrait .pillar svg{width:96px;height:96px}
+.portrait .s5-head{right:70px;top:120px;width:940px}
+.portrait .s5-list{right:70px;top:330px;width:940px;gap:18px}
+.portrait .ben{font-size:29px}
+.portrait .s5-map{left:50px;top:1040px;--base:scale(.86);transform:var(--base);transform-origin:top center}
+.portrait .s6-head{right:70px;top:120px;width:940px}
+.portrait .devs{right:70px;top:330px;width:940px;gap:18px}
+.portrait .dev{padding:22px 24px;gap:18px}
+.portrait .dev svg{width:60px;height:60px}
+.portrait .dev h4{font-size:28px}
+.portrait .dev p{font-size:22px}
+.portrait .s6-art{left:150px;top:1080px;--base:scale(.92);transform:var(--base);transform-origin:top center}
+.portrait .s7-head{right:70px;top:110px;width:940px}
+.portrait .stages{right:70px;top:340px;width:940px;gap:12px}
+.portrait .stg{padding:16px 26px}
+.portrait .stg h4{font-size:32px}
+.portrait .stg ul{font-size:24px}
+.portrait .phone{left:320px;top:1070px;--base:scale(.9);transform:var(--base);transform-origin:top center}
+.portrait .s8-head{right:70px;top:150px;width:940px}
+.portrait .impacts{right:70px;left:70px;top:430px;grid-template-columns:1fr;gap:30px}
+.portrait .imp{padding:18px}
+.portrait .imp > div{min-height:0;padding:28px 32px;gap:12px}
+.portrait .imp h3{font-size:38px}
+.portrait .imp p{font-size:27px}
+.portrait .s9 .ty{font-size:130px}
+.portrait .team{flex-direction:column;gap:20px}
+.portrait .member{min-width:0;width:760px}
 @media (prefers-reduced-motion: reduce){ .viewport{box-shadow:none} }
 </style>
 
@@ -314,7 +363,7 @@ svg text{font-family:var(--font)}
     <div class="tab" style="background:var(--lime)">إعادة التصميم</div>
     <div class="tab" style="background:var(--sky);opacity:.5">الأجهزة الذكية</div>
   </div>
-  <div class="abs" style="right:110px;top:120px;width:720px">
+  <div class="abs s5-head">
     <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 0.3 0.6">المحور الأول</span>
     <h2 class="h2" style="margin-top:18px" data-a="fadeUp 0.6 0.7">المخطط المقترح</h2>
   </div>
@@ -491,6 +540,7 @@ svg text{font-family:var(--font)}
   <button id="restart" type="button">من البداية</button>
   <input id="scrub" type="range" min="0" max="100" step="0.01" value="0" aria-label="موضع العرض">
   <span id="time">0:00</span>
+  <a id="orient" href="#v">نسخة الجوال (عمودية)</a>
 </div>
 <div class="chips" id="chips"></div>
 </div>
@@ -501,9 +551,14 @@ svg text{font-family:var(--font)}
 const TL = /*__TIMELINE__*/null;
 const DUR = TL.dur;
 const stage = document.getElementById('stage'), vp = document.getElementById('vp');
-const REC = location.hash === '#rec';
+const REC = /rec$/.test(location.hash);
+const PORTRAIT = /^#v/.test(location.hash);
 if (REC) document.body.classList.add('rec');
-const fit = () => { stage.style.transform = `scale(${vp.clientWidth/1920})`; };
+if (PORTRAIT) document.body.classList.add('portrait');
+const W = PORTRAIT ? 1080 : 1920;
+addEventListener('hashchange', () => location.reload());
+if (PORTRAIT){ const o=document.getElementById('orient'); o.href='#h'; o.textContent='النسخة الأفقية'; }
+const fit = () => { stage.style.transform = `scale(${vp.clientWidth/W})`; };
 new ResizeObserver(fit).observe(vp); fit();
 
 const clamp = (x,a=0,b=1) => Math.max(a,Math.min(b,x));
@@ -540,7 +595,8 @@ const anims = [...stage.querySelectorAll('[data-a]')].map(el => {
   const [type,s,d] = el.dataset.a.split(' ');
   if (type==='draw') el.setAttribute('stroke-dasharray','1');
   if (el instanceof SVGElement){ el.style.transformBox='fill-box'; el.style.transformOrigin= type==='grow'?'center bottom':'center'; }
-  return {el,type,s:when(s,sceneOf(el)),d:+d};
+  // --base lets a layout (portrait) scale an element that also animates
+  return {el,type,s:when(s,sceneOf(el)),d:+d,base:getComputedStyle(el).getPropertyValue('--base').trim()};
 });
 const scenes = [...stage.querySelectorAll('[data-scene]')].map(el => ({el, ...SC[el.dataset.scene]}));
 const marks = [...stage.querySelectorAll('[data-mark]')].map(el => { const [s,d]=el.dataset.mark.split(' '); return {el,s:when(s,sceneOf(el)),d:+d}; });
@@ -676,7 +732,7 @@ function render(t){
   for (const a of anims){
     const p = clamp((t-a.s)/a.d);
     if (a.type==='draw'){ a.el.style.strokeDashoffset = 1-eio(p); continue; }
-    const [o,tr] = FX[a.type](p); a.el.style.opacity=o; a.el.style.transform=tr;
+    const [o,tr] = FX[a.type](p); a.el.style.opacity=o; a.el.style.transform=`${a.base} ${tr}`.trim();
   }
   for (const m of marks) m.el.style.setProperty('--w', (eio(clamp((t-m.s)/m.d))*100)+'%');
 
