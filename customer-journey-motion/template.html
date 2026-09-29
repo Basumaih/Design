@@ -635,7 +635,7 @@ const crowdG = document.getElementById('crowdCars'), crowdQ = document.getElemen
 const laneX = [215,440,665], loads = [.96,.9,.06];
 const loadBars = laneX.map((x,i)=>{ const g=mk('g',{},loadG); mk('rect',{x:x-70,y:120,width:140,height:26,rx:13,fill:'#fff'},g); const f=mk('rect',{x:x-70,y:120,width:0,height:26,rx:13,fill:i<2?'#e23b3e':'#9aa7a0'},g); const t=mk('text',{x,y:108,'text-anchor':'middle','font-size':24,'font-weight':900,fill:i<2?'#e23b3e':'#4a5b63'},g); return {f,t,i}; });
 const crowd = [];
-for (let i=0;i<16;i++){ const lane = i%7===6 ? 2 : (i%2); crowd.push({g:useCar(crowdG,palette[i%palette.length],1.3), lane, slot: crowd.filter(c=>c.lane===lane).length, t0: i*0.32}); }
+for (let i=0;i<16;i++){ const lane = i%7===6 ? 2 : (i%2); crowd.push({g:useCar(crowdG,palette[i%palette.length],1.3), lane, slot: crowd.filter(c=>c.lane===lane).length, t0: i*0.18}); }
 const qMarks = [0,1,2].map(i=>{ const t=mk('text',{'text-anchor':'middle','font-size':44,'font-weight':900,fill:'#f2b632'},crowdQ); t.textContent='؟'; return t; });
 // V5
 const worker = document.getElementById('worker'), legL=document.getElementById('legL'), legR=document.getElementById('legR'), qCount=document.getElementById('qCount'), waitBubble=document.getElementById('waitBubble');
