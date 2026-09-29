@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>مسار — تجهيز التعبئة</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A1620;font-family:'IBM Plex Sans Arabic',sans-serif;color:#EEF4F1}
+a{color:#C8F03C}a:hover{color:#E2FF7A}
+button{font-family:inherit}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div dir="rtl" style="width: 390px; height: 844px; background: #0A1620; position: relative; overflow: hidden; display: flex; flex-direction: column">
+
+<div class="scroll" style="flex-grow: 1; overflow-y: auto; scrollbar-width: none; padding: 22px 20px 150px; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; align-items: center; gap: 12px">
+<a href="Home.dc.html" aria-label="رجوع" style="width: 44px; height: 44px; border-radius: 14px; background: #102230; border: 1px solid #1E3B4B; color: #EEF4F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<div style="display: flex; flex-direction: column; flex-grow: 1">
+<span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 20px">جهّز تعبئتك</span>
+<span style="font-size: 12px; color: #93A9B3">محطة طريق الملك فهد · 1.2 كم</span>
+</div>
+<span style="font-size: 12px; color: #0A1620; background: {{accent}}; border-radius: 999px; padding: 4px 10px; font-weight: 600">6 كبائن شاغرة</span>
+</div>
+
+<div style="display: flex; gap: 6px">
+<div style="flex-grow: 1; height: 5px; border-radius: 3px; background: {{accent}}"></div>
+<div style="flex-grow: 1; height: 5px; border-radius: 3px; background: {{accent}}"></div>
+<div style="flex-grow: 1; height: 5px; border-radius: 3px; background: #1E3B4B"></div>
+<div style="flex-grow: 1; height: 5px; border-radius: 3px; background: #1E3B4B"></div>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">نوع الوقود</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{fuels}}" as="f" hint-placeholder-count="3">
+<button onClick="{{f.pick}}" aria-pressed="{{f.on}}" style="border-radius: 22px; padding: 16px 10px 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: {{f.fg}}; background: {{f.bg}}; border: 1.5px solid {{f.bd}}; transition: all .2s">
+<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 26px; line-height: 1">{{f.t}}</span>
+<span style="font-size: 12px; opacity: .8">{{f.label}}</span>
+<span style="font-size: 13px; font-weight: 600">{{f.price}} ر.س/لتر</span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #93A9B3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#56CFE1" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>اقترحنا 91 حسب بيانات سيارتك</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">نوع التعبئة</h2>
+<div style="display: flex; padding: 5px; border-radius: 18px; background: #102230; border: 1px solid #1E3B4B">
+<sc-for list="{{modes}}" as="m" hint-placeholder-count="2">
+<button onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="flex-grow: 1; flex-basis: 0; height: 44px; border-radius: 14px; border: 0; cursor: pointer; font-size: 14px; font-weight: 600; color: {{m.fg}}; background: {{m.bg}}; transition: all .2s">{{m.t}}</button>
+</sc-for>
+</div>
+<sc-if value="{{isAmount}}" hint-placeholder-val="{{ true }}">
+<div style="border-radius: 22px; background: #102230; border: 1px solid #1E3B4B; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<button onClick="{{dec}}" aria-label="إنقاص" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #26485A; background: #16303F; color: #EEF4F1; font-size: 22px; cursor: pointer">−</button>
+<div style="display: flex; flex-direction: column; align-items: center"><span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 38px; line-height: 1.1">{{amount}}</span><span style="font-size: 12px; color: #93A9B3">ريال ≈ {{liters}} لتر</span></div>
+<button onClick="{{inc}}" aria-label="زيادة" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #26485A; background: #16303F; color: #EEF4F1; font-size: 22px; cursor: pointer">+</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+<button onClick="{{c.pick}}" style="height: 40px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: {{c.fg}}; background: {{c.bg}}; border: 1px solid {{c.bd}}">{{c.v}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{isFull}}" hint-placeholder-val="{{ false }}">
+<div style="border-radius: 22px; background: #102230; border: 1px solid #1E3B4B; padding: 16px; display: flex; align-items: center; gap: 14px">
+<div style="width: 48px; height: 48px; border-radius: 14px; background: #16303F; display: flex; align-items: center; justify-content: center; color: {{accent}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"></path></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">حتى امتلاء الخزان</span><span style="font-size: 12px; color: #93A9B3">نحجز حتى {{fullHold}} ر.س ونعيد الفرق فوراً</span></div>
+</div>
+</sc-if>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">طريقة الدفع</h2>
+<sc-for list="{{pays}}" as="p" hint-placeholder-count="3">
+<button onClick="{{p.pick}}" aria-pressed="{{p.on}}" style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 20px; cursor: pointer; text-align: right; color: #EEF4F1; background: #102230; border: 1.5px solid {{p.bd}}; transition: border-color .2s">
+<span style="width: 44px; height: 32px; border-radius: 8px; background: #16303F; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #A9BCC4">{{p.badge}}</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">{{p.t}}</span><span style="font-size: 12px; color: #93A9B3">{{p.sub}}</span></span>
+<span style="width: 22px; height: 22px; border-radius: 11px; border: 2px solid {{p.bd}}; display: flex; align-items: center; justify-content: center"><span style="width: 10px; height: 10px; border-radius: 5px; background: {{p.dot}}"></span></span>
+</button>
+</sc-for>
+</section>
+
+<button onClick="{{togglePre}}" aria-pressed="{{preStr}}" style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 22px; cursor: pointer; text-align: right; color: #EEF4F1; background: #13303A; border: 1px solid #26485A">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 700; font-size: 15px">الدفع المسبق</span><span style="font-size: 12px; color: #A9BCC4; line-height: 1.6">يفتح حاجز الكبينة تلقائياً عند التعرف على لوحتك، دون توقف.</span></span>
+<span style="width: 52px; height: 30px; border-radius: 15px; background: {{tBg}}; position: relative; flex-shrink: 0; transition: background .2s"><span style="position: absolute; top: 3px; right: {{tKnob}}; width: 24px; height: 24px; border-radius: 12px; background: #EEF4F1; transition: right .2s"></span></span>
+</button>
+
+</div>
+
+<div style="position: absolute; right: 0; left: 0; bottom: 0; padding: 16px 20px 24px; background: #0A1620; border-top: 1px solid #16303F; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A9BCC4"><span>{{summary}}</span><span>شامل الضريبة</span></div>
+<a href="Arrival.dc.html" style="height: 56px; border-radius: 18px; background: {{accent}}; color: #0A1620; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">{{cta}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { fuel: '91', mode: 'amount', amount: 100, pay: 'apple', pre: true }; }
+  renderVals() {
+    const accent = this.props.accent ?? '#C8F03C';
+    const st = this.state;
+    const prices = { '91': 2.18, '95': 2.33, 'ديزل': 1.66 };
+    const labels = { '91': 'أخضر', '95': 'أحمر', 'ديزل': 'ديزل' };
+    const fuels = Object.keys(prices).map((t) => {
+      const on = st.fuel === t;
+      return { t, label: labels[t], price: prices[t].toFixed(2), on: String(on), pick: () => this.setState({ fuel: t }),
+        bg: on ? accent : '#102230', fg: on ? '#0A1620' : '#EEF4F1', bd: on ? accent : '#1E3B4B' };
+    });
+    const modes = [['amount', 'بمبلغ محدد'], ['full', 'تعبئة كاملة']].map(([id, t]) => {
+      const on = st.mode === id;
+      return { t, on: String(on), pick: () => this.setState({ mode: id }), bg: on ? '#26485A' : 'transparent', fg: on ? '#EEF4F1' : '#93A9B3' };
+    });
+    const chips = [50, 100, 150, 200].map((v) => {
+      const on = st.amount === v;
+      return { v, pick: () => this.setState({ amount: v }), bg: on ? '#16303F' : 'transparent', fg: on ? accent : '#A9BCC4', bd: on ? accent : '#26485A' };
+    });
+    const pays = [
+      { id: 'apple', t: 'Apple Pay', sub: 'الدفع بلمسة', badge: 'Pay' },
+      { id: 'mada', t: 'بطاقة مدى', sub: '•••• 4821', badge: 'مدى' },
+      { id: 'wallet', t: 'محفظة مسار', sub: 'الرصيد 240 ر.س', badge: 'مسار' }
+    ].map((p) => {
+      const on = st.pay === p.id;
+      return { ...p, on: String(on), pick: () => this.setState({ pay: p.id }), bd: on ? accent : '#1E3B4B', dot: on ? accent : 'transparent' };
+    });
+    const price = prices[st.fuel];
+    const isAmount = st.mode === 'amount';
+    const liters = (st.amount / price).toFixed(1);
+    const summary = isAmount ? ('وقود ' + st.fuel + ' · ' + liters + ' لتر') : ('وقود ' + st.fuel + ' · حتى الامتلاء');
+    const cta = st.pre ? (isAmount ? 'ادفع ' + st.amount + ' ر.س وانطلق' : 'احجز وانطلق للمحطة') : 'تأكيد والدفع عند الكبينة';
+    return {
+      accent, fuels, modes, chips, pays, isAmount, isFull: !isAmount, amount: st.amount, liters, summary, cta,
+      fullHold: 200,
+      inc: () => this.setState({ amount: Math.min(500, st.amount + 10) }),
+      dec: () => this.setState({ amount: Math.max(10, st.amount - 10) }),
+      togglePre: () => this.setState({ pre: !st.pre }), preStr: String(st.pre),
+      tBg: st.pre ? accent : '#26485A', tKnob: st.pre ? '25px' : '3px'
+    };
+  }
+}
+</script>
+</body>
+</html>

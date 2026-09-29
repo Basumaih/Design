@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>هوية مسار</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A1620;font-family:'IBM Plex Sans Arabic',sans-serif;color:#EEF4F1}
+a{color:#C8F03C}a:hover{color:#E2FF7A}
+@keyframes lane{0%{transform:translateY(40px);opacity:0}30%{opacity:1}100%{transform:translateY(-60px);opacity:0}}
+@keyframes glow{0%,100%{opacity:.35}50%{opacity:1}}
+.dash{animation:lane 2.4s linear infinite}
+.blink{animation:glow 1.8s ease-in-out infinite}
+</style>
+</helmet>
+<div dir="rtl" style="width: 2270px; height: 1080px; box-sizing: border-box; padding: 72px 88px; background: #0A1620; display: grid; grid-template-columns: 760px minmax(0, 1fr); gap: 72px; overflow: hidden; position: relative">
+
+<div style="display: flex; flex-direction: column; justify-content: space-between; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 28px">
+<div style="width: 148px; height: 148px; border-radius: 42px; background: {{accent}}; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden">
+<svg width="96" height="96" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M10 40V14" stroke="#0A1620" stroke-width="4.5" stroke-linecap="round"></path><path d="M38 40V14" stroke="#0A1620" stroke-width="4.5" stroke-linecap="round"></path><path d="M24 40V10" stroke="#0A1620" stroke-width="4.5" stroke-linecap="round"></path><path d="M16 17l8-9 8 9" stroke="#0A1620" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 120px; line-height: 1; letter-spacing: -2px">مَسار</div>
+<div style="font-family: Alexandria, sans-serif; font-size: 22px; color: #93A9B3; letter-spacing: 6px">MASAR · FUEL JOURNEY</div>
+</div>
+</div>
+<div style="font-family: Alexandria, sans-serif; font-weight: 600; font-size: 46px; line-height: 1.35; max-width: 700px">رحلتك في المحطة… <span style="color: {{accent}}">من أول تنبيه حتى المغادرة</span>، بلا انتظار.</div>
+<p style="margin: 0; font-size: 21px; line-height: 1.8; color: #A9BCC4; max-width: 680px">منصة رقمية موحّدة تدير رحلة العميل بالكامل، وتتكامل مع حواجز الكبائن والكاميرات القارئة للوحات والإضاءات الإرشادية وأجهزة فحص حاسوب السيارة.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="font-size: 15px; color: #93A9B3; letter-spacing: 2px">لوحة الألوان</div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px">
+<div style="height: 150px; border-radius: 22px; background: {{accent}}; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; color: #0A1620"><div style="font-weight: 700; font-size: 16px">ليموني الانطلاق</div><div style="font-size: 13px">#C8F03C</div></div>
+<div style="height: 150px; border-radius: 22px; background: #56CFE1; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; color: #0A1620"><div style="font-weight: 700; font-size: 16px">سماوي التوجيه</div><div style="font-size: 13px">#56CFE1</div></div>
+<div style="height: 150px; border-radius: 22px; background: #FFB547; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; color: #0A1620"><div style="font-weight: 700; font-size: 16px">كهرماني التنبيه</div><div style="font-size: 13px">#FFB547</div></div>
+<div style="height: 150px; border-radius: 22px; background: #16303F; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; border: 1px solid #26485A"><div style="font-weight: 700; font-size: 16px">سطح الأسفلت</div><div style="font-size: 13px; color: #A9BCC4">#16303F</div></div>
+<div style="height: 150px; border-radius: 22px; background: #050D14; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; border: 1px solid #26485A"><div style="font-weight: 700; font-size: 16px">ليل الطريق</div><div style="font-size: 13px; color: #A9BCC4">#0A1620</div></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 8px">
+<div style="border-radius: 22px; background: #102230; border: 1px solid #1E3B4B; padding: 22px 24px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 13px; color: #93A9B3">خط العناوين</div>
+<div style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 40px">أ ب ت 95</div>
+<div style="font-size: 14px; color: #A9BCC4">Alexandria — هندسي وحديث</div>
+</div>
+<div style="border-radius: 22px; background: #102230; border: 1px solid #1E3B4B; padding: 22px 24px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 13px; color: #93A9B3">خط النصوص</div>
+<div style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 500; font-size: 34px">وضوح في كل حركة</div>
+<div style="font-size: 14px; color: #A9BCC4">IBM Plex Sans Arabic — مقروء</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 15px; color: #93A9B3; letter-spacing: 2px">خريطة الرحلة</div>
+<div style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 44px">أربع مراحل، تطبيق واحد</div>
+</div>
+<div style="display: flex; gap: 10px; align-items: center; font-size: 15px; color: #A9BCC4"><span class="blink" style="width: 10px; height: 10px; border-radius: 5px; background: {{accent}}"></span>متكامل مع الأجهزة الذكية لحظياً</div>
+</div>
+
+<div style="position: relative; height: 230px; border-radius: 32px; background: #102230; border: 1px solid #1E3B4B; overflow: hidden; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0">
+<div style="border-left: 2px dashed #26485A; position: relative; overflow: hidden"><div class="dash" style="position: absolute; right: 50%; bottom: 20px; width: 8px; height: 48px; border-radius: 4px; background: #FF7A66; margin-right: -4px"></div></div>
+<div style="border-left: 2px dashed #26485A; position: relative; overflow: hidden; background: #14303A"><div class="dash" style="position: absolute; right: 50%; bottom: 20px; width: 8px; height: 48px; border-radius: 4px; background: {{accent}}; margin-right: -4px"></div></div>
+<div style="border-left: 2px dashed #26485A; position: relative; overflow: hidden"><div class="dash" style="position: absolute; right: 50%; bottom: 20px; width: 8px; height: 48px; border-radius: 4px; background: #FF7A66; margin-right: -4px; animation-delay: .8s"></div></div>
+<div style="border-left: 2px dashed #26485A; position: relative; overflow: hidden; background: #14303A"><div class="dash" style="position: absolute; right: 50%; bottom: 20px; width: 8px; height: 48px; border-radius: 4px; background: {{accent}}; margin-right: -4px; animation-delay: 1.2s"></div></div>
+<div style="border-left: 2px dashed #26485A; position: relative; overflow: hidden"><div class="dash" style="position: absolute; right: 50%; bottom: 20px; width: 8px; height: 48px; border-radius: 4px; background: #FF7A66; margin-right: -4px; animation-delay: .4s"></div></div>
+<div style="position: relative; overflow: hidden; background: #14303A"><div class="dash" style="position: absolute; right: 50%; bottom: 20px; width: 8px; height: 48px; border-radius: 4px; background: {{accent}}; margin-right: -4px; animation-delay: 1.6s"></div></div>
+<div style="position: absolute; inset: auto 28px 22px 28px; display: flex; justify-content: space-between; font-size: 14px; color: #A9BCC4"><span>مسارات الدخول للتعبئة</span><span>مسارات الخروج المستقلة</span></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px">
+<sc-for list="{{stages}}" as="s" hint-placeholder-count="4">
+<div style="border-radius: 28px; background: #102230; border: 1px solid #1E3B4B; padding: 26px; display: flex; flex-direction: column; gap: 16px; min-height: 330px; box-sizing: border-box">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="width: 52px; height: 52px; border-radius: 16px; background: {{s.tint}}; color: #0A1620; display: flex; align-items: center; justify-content: center; font-family: Alexandria, sans-serif; font-weight: 800; font-size: 22px">{{s.n}}</div>
+<div style="font-size: 13px; color: #93A9B3">{{s.en}}</div>
+</div>
+<div style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 26px">{{s.title}}</div>
+<sc-for list="{{s.items}}" as="it" hint-placeholder-count="3">
+<div style="display: flex; gap: 10px; align-items: flex-start; font-size: 16px; line-height: 1.6; color: #C9D6DB"><span style="flex-shrink: 0; width: 7px; height: 7px; border-radius: 4px; margin-top: 10px; background: {{s.tint}}"></span><span>{{it}}</span></div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"$preview":{"width":2270,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#C8F03C';
+    return {
+      accent,
+      stages: [
+        { n: '1', en: 'PRE-ARRIVAL', title: 'قبل الوصول', tint: accent, items: ['تنبيه بقرب نفاد الوقود من حاسوب السيارة', 'أقرب محطة وحالة الازدحام والكبائن الشاغرة', 'تحديد الوقود ونوع التعبئة والدفع المسبق'] },
+        { n: '2', en: 'ARRIVAL', title: 'الوصول', tint: '#56CFE1', items: ['قراءة اللوحة آلياً عند الدخول', 'توجيه للمسار والكبينة بالإضاءات', 'فتح الحاجز تلقائياً بعد تأكيد الدفع'] },
+        { n: '3', en: 'FUELING', title: 'أثناء التعبئة', tint: '#FFB547', items: ['متابعة حيّة وتعديل الكمية', 'إرشادات السلامة', 'الطلب من المتجر وألعاب الانتظار'] },
+        { n: '4', en: 'DEPARTURE', title: 'المغادرة', tint: '#EEF4F1', items: ['فاتورة إلكترونية فورية', 'توجيه لمسار الخروج والخدمات', 'نقاط الولاء وتقييم التجربة'] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

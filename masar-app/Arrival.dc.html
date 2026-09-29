@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>مسار — الوصول والتوجيه</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A1620;font-family:'IBM Plex Sans Arabic',sans-serif;color:#EEF4F1}
+a{color:#C8F03C}a:hover{color:#E2FF7A}
+button{font-family:inherit}
+.scroll::-webkit-scrollbar{display:none}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.8)}}
+@keyframes flow{from{background-position:0 0}to{background-position:0 -40px}}
+@keyframes scan{0%{top:6px}50%{top:30px}100%{top:6px}}
+.blink{animation:blink 1.1s ease-in-out infinite}
+.flow{animation:flow 1s linear infinite}
+.scan{animation:scan 1.6s ease-in-out infinite}
+</style>
+</helmet>
+<div dir="rtl" style="width: 390px; height: 844px; background: #0A1620; position: relative; overflow: hidden; display: flex; flex-direction: column">
+
+<div class="scroll" style="flex-grow: 1; overflow-y: auto; scrollbar-width: none; padding: 22px 20px 120px; display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; align-items: center; gap: 12px">
+<a href="Order.dc.html" aria-label="رجوع" style="width: 44px; height: 44px; border-radius: 14px; background: #102230; border: 1px solid #1E3B4B; color: #EEF4F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<div style="display: flex; flex-direction: column; flex-grow: 1">
+<span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 20px">{{title}}</span>
+<span style="font-size: 12px; color: #93A9B3">محطة طريق الملك فهد</span>
+</div>
+<span style="font-size: 12px; color: #0A1620; background: #56CFE1; border-radius: 999px; padding: 4px 10px; font-weight: 600">مدفوع مسبقاً</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 5px; border-radius: 3px; background: {{s.c}}"></div><span style="font-size: 11px; color: {{s.tc}}">{{s.t}}</span></div>
+</sc-for>
+</div>
+
+<div style="border-radius: 28px; background: {{hero.bg}}; color: {{hero.fg}}; padding: 20px; display: flex; align-items: center; gap: 16px; transition: background .4s">
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<span style="font-size: 13px; opacity: .8">{{hero.k}}</span>
+<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 34px; line-height: 1.15">{{hero.v}}</span>
+<span style="font-size: 13px; opacity: .85">{{hero.sub}}</span>
+</div>
+<div style="width: 76px; height: 76px; border-radius: 22px; background: {{hero.chipBg}}; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 11px; opacity: .8">المضخة</span>
+<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 30px; line-height: 1">4</span>
+</div>
+</div>
+
+<div style="border-radius: 28px; background: #102230; border: 1px solid #1E3B4B; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">مخطط المحطة المباشر</span><span style="display: flex; gap: 10px; font-size: 11px; color: #A9BCC4"><span style="display: flex; align-items: center; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 4px; background: #3DDC97"></span>شاغرة</span><span style="display: flex; align-items: center; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 4px; background: #FF7A66"></span>مشغولة</span></span></div>
+<div style="position: relative; height: 300px; border-radius: 20px; background: #0C1B26; overflow: hidden; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0">
+<sc-for list="{{lanes}}" as="l" hint-placeholder-count="3">
+<div style="position: relative; border-left: 1px dashed #26485A; display: flex; flex-direction: column; align-items: center; padding-top: 12px; gap: 14px; background: {{l.bg}}">
+<span style="font-size: 11px; color: {{l.tc}}; font-weight: 600">المسار {{l.n}}</span>
+<sc-for list="{{l.pumps}}" as="p" hint-placeholder-count="2">
+<div style="width: 64px; height: 50px; border-radius: 12px; background: #16303F; border: 1.5px solid {{p.bd}}; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px; position: relative">
+{{p.n}}<span class="{{p.cls}}" style="width: 10px; height: 10px; border-radius: 5px; background: {{p.c}}"></span>
+</div>
+</sc-for>
+<div class="flow" style="position: absolute; bottom: 0; width: 4px; height: 70px; opacity: {{l.flow}}; background-image: linear-gradient({{l.arrow}} 50%, transparent 50%); background-size: 4px 20px"></div>
+</div>
+</sc-for>
+<div style="position: absolute; top: {{carTop}}; right: 50%; margin-right: -17px; width: 34px; height: 54px; border-radius: 10px; background: {{accent}}; box-shadow: 0 0 0 5px rgba(200,240,60,.18); transition: top 1.4s cubic-bezier(.4,0,.2,1); display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; box-sizing: border-box">
+<span style="width: 22px; height: 12px; border-radius: 4px; background: #0A1620; opacity: .55"></span>
+</div>
+<div style="position: absolute; bottom: 0; right: 0; left: 0; height: 30px; background: #16303F; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #A9BCC4">مدخل المحطة · بوابات الدخول الذكية</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="border-radius: 22px; background: #102230; border: 1px solid #1E3B4B; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #93A9B3">
+<span style="position: relative; width: 28px; height: 28px; border-radius: 8px; background: #16303F; display: flex; align-items: center; justify-content: center; overflow: hidden"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#56CFE1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path></svg><sc-if value="{{scanning}}" hint-placeholder-val="{{ true }}"><span class="scan" style="position: absolute; right: 4px; left: 4px; height: 2px; background: #56CFE1"></span></sc-if></span>
+كاميرا اللوحات
+</div>
+<div style="display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px; background: #EEF4F1; color: #0A1620; padding: 6px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1px">1234 · أ ب ج</div>
+<span style="font-size: 12px; color: {{plate.c}}">{{plate.t}}</span>
+</div>
+<div style="border-radius: 22px; background: #102230; border: 1px solid #1E3B4B; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #93A9B3">
+<span style="width: 28px; height: 28px; border-radius: 8px; background: #16303F; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round"><path d="M4 21V9M4 11h16"></path></svg></span>
+حاجز الكبينة
+</div>
+<div style="height: 36px; position: relative; display: flex; align-items: flex-end">
+<span style="width: 10px; height: 30px; border-radius: 3px; background: #FFB547"></span>
+<span style="position: absolute; right: 5px; bottom: 24px; width: 120px; height: 7px; border-radius: 4px; transform-origin: right center; transform: rotate({{barrierDeg}}); transition: transform .9s cubic-bezier(.4,0,.2,1); background: repeating-linear-gradient(90deg, #FF7A66 0 14px, #EEF4F1 14px 28px)"></span>
+</div>
+<span style="font-size: 12px; color: {{barrier.c}}">{{barrier.t}}</span>
+</div>
+</div>
+
+</div>
+
+<div style="position: absolute; right: 0; left: 0; bottom: 0; padding: 16px 20px 24px; background: #0A1620; border-top: 1px solid #16303F; display: flex; gap: 10px">
+<sc-if value="{{scanning}}" hint-placeholder-val="{{ true }}">
+<button onClick="{{arrive}}" style="flex-grow: 1; height: 56px; border-radius: 18px; border: 0; cursor: pointer; background: #56CFE1; color: #0A1620; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">محاكاة الوصول للمحطة</button>
+</sc-if>
+<sc-if value="{{arrived}}" hint-placeholder-val="{{ false }}">
+<button onClick="{{reset}}" aria-label="إعادة المحاكاة" style="width: 56px; height: 56px; border-radius: 18px; border: 1px solid #26485A; background: #102230; color: #EEF4F1; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg></button>
+<a href="Fueling.dc.html" style="flex-grow: 1; height: 56px; border-radius: 18px; background: {{accent}}; color: #0A1620; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">ابدأ التعبئة<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { arrived: false }; }
+  renderVals() {
+    const accent = this.props.accent ?? '#C8F03C';
+    const a = this.state.arrived;
+    const busy = { 1: true, 2: false, 3: true, 4: false, 5: false, 6: true };
+    const lanes = [1, 2, 3].map((n) => {
+      const mine = n === 2;
+      return { n, bg: mine ? 'rgba(200,240,60,0.06)' : 'transparent', tc: mine ? accent : '#93A9B3',
+        flow: mine ? 1 : 0.25, arrow: mine ? accent : '#3DDC97',
+        pumps: [n * 2 - 1, n * 2].map((p) => {
+          const you = p === 4;
+          return { n: p, cls: you ? 'blink' : '', c: you ? accent : busy[p] ? '#FF7A66' : '#3DDC97', bd: you ? accent : '#26485A' };
+        }) };
+    });
+    const steps = [['قبل الوصول', 2], ['الوصول', a ? 2 : 1], ['التعبئة', 0], ['المغادرة', 0]].map(([t, v]) => ({
+      t, c: v === 2 ? accent : v === 1 ? '#56CFE1' : '#1E3B4B', tc: v ? '#EEF4F1' : '#93A9B3' }));
+    return {
+      accent, lanes, steps, scanning: !a, arrived: a,
+      title: a ? 'أهلاً بك في المحطة' : 'في الطريق إلى المحطة',
+      hero: a
+        ? { bg: accent, fg: '#0A1620', chipBg: 'rgba(10,22,32,0.12)', k: 'توجّه مباشرة إلى', v: 'المسار 2', sub: 'اتبع الإضاءة الخضراء الوامضة' }
+        : { bg: '#13303A', fg: '#EEF4F1', chipBg: '#1E3B4B', k: 'الوصول خلال', v: '4 دقائق', sub: '1.2 كم · كبينتك محجوزة لك' },
+      carTop: a ? '162px' : '262px',
+      plate: a ? { t: 'تم التعرف على اللوحة', c: accent } : { t: 'بانتظار وصولك…', c: '#93A9B3' },
+      barrier: a ? { t: 'مفتوح — الدفع مؤكد', c: accent } : { t: 'مغلق حتى وصولك', c: '#93A9B3' },
+      barrierDeg: a ? '-70deg' : '0deg',
+      arrive: () => this.setState({ arrived: true }),
+      reset: () => this.setState({ arrived: false })
+    };
+  }
+}
+</script>
+</body>
+</html>
