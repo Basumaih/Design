@@ -4,34 +4,23 @@
 <meta charset="utf-8">
 <title>مسار — الوصول والتوجيه</title>
 <script src="./support.js"></script>
+<link rel="stylesheet" href="masar.css">
 </head>
 <body>
 <x-dc>
 <helmet>
 <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-<style>
-body{margin:0;background:#0A1620;font-family:'IBM Plex Sans Arabic',sans-serif;color:#EEF4F1}
-a{color:#C8F03C}a:hover{color:#E2FF7A}
-button{font-family:inherit}
-button:disabled{opacity:.45;cursor:default}
-.scroll::-webkit-scrollbar{display:none}
-@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
-@keyframes scan{0%{top:6px}50%{top:30px}100%{top:6px}}
-@keyframes toast{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
-.blink{animation:blink 1s ease-in-out infinite}
-.scan{animation:scan 1.6s ease-in-out infinite}
-.toast{animation:toast .35s ease-out both}
-</style>
+<style>body{margin:0}</style>
 </helmet>
-<div dir="rtl" style="width: 390px; height: 844px; background: #0A1620; position: relative; overflow: hidden; display: flex; flex-direction: column">
+<div dir="rtl" style="width: 390px; height: 844px; background: #0A1620; color: #EEF4F1; font-family: 'IBM Plex Sans Arabic', sans-serif; position: relative; overflow: hidden; display: flex; flex-direction: column">
 
 <div class="scroll" style="flex-grow: 1; overflow-y: auto; scrollbar-width: none; padding: 22px 20px 120px; display: flex; flex-direction: column; gap: 14px">
 
 <div style="display: flex; align-items: center; gap: 12px">
-<a href="Order.dc.html" aria-label="رجوع" style="width: 44px; height: 44px; border-radius: 14px; background: #102230; border: 1px solid #1E3B4B; color: #EEF4F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<sc-if value="{{alone}}" hint-placeholder-val="{{ true }}"><a href="Order.dc.html" aria-label="رجوع" style="width: 44px; height: 44px; border-radius: 14px; background: #102230; border: 1px solid #1E3B4B; color: #EEF4F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a></sc-if><sc-if value="{{embedded}}" hint-placeholder-val="{{ false }}"><button onClick="{{goBack}}" aria-label="رجوع" style="width: 44px; height: 44px; border-radius: 14px; background: #102230; border: 1px solid #1E3B4B; color: #EEF4F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button></sc-if>
 <div style="display: flex; flex-direction: column; flex-grow: 1">
 <span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 20px">{{title}}</span>
-<span style="font-size: 12px; color: #93A9B3">محطة طريق الملك فهد</span>
+<span style="font-size: 12px; color: #93A9B3">{{stName}} · {{carName}}</span>
 </div>
 <span style="font-size: 12px; color: #0A1620; background: #56CFE1; border-radius: 999px; padding: 4px 10px; font-weight: 600">دفع مسبق</span>
 </div>
@@ -114,22 +103,24 @@ button:disabled{opacity:.45;cursor:default}
 </sc-if>
 <sc-if value="{{isArrived}}" hint-placeholder-val="{{ false }}">
 <button onClick="{{runCycle}}" style="flex-grow: 1; flex-basis: 0; height: 56px; border-radius: 18px; border: 1px solid #26485A; cursor: pointer; background: #102230; color: #EEF4F1; font-size: 13px; font-weight: 600; line-height: 1.3">معاينة: تعبئة ← دفع ← فتح</button>
-<a href="Fueling.dc.html" style="flex-grow: 1.2; flex-basis: 0; height: 56px; border-radius: 18px; background: {{accent}}; color: #0A1620; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">ابدأ التعبئة<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a>
+<sc-if value="{{alone}}" hint-placeholder-val="{{ true }}"><a href="Fueling.dc.html" style="flex-grow: 1.2; flex-basis: 0; height: 56px; border-radius: 18px; background: {{accent}}; color: #0A1620; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">ابدأ التعبئة<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a></sc-if><sc-if value="{{embedded}}" hint-placeholder-val="{{ false }}"><button onClick="{{goFuel}}" style="flex-grow: 1.2; flex-basis: 0; height: 56px; border-radius: 18px; background: {{accent}}; color: #0A1620; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px; border: 0; cursor: pointer">ابدأ التعبئة<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></button></sc-if>
 </sc-if>
 <sc-if value="{{isBusy}}" hint-placeholder-val="{{ false }}">
 <div style="flex-grow: 1; height: 56px; border-radius: 18px; background: #102230; border: 1px solid #26485A; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #A9BCC4">{{busyText}}</div>
 </sc-if>
 <sc-if value="{{isOpen}}" hint-placeholder-val="{{ false }}">
 <button onClick="{{reset}}" aria-label="إعادة المحاكاة" style="width: 56px; height: 56px; border-radius: 18px; border: 1px solid #26485A; background: #102230; color: #EEF4F1; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg></button>
-<a href="Exit.dc.html" style="flex-grow: 1; height: 56px; border-radius: 18px; background: {{accent}}; color: #0A1620; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">الفاتورة والمغادرة<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a>
+<sc-if value="{{alone}}" hint-placeholder-val="{{ true }}"><a href="Exit.dc.html" style="flex-grow: 1; height: 56px; border-radius: 18px; background: {{accent}}; color: #0A1620; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">الفاتورة والمغادرة<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a></sc-if><sc-if value="{{embedded}}" hint-placeholder-val="{{ false }}"><button onClick="{{goExit}}" style="flex-grow: 1; height: 56px; border-radius: 18px; background: {{accent}}; color: #0A1620; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px; border: 0; cursor: pointer">الفاتورة والمغادرة<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></button></sc-if>
 </sc-if>
 </div>
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"shared":{"editor":null},"onShare":{"editor":null},"onNav":{"editor":null},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  constructor(props) { super(props); this.state = { phase: 'approach', lane: 3, reassigned: false, fuel: 0 }; }
+  constructor(props) { super(props); this.state = { phase: 'approach', lane: 3, reassigned: false, fuel: 0, car: 0, station: 'a' }; }
+  sh(k) { const s = this.props.shared; return s && s[k] !== undefined ? s[k] : this.state[k]; }
+  put(o) { if (this.props.onShare) this.props.onShare(o); }
   componentWillUnmount() { clearInterval(this.timer); clearTimeout(this.t2); }
   runCycle() {
     clearInterval(this.timer);
@@ -146,6 +137,11 @@ class Component extends DCLogic {
     const accent = this.props.accent ?? '#C8F03C';
     const st = this.state;
     const ph = st.phase;
+    const cars = [['تويوتا كامري', '1234 أ ب ج'], ['مرسيدس C200', '5678 د هـ و'], ['تويوتا هايلكس', '9012 ر س ص'], ['هيونداي توسان', '3456 ط ع ق']];
+    const names = { a: 'محطة طريق الملك فهد', d: 'محطة شارع العليا', e: 'محطة طريق التخصصي', b: 'محطة حي الياسمين', c: 'محطة طريق أنس بن مالك' };
+    const cr = cars[this.sh('car')] || cars[0];
+    const embedded = !!this.props.onNav;
+    const nav = (to) => this.props.onNav && this.props.onNav(to);
     const at = ph !== 'approach';
     const pos = (n, off) => 'calc(' + ((n - 0.5) * 25) + '% - ' + off + 'px)';
     const busyLanes = { 1: true, 4: true };
@@ -183,14 +179,16 @@ class Component extends DCLogic {
       otherTop: st.reassigned ? '138px' : '380px',
       showFuelChip: ph === 'fueling' || ph === 'paying', chipRight: pos(st.lane, 14),
       chip: ph === 'paying' ? 'الدفع ✓' : 'تعبئة ' + st.fuel + '%',
-      scanning: !at, plate: at ? { t: 'تم التعرف: 1234 أ ب ج', c: accent } : { t: 'بانتظار وصولك…', c: '#93A9B3' },
+      scanning: !at, plate: at ? { t: 'تم التعرف: ' + cr[1], c: accent } : { t: 'بانتظار وصولك…', c: '#93A9B3' },
       isApproach: ph === 'approach', isArrived: ph === 'arrived', isBusy: ph === 'fueling' || ph === 'paying', isOpen: ph === 'open',
       busyText: ph === 'paying' ? 'جارٍ الدفع…' : 'جارٍ التعبئة ' + st.fuel + '%',
       reassigned: st.reassigned,
-      otherArrives: () => this.setState({ reassigned: true, lane: 2 }),
+      otherArrives: () => { this.setState({ reassigned: true, lane: 2 }); this.put({ lane: 2 }); },
       arrive: () => this.setState({ phase: 'arrived' }),
       runCycle: () => this.runCycle(),
-      reset: () => { clearInterval(this.timer); clearTimeout(this.t2); this.setState({ phase: 'approach', lane: 3, reassigned: false, fuel: 0 }); }
+      reset: () => { clearInterval(this.timer); clearTimeout(this.t2); this.setState({ phase: 'approach', lane: 3, reassigned: false, fuel: 0 }); this.put({ lane: 3 }); },
+      stName: names[this.sh('station')] || names.a, carName: cr[0],
+      alone: !embedded, embedded, goBack: () => nav('order'), goFuel: () => nav('fueling'), goExit: () => nav('exit')
     };
   }
 }

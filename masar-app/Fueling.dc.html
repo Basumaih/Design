@@ -4,31 +4,22 @@
 <meta charset="utf-8">
 <title>مسار — أثناء التعبئة</title>
 <script src="./support.js"></script>
+<link rel="stylesheet" href="masar.css">
 </head>
 <body>
 <x-dc>
 <helmet>
 <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-<style>
-body{margin:0;background:#0A1620;font-family:'IBM Plex Sans Arabic',sans-serif;color:#EEF4F1}
-a{color:#C8F03C}a:hover{color:#E2FF7A}
-button{font-family:inherit}
-button:disabled{cursor:default}
-.scroll::-webkit-scrollbar{display:none}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes road{from{background-position:0 0}to{background-position:0 40px}}
-.spin{animation:spin 6s linear infinite}
-.road{animation:road .35s linear infinite}
-</style>
+<style>body{margin:0}</style>
 </helmet>
-<div dir="rtl" style="width: 390px; height: 844px; background: #0A1620; position: relative; overflow: hidden; display: flex; flex-direction: column">
+<div dir="rtl" style="width: 390px; height: 844px; background: #0A1620; color: #EEF4F1; font-family: 'IBM Plex Sans Arabic', sans-serif; position: relative; overflow: hidden; display: flex; flex-direction: column">
 
 <div class="scroll" style="flex-grow: 1; overflow-y: auto; scrollbar-width: none; padding: 22px 20px 120px; display: flex; flex-direction: column; gap: 16px">
 
 <div style="display: flex; align-items: center; justify-content: space-between">
 <div style="display: flex; flex-direction: column">
 <span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 20px">{{status}}</span>
-<span style="font-size: 12px; color: #93A9B3">الكبينة 2 · تويوتا كامري · بنزين 91</span>
+<span style="font-size: 12px; color: #93A9B3">الكبينة {{lane}} · {{carName}} · {{fuelName}}</span>
 </div>
 <button onClick="{{toggle}}" aria-label="{{toggleLabel}}" style="width: 44px; height: 44px; border-radius: 14px; background: #102230; border: 1px solid #1E3B4B; color: #EEF4F1; cursor: pointer; display: flex; align-items: center; justify-content: center">
 <sc-if value="{{running}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
@@ -176,16 +167,20 @@ button:disabled{cursor:default}
 </div>
 
 <div style="position: absolute; right: 0; left: 0; bottom: 0; padding: 16px 20px 24px; background: #0A1620; border-top: 1px solid #16303F">
-<a href="Exit.dc.html" style="height: 56px; border-radius: 18px; background: {{ctaBg}}; color: {{ctaFg}}; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px; transition: background .3s">{{cta}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a>
+<sc-if value="{{alone}}" hint-placeholder-val="{{ true }}"><a href="Exit.dc.html" style="height: 56px; border-radius: 18px; background: {{ctaBg}}; color: {{ctaFg}}; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px; transition: background .3s">{{cta}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a></sc-if><sc-if value="{{embedded}}" hint-placeholder-val="{{ false }}"><button onClick="{{goExit}}" style="height: 56px; border-radius: 18px; background: {{ctaBg}}; color: {{ctaFg}}; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px; transition: background .3s; width: 100%; border: 0; cursor: pointer">{{cta}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></button></sc-if>
 </div>
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"shared":{"editor":null},"onShare":{"editor":null},"onNav":{"editor":null},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { sar: 0, target: 100, running: true, shop: 'grocery', cart: {}, ordered: false,
+    const sh0 = props.shared || {};
+    const cars0 = [[60, 14, 2.18], [66, 18, 2.33], [80, 11, 1.66], [54, 16, 2.18]];
+    const cr0 = cars0[sh0.car || 0];
+    const target0 = sh0.mode === 'full' ? Math.round(cr0[0] * (1 - cr0[1] / 100) * cr0[2]) : (sh0.amount || 100);
+    this.state = { sar: 0, target: target0, running: true, shop: 'grocery', cart: {}, ordered: false,
       game: 'idle', lane: 1, obs: [], score: 0, best: 0 };
     this.oid = 0;
   }
@@ -224,7 +219,14 @@ class Component extends DCLogic {
   renderVals() {
     const accent = this.props.accent ?? '#C8F03C';
     const s = this.state;
-    const price = 2.18;
+    const cars = [['تويوتا كامري', '91', 60, 14], ['مرسيدس C200', '95', 66, 18], ['تويوتا هايلكس', 'ديزل', 80, 11], ['هيونداي توسان', '91', 54, 16]];
+    const prices = { '91': 2.18, '95': 2.33, 'ديزل': 1.66 };
+    const fuelNames = { '91': 'بنزين 91', '95': 'بنزين 95', 'ديزل': 'ديزل' };
+    const shd = this.props.shared || {};
+    const cr = cars[shd.car || 0];
+    const price = prices[cr[1]];
+    const fullSar = Math.round(cr[2] * (1 - cr[3] / 100) * price);
+    const embedded = !!this.props.onNav;
     const done = s.sar >= s.target;
     const C = 603;
     const icons = {
@@ -266,6 +268,14 @@ class Component extends DCLogic {
     const lanesX = ['16.66%', '50%', '83.33%'];
     const obs = s.obs.map((o) => ({ top: o.y + 'px', left: lanesX[o.lane], bar: o.kind === 'bar', cone: o.kind === 'cone' }));
     return {
+      lane: shd.lane || 2, carName: cr[0], fuelName: fuelNames[cr[1]],
+      alone: !embedded, embedded,
+      goExit: () => {
+        const lines = [];
+        Object.keys(menu).forEach((sh) => menu[sh].forEach(([id, n, p]) => { const q = s.cart[sh + '.' + id] || 0; if (q) lines.push({ n, q, p }); }));
+        if (this.props.onShare) this.props.onShare({ fueled: +s.sar.toFixed(2), cart: lines });
+        this.props.onNav('exit');
+      },
       accent, shops, items, cartCount, cartTotal, hasCart: cartCount > 0,
       ordered: s.ordered, confirmOrder: () => this.setState({ ordered: true }),
       orderLabel: s.ordered ? 'تم الطلب ✓' : 'تأكيد الطلب', orderBg: s.ordered ? '#26485A' : accent, orderFg: s.ordered ? '#EEF4F1' : '#0A1620',
@@ -277,7 +287,7 @@ class Component extends DCLogic {
       liters: (s.sar / price).toFixed(1), targetL: (s.target / price).toFixed(1), sar: s.sar.toFixed(2),
       add20: () => this.setState({ target: s.target + 20 }),
       add50: () => this.setState({ target: s.target + 50 }),
-      fill: () => this.setState({ target: 132 }),
+      fill: () => this.setState({ target: Math.max(s.target, fullSar) }),
       gate: done
         ? { t: 'تم خصم ' + (s.sar + cartTotal).toFixed(2) + ' ر.س · فُتح الحاجز', sub: 'الحاجز أمام الكبينة مفتوح، تفضّل بالتقدم', c: accent, bg: '#1B2E12', bd: '#4C6A1E', deg: '-70deg' }
         : { t: 'الحاجز أمام الكبينة مغلق', sub: 'يُفتح تلقائياً بعد انتهاء التعبئة وإتمام الدفع', c: '#EEF4F1', bg: '#102230', bd: '#1E3B4B', deg: '0deg' },

@@ -1,0 +1,27 @@
+body{margin:0;background:#0A1620;font-family:'IBM Plex Sans Arabic',sans-serif;color:#EEF4F1}
+a{color:#C8F03C}a:hover{color:#E2FF7A}
+button{font-family:inherit}
+button:disabled{cursor:default}
+.scroll::-webkit-scrollbar{display:none}
+@keyframes m-pulse{0%{box-shadow:0 0 0 0 rgba(255,181,71,.55)}70%{box-shadow:0 0 0 12px rgba(255,181,71,0)}100%{box-shadow:0 0 0 0 rgba(255,181,71,0)}}
+@keyframes m-me{0%{transform:scale(.6);opacity:.8}100%{transform:scale(2.6);opacity:0}}
+@keyframes m-dash{to{stroke-dashoffset:-24}}
+@keyframes m-rise{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+@keyframes m-blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
+@keyframes m-scan{0%{top:6px}50%{top:30px}100%{top:6px}}
+@keyframes m-toast{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
+@keyframes m-spin{to{transform:rotate(360deg)}}
+@keyframes m-road{from{background-position:0 0}to{background-position:0 40px}}
+@keyframes m-ring{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+@keyframes m-slide{from{transform:translateX(-14px);opacity:0}to{transform:none;opacity:1}}
+.pulse{animation:m-pulse 2s infinite}
+.me{animation:m-me 1.8s ease-out infinite}
+.route{animation:m-dash 1s linear infinite}
+.rise{animation:m-rise .45s ease-out both}
+.blink{animation:m-blink 1s ease-in-out infinite}
+.scan{animation:m-scan 1.6s ease-in-out infinite}
+.toast{animation:m-toast .35s ease-out both}
+.spin{animation:m-spin 6s linear infinite}
+.road{animation:m-road .35s linear infinite}
+.ring{animation:m-ring 1.8s ease-out infinite}
+.slide{animation:m-slide .35s ease-out both}
