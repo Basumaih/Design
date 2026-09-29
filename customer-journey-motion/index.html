@@ -1,0 +1,638 @@
+<title>رحلة العميل في المحطات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: a fixed 1920×1080 stage (RTL), scaled to fit; nine timed scenes driven by one clock t. Single bright look taken from the team's deck tabs. */
+:root{
+  --ink:#14222a; --ink-2:#4a5b63; --paper:#f4f7ee; --card:#ffffff;
+  --lime:#d4f26a; --sky:#bfe4fa; --rose:#ffc8da;
+  --go:#1c9a52; --stop:#e23b3e; --amber:#f2b632;
+  --teal:#0e7a8a; --slate:#768c96;
+  --display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --body:"IBM Plex Sans Arabic","Readex Pro",Tahoma,sans-serif;
+  color-scheme:light;
+}
+html,body{background:#e6ebe0;color:var(--ink)}
+body{margin:0;font-family:var(--body);padding-inline:16px;padding-block:20px}
+.wrap{max-width:1280px;margin-inline:auto;display:flex;flex-direction:column;gap:12px}
+.viewport{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:14px;background:var(--paper);box-shadow:0 10px 40px rgba(20,34,42,.18)}
+#stage{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:0 0;direction:rtl;background:var(--paper);overflow:hidden;font-family:var(--body)}
+.controls{direction:rtl;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.controls button{font:600 14px var(--body);border:0;border-radius:999px;padding:8px 16px;background:var(--ink);color:var(--paper);cursor:pointer}
+.controls button:focus-visible,.chips button:focus-visible,#scrub:focus-visible{outline:3px solid var(--go);outline-offset:2px}
+#scrub{flex:1;min-width:160px;accent-color:var(--go)}
+#time{font:500 13px var(--body);font-variant-numeric:tabular-nums;min-width:90px;text-align:center}
+.chips{direction:rtl;display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:500 13px var(--body);border:1px solid #c9d3c2;background:var(--card);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chips button.on{background:var(--lime);border-color:var(--lime)}
+body.rec{padding:0;background:var(--paper)} body.rec .controls,body.rec .chips{display:none}
+body.rec .wrap{max-width:none} body.rec .viewport{border-radius:0;box-shadow:none;width:1920px}
+
+/* scene scaffolding */
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden}
+[data-a]{will-change:transform,opacity}
+.tabs{position:absolute;top:0;right:120px;display:flex;gap:0}
+.tab{height:62px;padding:0 70px;display:grid;place-items:center;font:600 26px var(--display);border-radius:40px 40px 0 0;margin-left:-26px}
+.h1{font:700 88px/1.25 var(--display);text-wrap:balance;margin:0}
+.h2{font:700 64px/1.3 var(--display);text-wrap:balance;margin:0}
+.eyebrow{display:inline-block;font:600 28px var(--display);padding:10px 26px;border-radius:999px;background:var(--rose)}
+.lead{font:500 36px/1.6 var(--body);color:var(--ink-2);margin:0}
+.abs{position:absolute}
+
+/* S1 */
+.s1-title{right:130px;top:190px;width:1080px}
+.s1-title .h1{font-size:76px}
+.s1-meta{right:130px;top:720px;display:flex;gap:18px;flex-wrap:wrap;width:1100px}
+.pill{font:600 28px var(--display);padding:12px 28px;border-radius:999px;background:var(--card);border:2px solid #dbe4d3}
+.pill.lime{background:var(--lime);border-color:var(--lime)}
+.pill.sky{background:var(--sky);border-color:var(--sky)}
+.s1-art{left:60px;top:170px;width:700px;height:800px}
+
+/* S2 */
+.s2-box{inset:0;display:grid;place-items:center;text-align:center}
+.s2-quote{font:700 92px/1.35 var(--display);width:1500px;text-wrap:balance}
+.mark{background:linear-gradient(transparent 58%,var(--lime) 58%,var(--lime) 92%,transparent 92%);background-repeat:no-repeat;background-size:var(--w,0%) 100%;background-position:right}
+
+/* S3 */
+.s3-text{right:120px;top:130px;width:820px;display:flex;flex-direction:column;gap:30px}
+.chal{display:flex;align-items:center;gap:26px;font:600 36px/1.4 var(--body)}
+.chal i{flex:none;width:44px;height:44px;border-radius:50%;background:var(--stop);box-shadow:0 0 0 8px rgba(226,59,62,.15)}
+.s3-art{left:70px;top:120px;width:880px;height:840px;border-radius:36px;background:#e9ece5;overflow:hidden}
+.clock{left:110px;top:150px;background:var(--ink);color:var(--paper);border-radius:22px;padding:18px 28px;font:600 26px var(--display);display:flex;flex-direction:column;gap:2px}
+.clock b{font:700 54px var(--display);font-variant-numeric:tabular-nums;direction:ltr;color:#ff8b8d}
+
+/* S4 */
+.s4-head{right:120px;top:110px}
+.pillars{right:120px;left:120px;top:330px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.pillar{border-radius:36px;padding:48px 44px;display:flex;flex-direction:column;gap:22px;min-height:560px}
+.pillar h3{font:700 44px/1.3 var(--display);margin:0}
+.pillar p{font:500 30px/1.6 var(--body);margin:0;color:var(--ink-2)}
+.pillar svg{width:120px;height:120px}
+.p-lime{background:var(--lime)} .p-sky{background:var(--sky)} .p-rose{background:var(--rose)}
+
+/* S5 */
+.s5-map{left:70px;top:130px;width:980px;height:900px;border-radius:36px;background:#dfe4db;overflow:hidden}
+.s5-list{right:110px;top:350px;width:720px;display:flex;flex-direction:column;gap:26px}
+.ben{display:flex;gap:22px;align-items:flex-start;font:500 32px/1.5 var(--body)}
+.ben i{flex:none;margin-top:12px;width:22px;height:22px;border-radius:6px;background:var(--go);transform:rotate(45deg)}
+
+/* S6 */
+.s6-head{right:120px;top:120px}
+.devs{right:120px;top:300px;width:900px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.dev{background:var(--card);border-radius:28px;padding:30px 32px;display:flex;gap:24px;align-items:flex-start;border:3px solid transparent}
+.dev.hl{border-color:var(--go)}
+.dev svg{flex:none;width:76px;height:76px}
+.dev h4{font:700 32px/1.3 var(--display);margin:0 0 8px}
+.dev p{font:500 24px/1.55 var(--body);margin:0;color:var(--ink-2)}
+.dev.wide{grid-column:1/-1}
+.s6-art{left:70px;top:150px;width:780px;height:860px;border-radius:36px;background:#dfe4db;overflow:hidden}
+
+/* S7 */
+.s7-head{right:120px;top:100px}
+.stages{right:120px;top:270px;width:900px;display:flex;flex-direction:column;gap:18px}
+.stg{border-radius:28px;padding:22px 32px;background:rgba(255,255,255,.55);display:flex;flex-direction:column;gap:10px}
+.stg h4{margin:0;font:700 36px var(--display);display:flex;align-items:center;gap:18px}
+.stg h4 span{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font:700 26px var(--display)}
+.stg ul{margin:0;padding:0 70px 0 0;display:none;font:500 26px/1.6 var(--body);color:var(--ink-2)}
+.stg.on{background:var(--card);box-shadow:0 12px 40px rgba(20,34,42,.12)}
+.stg.on ul{display:block}
+.stg.on h4 span{background:var(--go)}
+.phone{left:260px;top:120px;width:440px;height:880px;border-radius:64px;background:var(--ink);padding:18px}
+.screen{position:relative;width:100%;height:100%;border-radius:48px;background:var(--paper);overflow:hidden}
+.scr{position:absolute;inset:0;padding:70px 30px 30px;display:flex;flex-direction:column;gap:18px;direction:rtl}
+.notch{position:absolute;top:14px;left:50%;width:130px;height:30px;margin-left:-65px;border-radius:20px;background:var(--ink);z-index:3}
+.appbar{font:700 28px var(--display);display:flex;justify-content:space-between;align-items:center}
+.appbar small{font:500 18px var(--body);color:var(--ink-2)}
+.ucard{background:var(--card);border-radius:24px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;font:500 21px/1.5 var(--body)}
+.ucard b{font:700 24px var(--display)}
+.alert{background:var(--rose)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip{font:600 20px var(--display);padding:8px 16px;border-radius:999px;background:#e7ecE2}
+.chip.on{background:var(--ink);color:var(--paper)}
+.bar{height:14px;border-radius:8px;background:#e5e9e0;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:8px}
+.btn{font:700 24px var(--display);text-align:center;background:var(--go);color:#fff;border-radius:18px;padding:16px}
+.phone-side{left:90px;top:200px;width:130px;display:flex;flex-direction:column;gap:14px}
+
+/* S8 */
+.s8-head{right:120px;top:130px}
+.impacts{right:120px;left:120px;top:340px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.imp{background:var(--slate);border-radius:36px;padding:26px}
+.imp > div{background:var(--card);border-radius:22px;padding:36px 34px;min-height:430px;display:flex;flex-direction:column;gap:20px}
+.imp .n{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 30px var(--display)}
+.imp h3{font:700 42px/1.35 var(--display);margin:0}
+.imp p{font:500 30px/1.6 var(--body);margin:0;color:var(--ink-2)}
+.imp .big{font:700 30px var(--display);margin-top:auto;padding-top:14px;border-top:3px dashed #d7ddd2}
+
+/* S9 */
+.s9{inset:0;display:grid;place-items:center;text-align:center}
+.s9 .inner{display:flex;flex-direction:column;align-items:center;gap:30px}
+.s9 .ty{font:700 150px/1.45 var(--display)}
+.team{display:flex;gap:28px;justify-content:center}
+.member{background:var(--card);border-radius:28px;padding:26px 40px;display:flex;flex-direction:column;gap:6px;min-width:440px}
+.member b{font:700 38px var(--display)}
+.member span{font:500 24px var(--body);color:var(--ink-2)}
+
+.caption{position:absolute;bottom:34px;right:120px;font:600 22px var(--display);color:var(--ink-2);display:flex;gap:14px;align-items:center}
+.caption i{width:14px;height:14px;border-radius:50%;background:var(--go)}
+.brand{position:absolute;bottom:34px;left:120px;font:700 24px var(--display);color:var(--ink)}
+.brand em{font-style:normal;color:var(--go)}
+@media (prefers-reduced-motion: reduce){ .viewport{box-shadow:none} }
+</style>
+
+<div class="wrap">
+<div class="viewport" id="vp"><div id="stage">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="car" viewBox="-13 -22 26 44" overflow="visible">
+      <rect x="-12" y="-21" width="24" height="42" rx="8" fill="currentColor"/>
+      <rect x="-9" y="-12" width="18" height="9" rx="3" fill="#14222a" opacity=".75"/>
+      <rect x="-9" y="8" width="18" height="6" rx="2.5" fill="#14222a" opacity=".55"/>
+      <rect x="-10" y="-21" width="5" height="3" rx="1.5" fill="#fff7c2"/>
+      <rect x="5" y="-21" width="5" height="3" rx="1.5" fill="#fff7c2"/>
+    </symbol>
+    <linearGradient id="canopy" x1="0" x2="1">
+      <stop offset="0" stop-color="#0e6f86"/><stop offset=".55" stop-color="#1c9a52"/><stop offset="1" stop-color="#9fd84a"/>
+    </linearGradient>
+    <symbol id="pump" viewBox="0 0 40 60">
+      <rect x="4" y="4" width="32" height="52" rx="6" fill="#14222a"/>
+      <rect x="9" y="10" width="22" height="14" rx="3" fill="#bfe4fa"/>
+      <rect x="9" y="30" width="22" height="4" rx="2" fill="#1c9a52"/>
+      <rect x="9" y="38" width="22" height="4" rx="2" fill="#f2b632"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- S1 · Title -->
+<section class="scene" data-scene="0 7.2">
+  <div class="tabs">
+    <div class="tab" style="background:var(--rose)" data-a="drop 0.2 0.6">تطبيق الجوال</div>
+    <div class="tab" style="background:var(--lime)" data-a="drop 0.35 0.6">إعادة التصميم</div>
+    <div class="tab" style="background:var(--sky)" data-a="drop 0.5 0.6">الأجهزة الذكية</div>
+  </div>
+  <div class="abs s1-title">
+    <div class="eyebrow" style="background:var(--lime)" data-a="fadeUp 0.6 0.7">فريق جِذوة</div>
+    <h1 class="h1" style="margin-top:30px" data-a="fadeUp 0.9 0.9">مقترح تطوير رحلة العميل في المحطات البترولية بالمملكة العربية السعودية</h1>
+  </div>
+  <div class="abs s1-meta">
+    <span class="pill sky" data-a="fadeUp 2.0 0.6">هاكاثون الطاقة ٢٠٢٦م</span>
+    <span class="pill" data-a="fadeUp 2.2 0.6">وزارة الطاقة</span>
+    <span class="pill" data-a="fadeUp 2.4 0.6">١٤٤٨هـ</span>
+  </div>
+  <svg class="abs s1-art" viewBox="0 0 700 800" aria-hidden="true">
+    <rect x="30" y="700" width="640" height="10" rx="5" fill="#c9d3c2" data-a="grow 1.0 0.8"/>
+    <g data-a="fadeDown 1.2 0.9">
+      <rect x="20" y="180" width="660" height="70" rx="12" fill="url(#canopy)"/>
+      <rect x="20" y="250" width="660" height="14" fill="#0b5566"/>
+    </g>
+    <g data-a="grow 1.5 0.8"><rect x="110" y="264" width="26" height="436" fill="#0e6f86"/><rect x="564" y="264" width="26" height="436" fill="#0e6f86"/></g>
+    <g data-a="pop 1.9 0.5"><use href="#pump" x="200" y="560" width="80" height="120"/></g>
+    <g data-a="pop 2.1 0.5"><use href="#pump" x="310" y="560" width="80" height="120"/></g>
+    <g data-a="pop 2.3 0.5"><use href="#pump" x="420" y="560" width="80" height="120"/></g>
+    <g id="s1car"><use href="#car" x="-26" y="-44" width="52" height="88" style="color:#e23b3e"/></g>
+    <path d="M 60 150 Q 350 40 640 150" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" pathLength="1" data-a="draw 2.6 1.2"/>
+    <path d="M 610 120 L 645 152 L 600 170" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" data-a="fade 3.6 0.4"/>
+  </svg>
+  <div class="brand" data-a="fade 1.0 1">مقترح للمشاركة في <em>هاكاثون الطاقة</em></div>
+</section>
+
+<!-- S2 · Vision -->
+<section class="scene" data-scene="7 13.2">
+  <div class="abs s2-box">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:40px">
+      <span class="eyebrow" data-a="fadeUp 7.4 0.6">رؤيتنا في المقترح</span>
+      <p class="s2-quote" data-a="fadeUp 7.8 0.9">إحداث <span class="mark" data-mark="9.0 1.0">نقلة نوعية</span> في تجربة العميل بالمحطات البترولية من خلال <span class="mark" data-mark="10.2 1.0">إعادة هندسة تجربتها</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- S3 · Problem -->
+<section class="scene" data-scene="13 25.2">
+  <div class="abs s3-text">
+    <span class="eyebrow" style="align-self:flex-start" data-a="fadeUp 13.3 0.6">لماذا نقدّم هذا المقترح؟</span>
+    <p class="lead" data-a="fadeUp 13.7 0.6">لأن المحطات البترولية تواجه التحديات التالية…</p>
+    <div class="chal" data-a="slideIn 15.0 0.6"><i></i>تكدّس المركبات في أوقات الذروة بسبب العشوائية.</div>
+    <div class="chal" data-a="slideIn 16.6 0.6"><i></i>تصميم المسارات الحالي يطيل انتظار العميل للوصول إلى الكبينة.</div>
+    <div class="chal" data-a="slideIn 18.2 0.6"><i></i>ضعف التكامل الرقمي بين المحطة والعملاء.</div>
+    <div class="chal" data-a="slideIn 19.8 0.6"><i></i>ضعف أدوات إدارة الحشود وتوجيهها.</div>
+    <div class="chal" data-a="slideIn 21.4 0.6"><i></i>الاعتماد على العنصر البشري ذي المهارة المتدنية.</div>
+  </div>
+  <div class="abs s3-art" data-a="fade 13.2 0.6">
+    <svg viewBox="0 0 880 840" width="880" height="840" id="chaos" aria-hidden="true">
+      <rect width="880" height="840" fill="#d9ddd4"/>
+      <rect x="80" y="230" width="720" height="60" rx="10" fill="#b7c0b3"/>
+      <rect x="80" y="520" width="720" height="60" rx="10" fill="#b7c0b3"/>
+      <g fill="#14222a"><use href="#pump" x="150" y="225" width="46" height="70"/><use href="#pump" x="330" y="225" width="46" height="70"/><use href="#pump" x="510" y="225" width="46" height="70"/><use href="#pump" x="690" y="225" width="46" height="70"/>
+      <use href="#pump" x="150" y="515" width="46" height="70"/><use href="#pump" x="330" y="515" width="46" height="70"/><use href="#pump" x="510" y="515" width="46" height="70"/><use href="#pump" x="690" y="515" width="46" height="70"/></g>
+      <g id="chaosCars"></g>
+      <g id="chaosPings"></g>
+    </svg>
+  </div>
+  <div class="abs clock" data-a="pop 14.2 0.5"><span>وقت الانتظار</span><b id="waitClock">00:00</b></div>
+</section>
+
+<!-- S4 · Model -->
+<section class="scene" data-scene="25 33.2">
+  <div class="abs s4-head">
+    <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 25.3 0.6">النموذج التطويري المقترح</span>
+    <h2 class="h2" style="margin-top:22px" data-a="fadeUp 25.6 0.7">ثلاثة محاور تعيد بناء الرحلة</h2>
+  </div>
+  <div class="abs pillars">
+    <div class="pillar p-lime" data-a="rise 26.6 0.8">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><path d="M30 110 V20" stroke="#1c9a52" stroke-width="12" stroke-linecap="round"/><path d="M14 36 L30 16 L46 36" fill="none" stroke="#1c9a52" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M90 110 V20" stroke="#e23b3e" stroke-width="12" stroke-linecap="round"/><path d="M74 36 L90 16 L106 36" fill="none" stroke="#e23b3e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 90 L84 50" stroke="#14222a" stroke-width="8" stroke-dasharray="8 8"/></svg>
+      <h3>إعادة تصميم مسارات المحطة</h3>
+      <p>تحسين انسيابية دخول المركبات وخروجها وضمانها بأعلى كفاءة وأمان.</p>
+    </div>
+    <div class="pillar p-sky" data-a="rise 27.6 0.8">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><rect x="20" y="30" width="62" height="44" rx="12" fill="#14222a"/><circle cx="51" cy="52" r="14" fill="#bfe4fa"/><circle cx="51" cy="52" r="6" fill="#14222a"/><rect x="82" y="44" width="22" height="16" rx="4" fill="#14222a"/><path d="M40 74 L34 104 M62 74 L68 104" stroke="#14222a" stroke-width="8" stroke-linecap="round"/></svg>
+      <h3>أجهزة ذكية لإدارة الحشود</h3>
+      <p>تقنيات وأجهزة تنظّم تدفق السيارات وتقلّل أوقات الانتظار داخل المحطة.</p>
+    </div>
+    <div class="pillar p-rose" data-a="rise 28.6 0.8">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><rect x="32" y="8" width="56" height="104" rx="14" fill="#14222a"/><rect x="38" y="20" width="44" height="80" rx="6" fill="#f4f7ee"/><rect x="44" y="30" width="32" height="10" rx="4" fill="#1c9a52"/><rect x="44" y="48" width="32" height="8" rx="4" fill="#ffc8da"/><rect x="44" y="62" width="22" height="8" rx="4" fill="#bfe4fa"/></svg>
+      <h3>تطبيق جوال</h3>
+      <p>منصة رقمية موحّدة تدير رحلة العميل كاملة، من الحاجة إلى التعبئة حتى ما بعد مغادرة المحطة.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S5 · Redesign -->
+<section class="scene" data-scene="33 47.2">
+  <div class="tabs">
+    <div class="tab" style="background:var(--rose);opacity:.5">تطبيق الجوال</div>
+    <div class="tab" style="background:var(--lime)">إعادة التصميم</div>
+    <div class="tab" style="background:var(--sky);opacity:.5">الأجهزة الذكية</div>
+  </div>
+  <div class="abs" style="right:110px;top:120px;width:720px">
+    <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 33.3 0.6">المحور الأول</span>
+    <h2 class="h2" style="margin-top:18px" data-a="fadeUp 33.6 0.7">المخطط المقترح</h2>
+  </div>
+  <div class="abs s5-list">
+    <div class="ben" data-a="slideIn 35.0 0.6"><i></i>استيعاب عدد أكبر من السيارات في وقت واحد وبنفس المساحات المعتمدة.</div>
+    <div class="ben" data-a="slideIn 36.6 0.6"><i></i>مسارات مستقلة للدخول وأخرى للخروج تسرّع رحلة التعبئة.</div>
+    <div class="ben" data-a="slideIn 38.2 0.6"><i></i>انعطافات سلسة لا حادة، تضمن انسيابية حركة المركبات.</div>
+    <div class="ben" data-a="slideIn 39.8 0.6"><i></i>خروج سريع في حالات الطوارئ عبر مسارات خروج مباشرة.</div>
+    <div class="ben" data-a="slideIn 41.4 0.6"><i></i>تعامل كفء مع السيارات عبر المسارات المتعددة.</div>
+    <div class="ben" data-a="slideIn 43.0 0.6"><i></i>خطوط أرضية ملوّنة للتوجيه السريع.</div>
+  </div>
+  <div class="abs s5-map" data-a="fade 33.2 0.6">
+    <svg viewBox="0 0 980 900" width="980" height="900" aria-hidden="true">
+      <rect width="980" height="900" fill="#d3d9cf"/>
+      <rect x="0" y="820" width="980" height="80" fill="#3a474f"/>
+      <text x="490" y="868" text-anchor="middle" fill="#f4f7ee" font-family="Readex Pro, sans-serif" font-size="24" font-weight="600">شارع الدخول</text>
+      <rect x="0" y="0" width="980" height="60" fill="#3a474f"/>
+      <text x="490" y="40" text-anchor="middle" fill="#f4f7ee" font-family="Readex Pro, sans-serif" font-size="24" font-weight="600">شارع الخروج</text>
+      <g id="lanes"></g>
+      <g id="flowCars"></g>
+      <g id="laneLabels"></g>
+    </svg>
+  </div>
+</section>
+
+<!-- S6 · Smart devices -->
+<section class="scene" data-scene="47 58.2">
+  <div class="tabs">
+    <div class="tab" style="background:var(--rose);opacity:.5">تطبيق الجوال</div>
+    <div class="tab" style="background:var(--lime);opacity:.5">إعادة التصميم</div>
+    <div class="tab" style="background:var(--sky)">الأجهزة الذكية</div>
+  </div>
+  <div class="abs s6-head">
+    <span class="eyebrow" style="background:var(--sky)" data-a="fadeUp 47.3 0.6">المحور الثاني</span>
+    <h2 class="h2" style="margin-top:18px" data-a="fadeUp 47.6 0.7">أجهزة ذكية عند كل كبينة</h2>
+  </div>
+  <div class="abs devs">
+    <div class="dev" data-dev="48.6 50.4" data-a="rise 48.4 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="6" y="40" width="14" height="30" rx="3" fill="#14222a"/><rect x="18" y="42" width="54" height="10" rx="5" fill="#e23b3e"/><rect x="34" y="42" width="10" height="10" fill="#fff"/><rect x="54" y="42" width="10" height="10" fill="#fff"/></svg>
+      <div><h4>حواجز السيارات</h4><p>عند كل كبينة، ولا تُفتح إلا بعد التحقق من الدفع.</p></div>
+    </div>
+    <div class="dev" data-dev="50.4 52.2" data-a="rise 48.7 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="8" y="18" width="44" height="30" rx="8" fill="#14222a"/><circle cx="30" cy="33" r="10" fill="#bfe4fa"/><circle cx="30" cy="33" r="4" fill="#14222a"/><path d="M52 26 L70 18 V48 L52 40 Z" fill="#14222a"/><rect x="20" y="54" width="40" height="14" rx="3" fill="#f2b632"/></svg>
+      <div><h4>كاميرات قارئة</h4><p>تتعرّف على اللوحة وتفتح الحاجز إن دفع العميل مسبقًا عبر التطبيق.</p></div>
+    </div>
+    <div class="dev" data-dev="52.2 54.0" data-a="rise 49.0 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="8" y="10" width="26" height="56" rx="13" fill="#14222a"/><circle cx="21" cy="26" r="8" fill="#1c9a52"/><circle cx="21" cy="50" r="8" fill="#56646b"/><rect x="42" y="10" width="26" height="56" rx="13" fill="#14222a"/><circle cx="55" cy="26" r="8" fill="#56646b"/><circle cx="55" cy="50" r="8" fill="#e23b3e"/></svg>
+      <div><h4>نظام الإضاءات الإرشادية</h4><p>فوق جميع الكبائن، يوضّح للعميل الشاغرة من المشغولة مباشرة.</p></div>
+    </div>
+    <div class="dev" data-dev="54.0 55.8" data-a="rise 49.3 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="14" y="6" width="48" height="64" rx="8" fill="#14222a"/><rect x="20" y="12" width="36" height="20" rx="3" fill="#bfe4fa"/><rect x="20" y="40" width="36" height="6" rx="3" fill="#56646b"/><rect x="4" y="50" width="40" height="24" rx="4" fill="#1c9a52"/><rect x="4" y="56" width="40" height="5" fill="#14222a"/></svg>
+      <div><h4>أجهزة الدفع الذاتي</h4><p>بدلًا من الاعتماد على العامل وتأخير العملاء الآخرين.</p></div>
+    </div>
+    <div class="dev wide" data-dev="55.8 58.2" data-a="rise 49.6 0.6">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><rect x="10" y="20" width="56" height="36" rx="8" fill="#14222a"/><rect x="18" y="28" width="26" height="12" rx="3" fill="#d4f26a"/><circle cx="54" cy="34" r="5" fill="#1c9a52"/><path d="M24 56 V68 M38 56 V68 M52 56 V68" stroke="#14222a" stroke-width="5" stroke-linecap="round"/></svg>
+      <div><h4>جهاز فحص حاسوب السيارة</h4><p>يربط معلومات السيارة بتطبيق الجوال أو الأنظمة المساندة.</p></div>
+    </div>
+  </div>
+  <div class="abs s6-art" data-a="fade 47.2 0.6">
+    <svg viewBox="0 0 780 860" width="780" height="860" aria-hidden="true" id="devArt">
+      <rect width="780" height="860" fill="#d3d9cf"/>
+      <rect x="40" y="70" width="700" height="56" rx="12" fill="url(#canopy)"/>
+      <g id="cabins"></g>
+      <g id="gateScene">
+        <rect x="260" y="400" width="260" height="440" fill="#c4cbbf"/>
+        <path d="M290 820 V420" stroke="#1c9a52" stroke-width="8" stroke-dasharray="20 18" opacity=".7"/>
+        <use href="#pump" x="540" y="470" width="90" height="135"/>
+        <g id="cam"><rect x="120" y="440" width="90" height="56" rx="12" fill="#14222a"/><circle cx="150" cy="468" r="16" fill="#bfe4fa"/><circle cx="150" cy="468" r="7" fill="#14222a"/><rect x="156" y="496" width="12" height="150" fill="#14222a"/>
+          <path id="beam" d="M200 468 L380 610 L300 660 Z" fill="#f2b632" opacity="0"/></g>
+        <rect x="230" y="560" width="30" height="80" rx="6" fill="#14222a"/>
+        <g id="arm"><rect x="240" y="566" width="300" height="20" rx="10" fill="#e23b3e"/><rect x="300" y="566" width="30" height="20" fill="#fff"/><rect x="380" y="566" width="30" height="20" fill="#fff"/><rect x="460" y="566" width="30" height="20" fill="#fff"/></g>
+        <g id="devCar"><use href="#car" x="-38" y="-64" width="76" height="128" style="color:#0e6f86"/><rect x="-24" y="46" width="48" height="16" rx="3" fill="#fff" stroke="#14222a" stroke-width="2"/></g>
+        <g id="paidTag" opacity="0"><rect x="560" y="660" width="190" height="64" rx="32" fill="#1c9a52"/><text x="655" y="702" text-anchor="middle" fill="#fff" font-family="Readex Pro, sans-serif" font-size="26" font-weight="700">تم الدفع ✓</text></g>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- S7 · App -->
+<section class="scene" data-scene="58 76.2">
+  <div class="tabs">
+    <div class="tab" style="background:var(--rose)">تطبيق الجوال</div>
+    <div class="tab" style="background:var(--lime);opacity:.5">إعادة التصميم</div>
+    <div class="tab" style="background:var(--sky);opacity:.5">الأجهزة الذكية</div>
+  </div>
+  <div class="abs s7-head">
+    <span class="eyebrow" data-a="fadeUp 58.3 0.6">المحور الثالث</span>
+    <h2 class="h2" style="margin-top:18px" data-a="fadeUp 58.6 0.7">تطبيق يرافق العميل في كل مرحلة</h2>
+  </div>
+  <div class="abs stages">
+    <div class="stg" data-stage="59.4 63.6" data-a="fadeUp 59.0 0.5"><h4><span>١</span>ما قبل الوصول</h4>
+      <ul><li>تنبيه بقرب انتهاء خزان الوقود، ومعلومات مباشرة عن الوقود المتاح في السيارة.</li><li>أقرب محطة وحالتها: الازدحام، الكبائن الشاغرة، كميات الوقود، ازدحام المرافق كالبقالة والمصلى.</li><li>تحديد نوع الوقود ونوع التعبئة والدفع، مع إتاحة الدفع المسبق.</li></ul></div>
+    <div class="stg" data-stage="63.6 67.8" data-a="fadeUp 59.2 0.5"><h4><span>٢</span>الوصول</h4>
+      <ul><li>إشعار بوصول العميل إلى المحطة.</li><li>توجيهه إلى المسار والكبينة المناسبين.</li></ul></div>
+    <div class="stg" data-stage="67.8 72.0" data-a="fadeUp 59.4 0.5"><h4><span>٣</span>التعبئة</h4>
+      <ul><li>تعديل حجم التعبئة وقيمتها إن غيّر العميل رأيه.</li><li>إرشادات السلامة الواجب اتباعها أثناء التعبئة.</li><li>الطلب من محلات المحطة واستلامه من نوافذ السيارات، وألعاب قصيرة لكسر ملل الانتظار.</li></ul></div>
+    <div class="stg" data-stage="72.0 76.2" data-a="fadeUp 59.6 0.5"><h4><span>٤</span>مغادرة الكبينة</h4>
+      <ul><li>وصول الفاتورة الإلكترونية، والتوجيه إلى مسار المغادرة.</li><li>معلومات عن الخدمات والمرافق المساندة بالمحطة.</li><li>نقاط برنامج الولاء والمكافآت، وتقييم التجربة.</li></ul></div>
+  </div>
+  <div class="abs phone" data-a="rise 58.8 0.8"><div class="screen"><div class="notch"></div>
+    <div class="scr" data-scr="59.4 63.6">
+      <div class="appbar">صباح الخير <small>السيارة: كامري ٢٠٢٣</small></div>
+      <div class="ucard alert"><b>⛽ الخزان قارب على النفاد</b>المتبقي يكفي لنحو ٤٢ كم</div>
+      <div class="ucard"><b>أقرب محطة · ١٫٨ كم</b>
+        <div class="row" style="justify-content:space-between"><span>الازدحام</span><span style="color:var(--go);font-weight:700">منخفض</span></div>
+        <div class="bar"><i style="width:28%;background:var(--go)"></i></div>
+        <div class="row" style="justify-content:space-between"><span>الكبائن الشاغرة</span><b>٧ من ١٢</b></div>
+        <div class="row" style="justify-content:space-between"><span>البقالة · المصلى</span><span>هادئ</span></div></div>
+      <div class="ucard"><span>نوع الوقود</span><div class="row"><span class="chip">٩١</span><span class="chip on">٩٥</span><span class="chip">ديزل</span></div>
+        <span>التعبئة</span><div class="row"><span class="chip on">كامل</span><span class="chip">مبلغ محدد</span></div></div>
+      <div class="btn">ادفع مسبقًا</div>
+    </div>
+    <div class="scr" data-scr="63.6 67.8">
+      <div class="appbar">وصلت إلى المحطة <small>الآن</small></div>
+      <div class="ucard" style="background:var(--lime)"><b>توجّه إلى المسار ٢</b>الكبينة ٥ بانتظارك · الحاجز سيفتح تلقائيًا</div>
+      <svg viewBox="0 0 360 380" width="100%" style="background:#dfe4db;border-radius:24px" aria-hidden="true">
+        <rect x="40" y="20" width="12" height="340" fill="#1c9a52" opacity=".35"/><rect x="175" y="20" width="12" height="340" fill="#1c9a52" opacity=".35"/><rect x="310" y="20" width="12" height="340" fill="#e23b3e" opacity=".35"/>
+        <path id="route" d="M181 360 L181 190 Q181 150 240 120" fill="none" stroke="#1c9a52" stroke-width="10" stroke-linecap="round" pathLength="1"/>
+        <circle cx="250" cy="112" r="22" fill="#1c9a52"/><text x="250" y="121" text-anchor="middle" fill="#fff" font-family="Readex Pro, sans-serif" font-size="24" font-weight="700">٥</text>
+        <circle id="dot" cx="181" cy="360" r="12" fill="#14222a"/>
+      </svg>
+    </div>
+    <div class="scr" data-scr="67.8 72.0">
+      <div class="appbar">جارٍ التعبئة <small>الكبينة ٥</small></div>
+      <div class="ucard" style="align-items:center">
+        <svg viewBox="0 0 200 200" width="200" height="200" aria-hidden="true"><circle cx="100" cy="100" r="80" fill="none" stroke="#e5e9e0" stroke-width="20"/><circle id="ring" cx="100" cy="100" r="80" fill="none" stroke="#1c9a52" stroke-width="20" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" transform="rotate(-90 100 100)"/><text id="liters" x="100" y="112" text-anchor="middle" font-family="Readex Pro, sans-serif" font-size="40" font-weight="700" fill="#14222a">0 ل</text></svg>
+        <div class="row"><span class="chip">تعديل الكمية</span></div></div>
+      <div class="ucard" style="background:var(--sky)"><b>السلامة أولًا</b>أطفئ المحرك ولا تستخدم الولاعة</div>
+      <div class="ucard"><b>اطلب من البقالة</b>قهوة · ماء · وجبة خفيفة ← استلم من نافذة السيارات</div>
+    </div>
+    <div class="scr" data-scr="72.0 76.2">
+      <div class="appbar">شكرًا لزيارتك <small>الفاتورة</small></div>
+      <div class="ucard"><b>فاتورة إلكترونية</b><div class="row" style="justify-content:space-between"><span>٤٨ لتر · ٩٥</span><b>١٠٤٫١٦ ر.س</b></div></div>
+      <div class="ucard" style="background:var(--lime)"><b>مسار المغادرة: الخروج ٢</b>طريقك واضح إلى الشارع</div>
+      <div class="ucard"><b>+٢٥ نقطة ولاء</b><div class="bar"><i style="width:68%;background:var(--amber)"></i></div></div>
+      <div class="ucard" style="align-items:center"><span>قيّم تجربتك</span><div id="stars" style="font-size:40px;letter-spacing:6px;color:var(--amber)">★★★★★</div></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- S8 · Impact -->
+<section class="scene" data-scene="76 84.2">
+  <div class="abs s8-head">
+    <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 76.3 0.6">الأثر المتوقع</span>
+    <h2 class="h2" style="margin-top:18px" data-a="fadeUp 76.6 0.7">الأثر المتوقع والقيمة المضافة</h2>
+  </div>
+  <div class="abs impacts">
+    <div class="imp" data-a="rise 77.4 0.8"><div><span class="n" style="background:var(--go)">01</span><h3>تحسين تجربة العميل ورفع رضاه</h3><p>رفع مستويات الرضا من خلال خدمة أسرع وأكثر سلاسة.</p><div class="big" style="color:var(--go)">خدمة أسرع وأسلس</div></div></div>
+    <div class="imp" data-a="rise 78.4 0.8"><div><span class="n" style="background:#1a9ad6">02</span><h3>زيادة الكفاءة التشغيلية للمحطات</h3><p>تقليل أوقات الانتظار وزيادة الطاقة الاستيعابية للمحطات.</p><div class="big" style="color:#1a9ad6">انتظار أقل · استيعاب أكبر</div></div></div>
+    <div class="imp" data-a="rise 79.4 0.8"><div><span class="n" style="background:var(--ink)">03</span><h3>تعزيز التحول الرقمي</h3><p>المساهمة في تعديل نموذج عمل المحطات ليوائم بين التقنية والأعمال.</p><div class="big">تقنية تخدم الأعمال</div></div></div>
+  </div>
+</section>
+
+<!-- S9 · Close -->
+<section class="scene" data-scene="84 91">
+  <div class="abs s9"><div class="inner">
+    <span class="eyebrow" style="background:var(--lime)" data-a="fadeUp 84.3 0.6">فريق جِذوة</span>
+    <div class="ty" data-a="pop 84.6 0.8">شكرًا لكم</div>
+    <div class="team">
+      <div class="member" data-a="rise 85.4 0.6"><b>عبدالرحمن عبدالله باسميح</b><span>مؤسس الفريق</span></div>
+      <div class="member" data-a="rise 85.7 0.6"><b>عبدالعزيز علي الهوسة</b><span>شريك مؤسس</span></div>
+    </div>
+    <div class="pill" style="direction:ltr" data-a="fadeUp 86.3 0.6">basumaih2009@gmail.com</div>
+  </div></div>
+</section>
+
+</div></div>
+
+<div class="controls">
+  <button id="play" type="button">إيقاف مؤقت</button>
+  <button id="restart" type="button">من البداية</button>
+  <input id="scrub" type="range" min="0" max="91" step="0.01" value="0" aria-label="موضع العرض">
+  <span id="time">0:00 / 1:31</span>
+</div>
+<div class="chips" id="chips"></div>
+</div>
+
+<script>
+(() => {
+const DUR = 91;
+const stage = document.getElementById('stage'), vp = document.getElementById('vp');
+const REC = location.hash === '#rec';
+if (REC) document.body.classList.add('rec');
+const fit = () => { stage.style.transform = `scale(${vp.clientWidth/1920})`; };
+new ResizeObserver(fit).observe(vp); fit();
+
+const clamp = (x,a=0,b=1) => Math.max(a,Math.min(b,x));
+const eo = p => 1-Math.pow(1-p,3);
+const eio = p => p<.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2;
+const back = p => { const c=1.7; return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2); };
+const lerp = (a,b,p) => a+(b-a)*p;
+const NS = 'http://www.w3.org/2000/svg';
+const mk = (tag, attrs, parent) => { const e=document.createElementNS(NS,tag); for (const k in attrs) e.setAttribute(k,attrs[k]); parent && parent.appendChild(e); return e; };
+const useCar = (parent, color, s=1) => { const g=mk('g',{},parent); const u=mk('use',{href:'#car',x:-13*s,y:-22*s,width:26*s,height:44*s},g); u.style.color=color; return g; };
+
+/* generic element animations */
+const FX = {
+  fade:    (p) => [p, ''],
+  fadeUp:  (p) => [p, `translateY(${(1-eo(p))*50}px)`],
+  fadeDown:(p) => [p, `translateY(${-(1-eo(p))*50}px)`],
+  slideIn: (p) => [p, `translateX(${-(1-eo(p))*80}px)`],
+  rise:    (p) => [p, `translateY(${(1-eo(p))*120}px)`],
+  drop:    (p) => [1, `translateY(${(1-eo(p))*-70}px)`],
+  pop:     (p) => [clamp(p*2), `scale(${0.6+0.4*back(p)})`],
+  grow:    (p) => [p, `scaleY(${eo(p)})`],
+};
+const anims = [...stage.querySelectorAll('[data-a]')].map(el => {
+  const [type,s,d] = el.dataset.a.split(' ');
+  if (type==='draw') { el.setAttribute('stroke-dasharray','1'); }
+  if (el instanceof SVGElement) { el.style.transformBox='fill-box'; el.style.transformOrigin= type==='grow'?'center bottom':'center'; }
+  return {el,type,s:+s,d:+d};
+});
+const scenes = [...stage.querySelectorAll('[data-scene]')].map(el => { const [s,e]=el.dataset.scene.split(' ').map(Number); return {el,s,e}; });
+const marks = [...stage.querySelectorAll('[data-mark]')].map(el => { const [s,d]=el.dataset.mark.split(' ').map(Number); return {el,s,d}; });
+
+/* S1: car drives in and parks */
+const s1car = document.getElementById('s1car');
+
+/* S3: chaos */
+const chaosG = document.getElementById('chaosCars'), pingG = document.getElementById('chaosPings');
+let seed = 7; const rnd = () => (seed = (seed*16807)%2147483647, (seed-1)/2147483646);
+const palette = ['#e23b3e','#0e7a8a','#f2b632','#14222a','#768c96','#1a9ad6','#9aa7a0','#c75d9b'];
+const chaos = [];
+for (let i=0;i<30;i++){
+  const tx = 70+rnd()*740, ty = 90+rnd()*700;
+  if ((ty>200&&ty<320)||(ty>490&&ty<610)) { if (rnd()<.6) continue; }
+  const g = useCar(chaosG, palette[i%palette.length], 1.35);
+  chaos.push({g, tx, ty, fx: tx+(rnd()-.5)*300, fy: 900+rnd()*200, a: (rnd()-.5)*160, delay: rnd()*5, ph: rnd()*6});
+}
+const pings = [];
+for (let i=0;i<7;i++){ const c=mk('circle',{r:20,fill:'none',stroke:'#e23b3e','stroke-width':6},pingG); pings.push({c,x:100+rnd()*680,y:120+rnd()*640,o:rnd()*2}); }
+const waitClock = document.getElementById('waitClock');
+
+/* S5: lanes + flow */
+const lanesG = document.getElementById('lanes'), flowG = document.getElementById('flowCars'), lblG = document.getElementById('laneLabels');
+const LW = 980/3, bays = [650,510,370,230];
+const carPaths = [];
+for (let k=0;k<3;k++){
+  const x0=k*LW, ex=x0+58, xo=x0+LW-58, px=x0+LW/2-18;
+  const lane = mk('g',{},lanesG);
+  mk('rect',{x:x0+14,y:60,width:LW-28,height:760,rx:14,fill:'#c4cbbf'},lane);
+  const gin = mk('path',{d:`M${ex} 820 V120`,stroke:'#1c9a52','stroke-width':14,fill:'none','stroke-linecap':'round',opacity:.85,pathLength:1,'stroke-dasharray':1},lane);
+  const gout = mk('path',{d:`M${xo} 820 V70`,stroke:'#e23b3e','stroke-width':14,fill:'none','stroke-linecap':'round',opacity:.85,pathLength:1,'stroke-dasharray':1},lane);
+  lane._draw=[gin,gout];
+  mk('path',{d:`M${ex-16} 150 L${ex} 118 L${ex+16} 150`,stroke:'#1c9a52','stroke-width':10,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},lane);
+  mk('path',{d:`M${xo-16} 102 L${xo} 70 L${xo+16} 102`,stroke:'#e23b3e','stroke-width':10,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},lane);
+  // stop sign at exit bottom (no entry)
+  mk('circle',{cx:xo,cy:790,r:16,fill:'#e23b3e'},lane); mk('rect',{x:xo-9,y:787,width:18,height:6,fill:'#fff'},lane);
+  bays.forEach((yb,b)=>{
+    const guide = mk('path',{d:`M${ex} ${yb+70} Q${ex} ${yb+30} ${px} ${yb}`,stroke:'#1c9a52','stroke-width':5,fill:'none','stroke-dasharray':'10 10',opacity:.6},lane);
+    mk('path',{d:`M${px} ${yb} Q${xo} ${yb-40} ${xo} ${yb-90}`,stroke:'#e23b3e','stroke-width':5,fill:'none','stroke-dasharray':'10 10',opacity:.6},lane);
+    const pg = mk('g',{transform:`translate(${px+38} ${yb-8}) rotate(35)`},lane);
+    mk('use',{href:'#pump',x:-12,y:-18,width:24,height:36},pg);
+    const lt = mk('circle',{cx:px+62,cy:yb-40,r:8,fill:'#1c9a52'},lane);
+    const pIn = mk('path',{d:`M${ex} 900 L${ex} ${yb+70} Q${ex} ${yb+30} ${px} ${yb}`,fill:'none'},lanesG);
+    const pOut = mk('path',{d:`M${px} ${yb} Q${xo} ${yb-40} ${xo} ${yb-90} L${xo} -60`,fill:'none'},lanesG);
+    carPaths.push({k,b,pIn,pOut,Lin:pIn.getTotalLength(),Lout:pOut.getTotalLength(),lt});
+  });
+  const t = mk('text',{x:x0+LW/2,y:800,'text-anchor':'middle',fill:'#14222a','font-family':'Readex Pro, sans-serif','font-size':24,'font-weight':700},lblG); t.textContent=`المسار ${['١','٢','٣'][k]}`;
+}
+const flow = [];
+const cols = ['#0e7a8a','#e23b3e','#f2b632','#14222a','#1a9ad6','#768c96','#c75d9b','#fdfdfd'];
+for (let k=0;k<3;k++) for (let i=0;i<10;i++){
+  const b = [3,2,1,0][i%4];
+  const cp = carPaths.find(c=>c.k===k&&c.b===b);
+  flow.push({cp, t0: 34.4 + i*1.3 + k*0.4, g: useCar(flowG, cols[(i+k*3)%cols.length], 1.25)});
+}
+const SPD=300, DWELL=2.2;
+const pose = (path,L,d) => { const l=clamp(d,0,L); const a=path.getPointAtLength(l), b=path.getPointAtLength(clamp(l+2,0,L)), c=path.getPointAtLength(clamp(l-2,0,L)); return {x:a.x,y:a.y,ang:Math.atan2(b.y-c.y,b.x-c.x)*180/Math.PI+90}; };
+
+/* S6 */
+const cabinsG = document.getElementById('cabins'); const lights=[];
+for (let i=0;i<6;i++){ const x=80+i*112; mk('rect',{x,y:140,width:84,height:40,rx:20,fill:'#14222a'},cabinsG); lights.push(mk('circle',{cx:x+42,cy:160,r:13,fill:'#1c9a52'},cabinsG));
+  const t=mk('text',{x:x+42,y:220,'text-anchor':'middle','font-family':'Readex Pro, sans-serif','font-size':22,'font-weight':600,fill:'#14222a'},cabinsG); t.textContent=['١','٢','٣','٤','٥','٦'][i]; }
+const lightPattern = [[1,0,1,1,0,1],[1,1,0,1,0,1],[0,1,0,1,1,1],[0,1,1,0,1,0]];
+const arm=document.getElementById('arm'), devCar=document.getElementById('devCar'), beam=document.getElementById('beam'), paid=document.getElementById('paidTag');
+arm.style.transformBox='view-box'; arm.style.transformOrigin='245px 576px';
+const devs = [...stage.querySelectorAll('[data-dev]')].map(el=>{const [s,e]=el.dataset.dev.split(' ').map(Number);return{el,s,e};});
+
+/* S7 */
+const stgs = [...stage.querySelectorAll('[data-stage]')].map(el=>{const [s,e]=el.dataset.stage.split(' ').map(Number);return{el,s,e};});
+const scrs = [...stage.querySelectorAll('[data-scr]')].map(el=>{const [s,e]=el.dataset.scr.split(' ').map(Number);return{el,s,e};});
+const route=document.getElementById('route'), dot=document.getElementById('dot'), ring=document.getElementById('ring'), liters=document.getElementById('liters');
+route.setAttribute('stroke-dasharray','1'); const RL = route.getTotalLength();
+const AR = n => String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+
+function render(t){
+  for (const s of scenes){
+    const o = Math.min(clamp((t-s.s)/0.5), clamp((s.e-t)/0.5));
+    s.el.style.opacity = o; s.el.style.visibility = o>0 ? 'visible':'hidden';
+    s.on = o>0;
+  }
+  for (const a of anims){
+    const p = clamp((t-a.s)/a.d);
+    if (a.type==='draw'){ a.el.style.strokeDashoffset = 1-eio(p); continue; }
+    const [o,tr] = FX[a.type](p); a.el.style.opacity=o; a.el.style.transform=tr;
+  }
+  for (const m of marks) m.el.style.setProperty('--w', (eio(clamp((t-m.s)/m.d))*100)+'%');
+
+  if (scenes[0].on){
+    const p = eio(clamp((t-2.8)/2.2));
+    s1car.setAttribute('transform',`translate(${lerp(-80,350,p)} ${lerp(760,470,p)}) rotate(${lerp(40,0,p)})`);
+  }
+  if (scenes[2].on){
+    const lt = t-13;
+    for (const c of chaos){
+      const p = eo(clamp((lt - c.delay*0.4)/2.5));
+      const j = Math.sin((t+c.ph)*9)*2.2*(p>=1?1:0);
+      c.g.setAttribute('transform',`translate(${lerp(c.fx,c.tx,p)+j} ${lerp(c.fy,c.ty,p)}) rotate(${c.a + Math.sin(t*3+c.ph)*3})`);
+    }
+    for (const q of pings){ const f=((t+q.o)%2)/2; q.c.setAttribute('cx',q.x); q.c.setAttribute('cy',q.y); q.c.setAttribute('r',10+f*40); q.c.setAttribute('opacity',(1-f)*clamp((lt-3)/1)); }
+    const secs = Math.floor(clamp(lt-1,0,12)*55);
+    waitClock.textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+  }
+  if (scenes[4].on){
+    [...lanesG.children].forEach((lane,i)=>{ if(!lane._draw) return; const p=eio(clamp((t-33.6-i*0.25)/1.2)); lane._draw.forEach(d=>d.style.strokeDashoffset=1-p); });
+    const busy = new Set();
+    for (const f of flow){
+      const {cp}=f; const lt=t-f.t0; const tin=cp.Lin/SPD, tout=cp.Lout/SPD;
+      let P;
+      if (lt<0){ f.g.style.display='none'; continue; }
+      if (lt<tin) P=pose(cp.pIn,cp.Lin,lt*SPD);
+      else if (lt<tin+DWELL){ P=pose(cp.pIn,cp.Lin,cp.Lin); busy.add(cp); }
+      else if (lt<tin+DWELL+tout){ const q=(lt-tin-DWELL)/tout; P=pose(cp.pOut,cp.Lout,cp.Lout*(q*q*.35+q*.65)); }
+      else { f.g.style.display='none'; continue; }
+      f.g.style.display=''; f.g.setAttribute('transform',`translate(${P.x} ${P.y}) rotate(${P.ang})`);
+    }
+    for (const cp of carPaths) cp.lt.setAttribute('fill', busy.has(cp)?'#e23b3e':'#1c9a52');
+  }
+  if (scenes[5].on){
+    const pat = lightPattern[Math.floor(Math.max(0,t-47)/2.2)%4];
+    lights.forEach((l,i)=>l.setAttribute('fill',pat[i]?'#1c9a52':'#e23b3e'));
+    const cy = t<50 ? lerp(900,700,eo(clamp((t-47.8)/1.8))) : t<53.4 ? 700 : lerp(700,330,eio(clamp((t-53.4)/2.4)));
+    devCar.setAttribute('transform',`translate(390 ${cy})`);
+    const scan = clamp((t-50.4)/0.4)*clamp((52.2-t)/0.4);
+    beam.setAttribute('opacity', (0.35+0.2*Math.sin(t*12))*scan);
+    paid.setAttribute('opacity', clamp((t-51.4)/0.4)*clamp((56-t)/0.4));
+    const up = eio(clamp((t-52.4)/0.9));
+    arm.style.transform = `rotate(${-80*up}deg)`;
+    for (const d of devs) d.el.classList.toggle('hl', t>=d.s && t<d.e);
+  }
+  if (scenes[6].on){
+    for (const s of stgs) s.el.classList.toggle('on', t>=s.s && t<s.e);
+    for (const s of scrs){ const o=Math.min(clamp((t-s.s)/0.35), clamp((s.e-t)/0.35)); const first=s===scrs[0], last=s===scrs[scrs.length-1];
+      const oo = (first&&t<s.s)?0:(last&&t>=s.e)?1:o; s.el.style.opacity=oo; s.el.style.transform=`translateX(${(1-eo(clamp((t-s.s)/0.5)))*-40}px)`; s.el.style.visibility=oo>0?'visible':'hidden'; }
+    const rp = eio(clamp((t-64.2)/2.4));
+    route.style.strokeDashoffset = 1-rp;
+    const pt = route.getPointAtLength(RL*rp); dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
+    const fp = eio(clamp((t-68.2)/3.2));
+    ring.style.strokeDashoffset = 1-fp; liters.textContent = `${AR(Math.round(48*fp))} ل`;
+  }
+}
+
+/* player */
+let t = 0, playing = !REC, last = null;
+const playBtn=document.getElementById('play'), scrub=document.getElementById('scrub'), timeEl=document.getElementById('time'), chipsEl=document.getElementById('chips');
+const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+const chapters = [['المقدمة',0],['الرؤية',7],['التحديات',13],['النموذج',25],['إعادة التصميم',33],['الأجهزة الذكية',47],['تطبيق الجوال',58],['الأثر',76],['الختام',84]];
+const chipBtns = chapters.map(([n,s])=>{ const b=document.createElement('button'); b.type='button'; b.textContent=n; b.onclick=()=>{seek(s+0.01); if(!playing) toggle();}; chipsEl.appendChild(b); return [b,s]; });
+function seek(x){ t=clamp(x,0,DUR); render(t); scrub.value=t; timeEl.textContent=`${fmt(t)} / ${fmt(DUR)}`;
+  chipBtns.forEach(([b,s],i)=>b.classList.toggle('on', t>=s && (i===chipBtns.length-1 || t<chipBtns[i+1][1]))); }
+function toggle(){ playing=!playing; if (playing && t>=DUR) seek(0); playBtn.textContent = playing?'إيقاف مؤقت':'تشغيل'; last=null; }
+playBtn.onclick=toggle; document.getElementById('restart').onclick=()=>{seek(0); if(!playing) toggle();};
+scrub.oninput=()=>seek(+scrub.value);
+function loop(ts){ if (playing){ if(last!==null) seek(t+(ts-last)/1000); last=ts; if (t>=DUR){ playing=false; playBtn.textContent='تشغيل'; } } else last=null; requestAnimationFrame(loop); }
+if (matchMedia('(prefers-reduced-motion: reduce)').matches && !REC){ playing=false; playBtn.textContent='تشغيل'; seek(3.9); } else seek(0);
+requestAnimationFrame(loop);
+window.__seek = x => seek(x); window.__DUR = DUR;
+})();
+</script>
