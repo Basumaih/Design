@@ -3,6 +3,7 @@
 60-second vertical motion graphic (1080×1920, 60 fps, H.264 + AAC) for **هاكاثون الطاقة ٢٠٢٦م**.
 
 - `output/gas-station-journey_1080x1920_60fps.mp4` — final video
+- `output/gas-station-journey_1080x1920_60fps_sfx-only.mp4` — same video, sound effects only (no music)
 - `output/poster.jpg` — end-card still
 
 ## Structure (128 BPM, cuts on the bar)
@@ -28,7 +29,7 @@ Download the family from https://font.thmanyah.com and save these files into `mo
 `thmanyah-serif-display-Bold.woff2`, `thmanyah-serif-display-Black.woff2` (convert from OTF/TTF if needed).
 ```sh
 node render.mjs video out/v.mp4 4          # frames → x264 parts + cue sheet (needs Playwright/Chromium, ffmpeg)
-python3 audio.py out/v.mp4.sfx.json a.wav  # music + SFX from the same cue sheet (numpy)
+python3 audio.py out/v.mp4.sfx.json a.wav  # music + SFX from the same cue sheet (numpy); add --no-music for SFX only
 ffmpeg -f concat -safe 0 -i out/v.mp4.list -i a.wav -map 0:v -map 1:a -c:v libx264 -crf 23 -c:a aac out.mp4
 ```
 Open `index.html` over a local server for a real-time preview (`?t=12.5` shows a single frame).

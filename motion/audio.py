@@ -1,8 +1,10 @@
 """Synthesises the soundtrack (music + SFX) for the motion piece.
-Usage: python3 audio.py sfx.json out.wav
+Usage: python3 audio.py sfx.json out.wav [--no-music]
 The cue sheet comes from motion.js (window.SFX) so picture and sound share one timeline."""
 import json, sys, wave
 import numpy as np
+
+NO_MUSIC = '--no-music' in sys.argv
 
 SR = 48000
 DUR = 60.0
@@ -343,7 +345,10 @@ music *= pump; bassb *= pump
 
 intro_filter = np.ones(N)
 music_f = lp_fast(music, 9000)
-add(music_f, 0, 1.0); add(bassb, 0, 1.0); add(drums, 0, 1.0)
+if NO_MUSIC:
+    add(impact(True), 59.0, 0.6)  # keep the final hit as an effect
+else:
+    add(music_f, 0, 1.0); add(bassb, 0, 1.0); add(drums, 0, 1.0)
 
 # ---------------- cue sheet ----------------
 cues = json.load(open(sys.argv[1]))
