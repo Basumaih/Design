@@ -13,11 +13,12 @@
 body{margin:0;background:#0A1620;font-family:'IBM Plex Sans Arabic',sans-serif;color:#EEF4F1}
 a{color:#C8F03C}a:hover{color:#E2FF7A}
 button{font-family:inherit}
+button:disabled{cursor:default}
 .scroll::-webkit-scrollbar{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(.88)}100%{transform:scale(1)}}
+@keyframes road{from{background-position:0 0}to{background-position:0 40px}}
 .spin{animation:spin 6s linear infinite}
-.drop:active{animation:pop .2s}
+.road{animation:road .35s linear infinite}
 </style>
 </helmet>
 <div dir="rtl" style="width: 390px; height: 844px; background: #0A1620; position: relative; overflow: hidden; display: flex; flex-direction: column">
@@ -27,7 +28,7 @@ button{font-family:inherit}
 <div style="display: flex; align-items: center; justify-content: space-between">
 <div style="display: flex; flex-direction: column">
 <span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 20px">{{status}}</span>
-<span style="font-size: 12px; color: #93A9B3">المسار 2 · المضخة 4 · وقود 91</span>
+<span style="font-size: 12px; color: #93A9B3">الكبينة 2 · تويوتا كامري · بنزين 91</span>
 </div>
 <button onClick="{{toggle}}" aria-label="{{toggleLabel}}" style="width: 44px; height: 44px; border-radius: 14px; background: #102230; border: 1px solid #1E3B4B; color: #EEF4F1; cursor: pointer; display: flex; align-items: center; justify-content: center">
 <sc-if value="{{running}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
@@ -35,56 +36,142 @@ button{font-family:inherit}
 </button>
 </div>
 
-<div style="position: relative; height: 250px; display: flex; align-items: center; justify-content: center">
-<div class="spin" style="position: absolute; width: 238px; height: 238px; border-radius: 50%; border: 1px dashed #26485A"></div>
-<svg width="220" height="220" viewBox="0 0 220 220" aria-hidden="true" style="position: absolute"><circle cx="110" cy="110" r="96" fill="none" stroke="#16303F" stroke-width="16"></circle><circle cx="110" cy="110" r="96" fill="none" stroke="{{accent}}" stroke-width="16" stroke-linecap="round" stroke-dasharray="{{dash}}" transform="rotate(-90 110 110)" style="transition: stroke-dasharray .45s linear"></circle></svg>
+<div style="position: relative; height: 236px; display: flex; align-items: center; justify-content: center">
+<div class="spin" style="position: absolute; width: 226px; height: 226px; border-radius: 50%; border: 1px dashed #26485A"></div>
+<svg width="208" height="208" viewBox="0 0 220 220" aria-hidden="true" style="position: absolute"><circle cx="110" cy="110" r="96" fill="none" stroke="#16303F" stroke-width="16"></circle><circle cx="110" cy="110" r="96" fill="none" stroke="{{accent}}" stroke-width="16" stroke-linecap="round" stroke-dasharray="{{dash}}" transform="rotate(-90 110 110)" style="transition: stroke-dasharray .45s linear"></circle></svg>
 <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px">
 <span style="font-size: 12px; color: #93A9B3">تم تعبئة</span>
-<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 48px; line-height: 1.05">{{liters}}</span>
+<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 44px; line-height: 1.05">{{liters}}</span>
 <span style="font-size: 13px; color: #A9BCC4">لتر من {{targetL}}</span>
 <span style="margin-top: 6px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 18px; color: {{accent}}">{{sar}} ر.س</span>
 </div>
 </div>
 
 <div style="display: flex; gap: 10px">
-<button onClick="{{add20}}" style="flex-grow: 1; height: 48px; border-radius: 16px; border: 1px solid #26485A; background: #102230; color: #EEF4F1; cursor: pointer; font-size: 14px; font-weight: 600">+ 20 ر.س</button>
-<button onClick="{{add50}}" style="flex-grow: 1; height: 48px; border-radius: 16px; border: 1px solid #26485A; background: #102230; color: #EEF4F1; cursor: pointer; font-size: 14px; font-weight: 600">+ 50 ر.س</button>
-<button onClick="{{fill}}" style="flex-grow: 1; height: 48px; border-radius: 16px; border: 1px solid #26485A; background: #102230; color: #EEF4F1; cursor: pointer; font-size: 14px; font-weight: 600">حتى الامتلاء</button>
+<button onClick="{{add20}}" style="flex-grow: 1; height: 46px; border-radius: 16px; border: 1px solid #26485A; background: #102230; color: #EEF4F1; cursor: pointer; font-size: 14px; font-weight: 600">+ 20 ر.س</button>
+<button onClick="{{add50}}" style="flex-grow: 1; height: 46px; border-radius: 16px; border: 1px solid #26485A; background: #102230; color: #EEF4F1; cursor: pointer; font-size: 14px; font-weight: 600">+ 50 ر.س</button>
+<button onClick="{{fill}}" style="flex-grow: 1; height: 46px; border-radius: 16px; border: 1px solid #26485A; background: #102230; color: #EEF4F1; cursor: pointer; font-size: 14px; font-weight: 600">حتى الامتلاء</button>
 </div>
 
-<div style="border-radius: 24px; background: #2A2413; border: 1px solid #5A4A1E; padding: 16px; display: flex; gap: 14px; align-items: flex-start">
-<div style="width: 40px; height: 40px; border-radius: 12px; background: #FFB547; color: #0A1620; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20z"></path><path d="M12 10v4M12 17h.01"></path></svg></div>
-<div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; color: #FFB547; font-weight: 600">إرشاد السلامة {{tipNo}} من 4</span><button onClick="{{nextTip}}" style="background: none; border: 0; color: #FFD58F; font-size: 12px; cursor: pointer; min-height: 32px">التالي</button></div>
-<span style="font-size: 15px; line-height: 1.6; font-weight: 500">{{tip}}</span>
-</div>
+<div style="display: flex; align-items: center; gap: 12px; border-radius: 18px; background: {{gate.bg}}; border: 1px solid {{gate.bd}}; padding: 12px 14px; transition: all .4s">
+<svg width="30" height="22" viewBox="0 0 30 22" fill="none" aria-hidden="true" style="flex-shrink: 0"><rect x="1" y="6" width="5" height="15" rx="1.5" fill="#FFB547"></rect><g style="transform-origin: 4px 8px; transform: rotate({{gate.deg}}); transition: transform .9s"><rect x="4" y="6" width="25" height="4" rx="2" fill="#FF7A66"></rect><rect x="10" y="6" width="5" height="4" fill="#EEF4F1"></rect><rect x="20" y="6" width="5" height="4" fill="#EEF4F1"></rect></g></svg>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 700; color: {{gate.c}}">{{gate.t}}</span><span style="font-size: 11px; color: #A9BCC4">{{gate.sub}}</span></span>
 </div>
 
-<div style="border-radius: 24px; background: #102230; border: 1px solid #1E3B4B; padding: 16px; display: flex; flex-direction: column; gap: 12px">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">اطلب من المتجر</span><span style="font-size: 12px; color: #93A9B3">تستلمه من نافذة الخروج</span></div>
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">إرشادات السلامة أثناء التعبئة</h2>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
-<sc-for list="{{items}}" as="it" hint-placeholder-count="3">
-<div style="border-radius: 18px; background: #16303F; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; border: 1.5px solid {{it.bd}}">
-<span style="width: 40px; height: 40px; border-radius: 12px; background: #0C1B26; display: flex; align-items: center; justify-content: center; color: #56CFE1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{it.icon}}"></path></svg></span>
-<span style="font-size: 13px; font-weight: 600">{{it.n}}</span>
-<span style="font-size: 12px; color: #93A9B3">{{it.p}} ر.س</span>
-<button onClick="{{it.add}}" aria-label="إضافة {{it.n}}" style="width: 100%; height: 32px; border-radius: 10px; border: 0; background: {{it.btnBg}}; color: {{it.btnFg}}; cursor: pointer; font-size: 13px; font-weight: 700">{{it.btn}}</button>
+
+<div style="border-radius: 18px; background: #102230; border: 1px solid #1E3B4B; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<svg width="52" height="52" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19" fill="#1E6FD9" stroke="#FFFFFF" stroke-width="2"></circle><path d="M16.5 15.5a8.5 8.5 0 1 0 11 0" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"></path><path d="M22 11v10" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"></path></svg>
+<span style="font-size: 12px; font-weight: 600; line-height: 1.4">أطفئ المحرك</span>
+</div>
+
+<div style="border-radius: 18px; background: #102230; border: 1px solid #1E3B4B; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<svg width="52" height="52" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19" fill="#FFFFFF" stroke="#E0322B" stroke-width="4"></circle><rect x="9" y="21" width="20" height="5" fill="#1A1A1A"></rect><rect x="29" y="21" width="5" height="5" fill="#F08A24"></rect><path d="M32 18c-2-2 2-3.5 0-6" fill="none" stroke="#1A1A1A" stroke-width="1.6" stroke-linecap="round"></path><path d="M9 9l26 26" stroke="#E0322B" stroke-width="4"></path></svg>
+<span style="font-size: 12px; font-weight: 600; line-height: 1.4">ممنوع التدخين</span>
+</div>
+
+<div style="border-radius: 18px; background: #102230; border: 1px solid #1E3B4B; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<svg width="52" height="52" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19" fill="#FFFFFF" stroke="#E0322B" stroke-width="4"></circle><rect x="16" y="10" width="12" height="23" rx="2.5" fill="none" stroke="#1A1A1A" stroke-width="2.4"></rect><circle cx="22" cy="29" r="1.3" fill="#1A1A1A"></circle><path d="M9 9l26 26" stroke="#E0322B" stroke-width="4"></path></svg>
+<span style="font-size: 12px; font-weight: 600; line-height: 1.4">لا جوال خارج المركبة</span>
+</div>
+
+<div style="border-radius: 18px; background: #102230; border: 1px solid #1E3B4B; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<svg width="52" height="52" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19" fill="#FFFFFF" stroke="#E0322B" stroke-width="4"></circle><path d="M22 10c4 5 7 8.5 7 13.5a7 7 0 0 1-14 0c0-3 1.6-5.2 3-7 .8 2 1.8 3 3 3.3-.3-3.3 0-6.5 1-9.8z" fill="#1A1A1A"></path><path d="M9 9l26 26" stroke="#E0322B" stroke-width="4"></path></svg>
+<span style="font-size: 12px; font-weight: 600; line-height: 1.4">ممنوع اللهب</span>
+</div>
+
+<div style="border-radius: 18px; background: #102230; border: 1px solid #1E3B4B; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<svg width="52" height="52" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 4 41 38H3z" fill="#FFC83D" stroke="#1A1A1A" stroke-width="2.4" stroke-linejoin="round"></path><path d="M22 15c2.6 3.2 4.6 5.6 4.6 8.8a4.6 4.6 0 0 1-9.2 0c0-2 1-3.4 2-4.6.5 1.3 1.2 2 2 2.2-.2-2.2 0-4.2.6-6.4z" fill="#1A1A1A"></path><rect x="15" y="31" width="14" height="2.4" rx="1.2" fill="#1A1A1A"></rect></svg>
+<span style="font-size: 12px; font-weight: 600; line-height: 1.4">مواد قابلة للاشتعال</span>
+</div>
+
+<div style="border-radius: 18px; background: #102230; border: 1px solid #1E3B4B; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<svg width="52" height="52" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 4 41 38H3z" fill="#FFC83D" stroke="#1A1A1A" stroke-width="2.4" stroke-linejoin="round"></path><path d="M14 30v-4l2.5-5h11l2.5 5v4z" fill="#1A1A1A"></path><circle cx="17" cy="31" r="2" fill="#1A1A1A"></circle><circle cx="27" cy="31" r="2" fill="#1A1A1A"></circle><rect x="18" y="22.5" width="8" height="3" rx="1" fill="#FFC83D"></rect></svg>
+<span style="font-size: 12px; font-weight: 600; line-height: 1.4">لا تتحرك قبل فصل الخرطوم</span>
+</div>
+
+</div>
+</section>
+
+<section style="border-radius: 24px; background: #102230; border: 1px solid #1E3B4B; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">اطلب من محلات المحطة</span><span style="font-size: 11px; color: #93A9B3">الاستلام من نافذة الخروج</span></div>
+<div style="display: flex; padding: 4px; border-radius: 16px; background: #0C1B26; gap: 4px">
+<sc-for list="{{shops}}" as="sh" hint-placeholder-count="3">
+<button onClick="{{sh.pick}}" aria-pressed="{{sh.on}}" style="flex-grow: 1; flex-basis: 0; height: 40px; border-radius: 12px; border: 0; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; background: {{sh.bg}}; color: {{sh.fg}}; transition: all .2s"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{sh.icon}}"></path></svg>{{sh.n}}</button>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; border-radius: 16px; background: #16303F; padding: 10px 12px; opacity: {{it.op}}; border: 1px solid {{it.bd}}">
+<span style="width: 42px; height: 42px; border-radius: 12px; background: {{it.tint}}; display: flex; align-items: center; justify-content: center; color: #0A1620; flex-shrink: 0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{it.icon}}"></path></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">{{it.n}}</span><span style="font-size: 12px; color: #93A9B3">{{it.p}} ر.س</span></span>
+<sc-if value="{{it.out}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 12px; font-weight: 700; color: #FF9A8A; background: #3A1F1B; border-radius: 999px; padding: 5px 12px">نفد</span>
+</sc-if>
+<sc-if value="{{it.zero}}" hint-placeholder-val="{{ true }}">
+<button onClick="{{it.inc}}" aria-label="إضافة {{it.n}}" style="height: 36px; padding: 0 16px; border-radius: 12px; border: 1px solid #2C5163; background: #102230; color: #EEF4F1; cursor: pointer; font-size: 13px; font-weight: 700">أضف</button>
+</sc-if>
+<sc-if value="{{it.some}}" hint-placeholder-val="{{ false }}">
+<span style="display: flex; align-items: center; gap: 4px; border-radius: 12px; background: {{accent}}; color: #0A1620; padding: 3px">
+<button onClick="{{it.inc}}" aria-label="زيادة {{it.n}}" style="width: 32px; height: 32px; border-radius: 9px; border: 0; background: rgba(10,22,32,.12); color: #0A1620; cursor: pointer; font-size: 18px; font-weight: 700">+</button>
+<span style="min-width: 20px; text-align: center; font-family: Alexandria, sans-serif; font-weight: 800; font-size: 15px">{{it.q}}</span>
+<button onClick="{{it.dec}}" aria-label="إنقاص {{it.n}}" style="width: 32px; height: 32px; border-radius: 9px; border: 0; background: rgba(10,22,32,.12); color: #0A1620; cursor: pointer; font-size: 18px; font-weight: 700">−</button>
+</span>
+</sc-if>
 </div>
 </sc-for>
 </div>
 <sc-if value="{{hasCart}}" hint-placeholder-val="{{ false }}">
-<div style="display: flex; justify-content: space-between; align-items: center; border-radius: 14px; background: #13303A; padding: 10px 14px; font-size: 13px"><span>{{cartCount}} منتجات · {{cartTotal}} ر.س</span><span style="color: {{accent}}; font-weight: 600">تُضاف لفاتورتك</span></div>
+<div style="display: flex; align-items: center; gap: 10px; border-radius: 16px; background: #13303A; padding: 10px 12px">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 700">{{cartCount}} منتجات · {{cartTotal}} ر.س</span><span style="font-size: 11px; color: #A9BCC4">{{cartNote}}</span></span>
+<button onClick="{{confirmOrder}}" disabled="{{ordered}}" style="height: 40px; padding: 0 14px; border-radius: 12px; border: 0; cursor: pointer; font-size: 13px; font-weight: 700; background: {{orderBg}}; color: {{orderFg}}">{{orderLabel}}</button>
+</div>
+</sc-if>
+</section>
+
+<section style="border-radius: 24px; background: #102230; border: 1px solid #1E3B4B; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">لعبة: تجاوز الحواجز</span><span style="font-size: 11px; color: #93A9B3">كل 10 أمتار = نقطة ولاء</span></span>
+<span style="display: flex; gap: 12px; text-align: center">
+<span style="display: flex; flex-direction: column"><span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 18px; color: #56CFE1">{{score}}</span><span style="font-size: 10px; color: #93A9B3">متر</span></span>
+<span style="display: flex; flex-direction: column"><span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 18px">{{best}}</span><span style="font-size: 10px; color: #93A9B3">الأفضل</span></span>
+</span>
+</div>
+<div style="position: relative; height: 260px; border-radius: 18px; overflow: hidden; background: #1A2B36">
+<div class="{{roadCls}}" style="position: absolute; top: 0; bottom: 0; left: calc(33.33% - 2px); width: 4px; background-image: linear-gradient(#EEF4F1 50%, transparent 50%); background-size: 4px 40px; opacity: .5"></div>
+<div class="{{roadCls}}" style="position: absolute; top: 0; bottom: 0; left: calc(66.66% - 2px); width: 4px; background-image: linear-gradient(#EEF4F1 50%, transparent 50%); background-size: 4px 40px; opacity: .5"></div>
+<div style="position: absolute; top: 0; bottom: 0; left: 0; width: 5px; background: #FFB547"></div>
+<div style="position: absolute; top: 0; bottom: 0; right: 0; width: 5px; background: #FFB547"></div>
+<sc-for list="{{obs}}" as="o" hint-placeholder-count="2">
+<sc-if value="{{o.bar}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; top: {{o.top}}; left: {{o.left}}; width: 64px; margin-left: -32px; height: 22px; display: flex; flex-direction: column; gap: 2px">
+<div style="height: 12px; border-radius: 3px; background: repeating-linear-gradient(90deg, #FF7A66 0 10px, #EEF4F1 10px 20px)"></div>
+<div style="display: flex; justify-content: space-between; padding: 0 6px"><span style="width: 4px; height: 8px; background: #93A9B3"></span><span style="width: 4px; height: 8px; background: #93A9B3"></span></div>
+</div>
+</sc-if>
+<sc-if value="{{o.cone}}" hint-placeholder-val="{{ false }}">
+<svg width="30" height="26" viewBox="0 0 30 26" aria-hidden="true" style="position: absolute; top: {{o.top}}; left: {{o.left}}; margin-left: -15px"><path d="M11 2h8l6 20H5z" fill="#F08A24"></path><path d="M9.2 9h11.6l1.2 4H8z" fill="#EEF4F1"></path><rect x="2" y="21" width="26" height="4" rx="1.5" fill="#F08A24"></rect></svg>
+</sc-if>
+</sc-for>
+<div style="position: absolute; top: 200px; left: {{carLeft}}; margin-left: -15px; width: 30px; height: 46px; border-radius: 9px; background: {{accent}}; transition: left .12s ease-out; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 5px 0; box-sizing: border-box; box-shadow: 0 6px 14px rgba(0,0,0,.4)">
+<span style="width: 20px; height: 9px; border-radius: 3px; background: #0A1620; opacity: .55"></span>
+<span style="width: 20px; height: 7px; border-radius: 3px; background: #0A1620; opacity: .35"></span>
+</div>
+<sc-if value="{{showOverlay}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; inset: 0; background: rgba(10,22,32,.78); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 20px">
+<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 20px">{{overlayTitle}}</span>
+<span style="font-size: 12px; color: #C9D6DB; line-height: 1.6">{{overlaySub}}</span>
+<button onClick="{{startGame}}" style="height: 44px; padding: 0 26px; border-radius: 14px; border: 0; background: #56CFE1; color: #0A1620; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px; cursor: pointer">{{overlayBtn}}</button>
+</div>
 </sc-if>
 </div>
-
-<div style="border-radius: 24px; background: #102230; border: 1px solid #1E3B4B; padding: 16px; display: flex; align-items: center; gap: 14px">
-<button class="drop" onClick="{{tap}}" aria-label="التقط قطرة" style="width: 72px; height: 72px; border-radius: 22px; border: 0; background: #56CFE1; color: #0A1620; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"></path></svg></button>
-<div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1">
-<span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">العب أثناء الانتظار</span>
-<span style="font-size: 12px; color: #93A9B3; line-height: 1.5">اضغط القطرة واجمع نقاطاً تُضاف لرصيد الولاء</span>
+<div style="display: flex; gap: 10px" dir="ltr">
+<button onClick="{{left}}" aria-label="يسار" style="flex-grow: 1; height: 52px; border-radius: 16px; border: 1px solid #26485A; background: #16303F; color: #EEF4F1; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+<button onClick="{{right}}" aria-label="يمين" style="flex-grow: 1; height: 52px; border-radius: 16px; border: 1px solid #26485A; background: #16303F; color: #EEF4F1; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></button>
 </div>
-<div style="display: flex; flex-direction: column; align-items: center"><span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 26px; color: #56CFE1">{{score}}</span><span style="font-size: 11px; color: #93A9B3">نقطة</span></div>
-</div>
+</section>
 
 </div>
 
@@ -96,7 +183,12 @@ button{font-family:inherit}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  constructor(props) { super(props); this.state = { sar: 0, target: 100, running: true, tip: 0, cart: {}, score: 0 }; }
+  constructor(props) {
+    super(props);
+    this.state = { sar: 0, target: 100, running: true, shop: 'grocery', cart: {}, ordered: false,
+      game: 'idle', lane: 1, obs: [], score: 0, best: 0 };
+    this.oid = 0;
+  }
   componentDidMount() {
     this.timer = setInterval(() => {
       const s = this.state;
@@ -104,40 +196,101 @@ class Component extends DCLogic {
       this.setState({ sar: Math.min(s.target, s.sar + 1.6) });
     }, 450);
   }
-  componentWillUnmount() { clearInterval(this.timer); }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this.gameTimer); }
+  startGame() {
+    clearInterval(this.gameTimer);
+    this.setState({ game: 'play', lane: 1, obs: [], score: 0 });
+    this.gameTimer = setInterval(() => this.tick(), 40);
+  }
+  tick() {
+    const s = this.state;
+    if (s.game !== 'play') return;
+    const speed = 5 + Math.min(7, Math.floor(s.score / 120));
+    let obs = s.obs.map((o) => ({ ...o, y: o.y + speed })).filter((o) => o.y < 280);
+    const highest = obs.reduce((m, o) => Math.min(m, o.y), 999);
+    if (highest > 95 + Math.random() * 60) {
+      const lane = Math.floor(Math.random() * 3);
+      obs.push({ id: ++this.oid, lane, y: -26, kind: Math.random() < 0.55 ? 'bar' : 'cone' });
+      if (s.score > 250 && Math.random() < 0.35) obs.push({ id: ++this.oid, lane: (lane + 1 + Math.floor(Math.random() * 2)) % 3, y: -26, kind: 'cone' });
+    }
+    const hit = obs.some((o) => o.lane === s.lane && o.y + 22 > 204 && o.y < 242);
+    if (hit) {
+      clearInterval(this.gameTimer);
+      this.setState({ obs, game: 'over', best: Math.max(s.best, s.score) });
+      return;
+    }
+    this.setState({ obs, score: s.score + 1 });
+  }
   renderVals() {
     const accent = this.props.accent ?? '#C8F03C';
     const s = this.state;
     const price = 2.18;
     const done = s.sar >= s.target;
-    const pct = s.target ? s.sar / s.target : 0;
     const C = 603;
-    const tips = ['أطفئ محرك السيارة طوال مدة التعبئة.', 'يُمنع التدخين أو استخدام أي مصدر لهب داخل المحطة.', 'ابقَ داخل المركبة؛ العامل أو المضخة الذكية يتولى التعبئة.', 'لا تحرّك السيارة حتى يُفصل الخرطوم ويُغلق غطاء الخزان.'];
-    const catalog = [
-      { id: 'coffee', n: 'قهوة', p: 12, icon: 'M5 8h12v5a6 6 0 0 1-12 0zM17 9h1.5a2.5 2.5 0 0 1 0 5H17M8 2v3M12 2v3' },
-      { id: 'water', n: 'ماء', p: 2, icon: 'M9 2h6M10 2v3l-2 3v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V8l-2-3V2M8 12h8' },
-      { id: 'snack', n: 'وجبة خفيفة', p: 9, icon: 'M4 7h16l-1.5 13h-13zM8 7V5a4 4 0 0 1 8 0v2' }
-    ];
-    const items = catalog.map((it) => {
-      const q = s.cart[it.id] || 0;
-      return { ...it, btn: q ? 'في السلة · ' + q : 'أضف', btnBg: q ? accent : '#26485A', btnFg: q ? '#0A1620' : '#EEF4F1', bd: q ? accent : 'transparent',
-        add: () => this.setState({ cart: { ...s.cart, [it.id]: q + 1 } }) };
+    const icons = {
+      grocery: 'M4 7h16l-1.5 13h-13zM8 7V5a4 4 0 0 1 8 0v2',
+      cafe: 'M5 8h12v5a6 6 0 0 1-12 0zM17 9h1.5a2.5 2.5 0 0 1 0 5H17M8 2v3M12 2v3',
+      ice: 'M7 10a5 5 0 0 1 10 0M6 10h12l-6 12z'
+    };
+    const itemIcons = {
+      water: 'M9 2h6M10 2v3l-2 3v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V8l-2-3V2M8 12h8',
+      juice: 'M7 6h10l-1 15H8zM9 6l1-4h4M7 10h10',
+      chips: 'M6 3h12l-1 3 1 3-1 3 1 3-1 3 1 3H6l1-3-1-3 1-3-1-3 1-3z',
+      choc: 'M5 4h14v16H5zM5 9h14M5 14h14M12 4v16',
+      tissue: 'M4 10h16v10H4zM9 10c0-3 1.5-6 3-6s3 3 3 6',
+      cup: icons.cafe,
+      ice: icons.ice
+    };
+    const menu = {
+      grocery: [['w', 'ماء 330 مل', 2, 'water'], ['j', 'عصير برتقال', 5, 'juice'], ['c', 'رقائق بطاطس', 4, 'chips'], ['h', 'لوح شوكولاتة', 6, 'choc', true], ['t', 'مناديل', 7, 'tissue']],
+      cafe: [['q', 'قهوة عربية', 8, 'cup'], ['l', 'لاتيه', 16, 'cup'], ['p', 'كابتشينو', 15, 'cup', true], ['k', 'شاي كرك', 6, 'cup']],
+      ice: [['v', 'فانيلا', 9, 'ice'], ['s', 'شوكولاتة', 9, 'ice', true], ['f', 'فراولة', 10, 'ice'], ['m', 'مخروط مشكّل', 14, 'ice']]
+    };
+    const tints = { grocery: '#56CFE1', cafe: '#FFB547', ice: '#F4A6C8' };
+    const shops = [['grocery', 'البقالة'], ['cafe', 'المقهى'], ['ice', 'الآيس كريم']].map(([id, n]) => {
+      const on = s.shop === id;
+      return { n, icon: icons[id], on: String(on), bg: on ? '#26485A' : 'transparent', fg: on ? '#EEF4F1' : '#93A9B3', pick: () => this.setState({ shop: id }) };
     });
-    const cartCount = catalog.reduce((a, it) => a + (s.cart[it.id] || 0), 0);
-    const cartTotal = catalog.reduce((a, it) => a + (s.cart[it.id] || 0) * it.p, 0);
+    const setQ = (key, q) => this.setState({ cart: { ...s.cart, [key]: Math.max(0, q) }, ordered: false });
+    const items = menu[s.shop].map(([id, n, p, ic, out]) => {
+      const key = s.shop + '.' + id;
+      const q = s.cart[key] || 0;
+      return { n, p, icon: itemIcons[ic], tint: tints[s.shop], q, out: !!out, zero: !out && q === 0, some: !out && q > 0,
+        op: out ? '0.55' : '1', bd: q ? accent : 'transparent',
+        inc: () => setQ(key, q + 1), dec: () => setQ(key, q - 1) };
+    });
+    const all = [];
+    Object.keys(menu).forEach((sh) => menu[sh].forEach(([id, n, p]) => { const q = s.cart[sh + '.' + id] || 0; if (q) all.push([q, p]); }));
+    const cartCount = all.reduce((a, [q]) => a + q, 0);
+    const cartTotal = all.reduce((a, [q, p]) => a + q * p, 0);
+    const lanesX = ['16.66%', '50%', '83.33%'];
+    const obs = s.obs.map((o) => ({ top: o.y + 'px', left: lanesX[o.lane], bar: o.kind === 'bar', cone: o.kind === 'cone' }));
     return {
-      accent, items, cartCount, cartTotal, hasCart: cartCount > 0,
+      accent, shops, items, cartCount, cartTotal, hasCart: cartCount > 0,
+      ordered: s.ordered, confirmOrder: () => this.setState({ ordered: true }),
+      orderLabel: s.ordered ? 'تم الطلب ✓' : 'تأكيد الطلب', orderBg: s.ordered ? '#26485A' : accent, orderFg: s.ordered ? '#EEF4F1' : '#0A1620',
+      cartNote: s.ordered ? 'يُجهَّز الآن · يُضاف لفاتورتك' : 'يُضاف المبلغ لفاتورة التعبئة',
       running: s.running, paused: !s.running,
       toggle: () => this.setState({ running: !s.running }), toggleLabel: s.running ? 'إيقاف مؤقت' : 'استئناف',
       status: done ? 'اكتملت التعبئة' : s.running ? 'جارٍ التعبئة…' : 'متوقفة مؤقتاً',
-      dash: (pct * C).toFixed(1) + ' ' + C,
+      dash: (s.target ? s.sar / s.target * C : 0).toFixed(1) + ' ' + C,
       liters: (s.sar / price).toFixed(1), targetL: (s.target / price).toFixed(1), sar: s.sar.toFixed(2),
       add20: () => this.setState({ target: s.target + 20 }),
       add50: () => this.setState({ target: s.target + 50 }),
       fill: () => this.setState({ target: 132 }),
-      tip: tips[s.tip], tipNo: s.tip + 1, nextTip: () => this.setState({ tip: (s.tip + 1) % tips.length }),
-      score: s.score, tap: () => this.setState({ score: s.score + 5 }),
-      cta: done ? 'إنهاء واستلام الفاتورة' : 'إنهاء التعبئة الآن',
+      gate: done
+        ? { t: 'تم خصم ' + (s.sar + cartTotal).toFixed(2) + ' ر.س · فُتح الحاجز', sub: 'الحاجز أمام الكبينة مفتوح، تفضّل بالتقدم', c: accent, bg: '#1B2E12', bd: '#4C6A1E', deg: '-70deg' }
+        : { t: 'الحاجز أمام الكبينة مغلق', sub: 'يُفتح تلقائياً بعد انتهاء التعبئة وإتمام الدفع', c: '#EEF4F1', bg: '#102230', bd: '#1E3B4B', deg: '0deg' },
+      obs, carLeft: lanesX[s.lane], score: s.score, best: s.best,
+      roadCls: s.game === 'play' ? 'road' : '',
+      showOverlay: s.game !== 'play',
+      overlayTitle: s.game === 'over' ? 'اصطدام! ' + s.score + ' متر' : 'تجاوز الحواجز',
+      overlaySub: s.game === 'over' ? 'ربحت ' + Math.floor(s.score / 10) + ' نقطة ولاء. حاول تحطيم رقمك!' : 'حرّك السيارة يميناً ويساراً لتفادي الحواجز والأقماع',
+      overlayBtn: s.game === 'over' ? 'العب مجدداً' : 'ابدأ اللعب',
+      startGame: () => this.startGame(),
+      left: () => { if (s.game === 'play') this.setState({ lane: Math.max(0, s.lane - 1) }); },
+      right: () => { if (s.game === 'play') this.setState({ lane: Math.min(2, s.lane + 1) }); },
+      cta: done ? 'الفاتورة والمغادرة' : 'إنهاء التعبئة الآن',
       ctaBg: done ? accent : '#16303F', ctaFg: done ? '#0A1620' : '#EEF4F1'
     };
   }

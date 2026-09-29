@@ -15,14 +15,18 @@ a{color:#C8F03C}a:hover{color:#E2FF7A}
 button{font-family:inherit}
 .scroll::-webkit-scrollbar{display:none}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,181,71,.55)}70%{box-shadow:0 0 0 12px rgba(255,181,71,0)}100%{box-shadow:0 0 0 0 rgba(255,181,71,0)}}
+@keyframes me{0%{transform:scale(.6);opacity:.8}100%{transform:scale(2.4);opacity:0}}
+@keyframes dashmove{to{stroke-dashoffset:-24}}
 @keyframes rise{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
 .pulse{animation:pulse 2s infinite}
+.me{animation:me 1.8s ease-out infinite}
+.route{animation:dashmove 1s linear infinite}
 .rise{animation:rise .45s ease-out both}
 </style>
 </helmet>
 <div dir="rtl" style="width: 390px; height: 844px; background: #0A1620; position: relative; overflow: hidden; display: flex; flex-direction: column">
 
-<div class="scroll" style="flex-grow: 1; overflow-y: auto; scrollbar-width: none; padding: 26px 20px 176px; display: flex; flex-direction: column; gap: 18px">
+<div class="scroll" style="flex-grow: 1; overflow-y: auto; scrollbar-width: none; padding: 26px 20px 176px; display: flex; flex-direction: column; gap: 16px">
 
 <div style="display: flex; align-items: center; justify-content: space-between">
 <div style="display: flex; align-items: center; gap: 12px">
@@ -40,65 +44,107 @@ button{font-family:inherit}
 </button>
 </div>
 
-<div class="rise" style="border-radius: 28px; background: #102230; border: 1px solid #1E3B4B; padding: 18px; display: flex; gap: 16px; align-items: center">
-<div style="position: relative; width: 112px; height: 112px; flex-shrink: 0">
-<svg width="112" height="112" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" fill="none" stroke="#1E3B4B" stroke-width="12"></circle><circle cx="60" cy="60" r="50" fill="none" stroke="#FFB547" stroke-width="12" stroke-linecap="round" stroke-dasharray="44 314" transform="rotate(-90 60 60)"></circle></svg>
-<div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center">
-<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 30px; line-height: 1">14%</span>
-<span style="font-size: 12px; color: #93A9B3; margin-top: 4px">الخزان</span>
+<div class="rise" style="border-radius: 28px; background: #102230; border: 1px solid #1E3B4B; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<div style="width: 56px; height: 56px; border-radius: 18px; background: linear-gradient(145deg, #1F3E4F, #0E1E29); border: 1px solid #2C5163; display: flex; align-items: center; justify-content: center; color: #EEF4F1; flex-shrink: 0">
+<sc-if value="{{car.toyota}}" hint-placeholder-val="{{ true }}"><svg width="38" height="26" viewBox="0 0 36 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-label="شعار تويوتا"><ellipse cx="18" cy="12" rx="16" ry="10.5"></ellipse><ellipse cx="18" cy="12.6" rx="5" ry="9.6"></ellipse><ellipse cx="18" cy="7.2" rx="11.5" ry="4.4"></ellipse></svg></sc-if>
+<sc-if value="{{car.merc}}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-label="شعار مرسيدس"><circle cx="12" cy="12" r="10.5"></circle><path d="M12 1.8 13.1 11.2 20.8 17 12 13.3 3.2 17 10.9 11.2Z" fill="currentColor" fill-opacity=".9"></path></svg></sc-if>
+<sc-if value="{{car.hyundai}}" hint-placeholder-val="{{ false }}"><svg width="38" height="26" viewBox="0 0 36 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-label="شعار هيونداي"><ellipse cx="18" cy="12" rx="16" ry="10.5"></ellipse><path d="M12.5 5.5 10 18.5M25.5 5.5 23 18.5M11.3 12.6c3.8-2.2 9.4-2.6 13.2-1"></path></svg></sc-if>
 </div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">{{car.name}}</span>
+<span style="font-size: 12px; color: #93A9B3">{{car.plate}} · متصل بحاسوب السيارة</span>
 </div>
-<div style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1">
-<div class="pulse" style="align-self: flex-start; font-size: 12px; font-weight: 600; color: #0A1620; background: #FFB547; border-radius: 999px; padding: 3px 10px">وقود منخفض</div>
-<div style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 18px; line-height: 1.4">يكفي لقرابة 52 كم</div>
-<div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #93A9B3">
-<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#56CFE1" stroke-width="2" stroke-linecap="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><circle cx="12" cy="20" r="1"></circle></svg>
-متصل بحاسوب السيارة · كامري 2024
+<button onClick="{{nextCar}}" style="height: 36px; padding: 0 12px; border-radius: 12px; border: 1px solid #26485A; background: #16303F; color: #EEF4F1; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"></path></svg>سياراتي</button>
+</div>
+<div style="display: flex; align-items: center; gap: 14px">
+<div style="position: relative; width: 84px; height: 84px; flex-shrink: 0">
+<svg width="84" height="84" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" fill="none" stroke="#1E3B4B" stroke-width="13"></circle><circle cx="60" cy="60" r="50" fill="none" stroke="#FFB547" stroke-width="13" stroke-linecap="round" stroke-dasharray="{{car.dash}}" transform="rotate(-90 60 60)"></circle></svg>
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: Alexandria, sans-serif; font-weight: 800; font-size: 20px">{{car.tank}}%</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1">
+<div style="display: flex; gap: 6px; align-items: center">
+<span class="pulse" style="font-size: 11px; font-weight: 600; color: #0A1620; background: #FFB547; border-radius: 999px; padding: 3px 9px">وقود منخفض</span>
+<span style="font-size: 12px; color: #A9BCC4">يكفي لقرابة {{car.range}} كم</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; background: #16303F; padding: 8px 10px">
+<span style="min-width: 34px; height: 26px; padding: 0 6px; box-sizing: border-box; border-radius: 8px; background: {{car.fuelColor}}; color: #0A1620; display: flex; align-items: center; justify-content: center; font-family: Alexandria, sans-serif; font-weight: 800; font-size: 13px">{{car.fuel}}</span>
+<span style="font-size: 12px; color: #C9D6DB; line-height: 1.4">نوع الوقود محدد تلقائياً حسب نوع وموديل السيارة</span>
+</div>
 </div>
 </div>
 </div>
 
-<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px">
-<h2 style="margin: 0; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 18px">أقرب المحطات لك</h2>
-<span style="font-size: 13px; color: #93A9B3">مرتبة حسب وقت الانتظار</span>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 2px">
+<h2 style="margin: 0; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 18px">المحطات القريبة</h2>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=%D9%85%D8%AD%D8%B7%D8%A9+%D9%88%D9%82%D9%88%D8%AF" style="font-size: 12px; color: #56CFE1; text-decoration: none; display: flex; align-items: center; gap: 4px">فتح في خرائط Google<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg></a>
 </div>
 
-<div class="scroll" style="display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin: 0 -20px; padding: 0 20px">
+<div style="position: relative; height: 230px; border-radius: 26px; overflow: hidden; border: 1px solid #1E3B4B; background: #0E1D29">
+<svg width="350" height="230" viewBox="0 0 350 230" style="position: absolute; inset: 0" aria-hidden="true">
+<rect x="0" y="0" width="350" height="230" fill="#0E1D29"></rect>
+<rect x="100" y="70" width="65" height="40" rx="4" fill="#12303A"></rect>
+<rect x="10" y="130" width="70" height="80" rx="4" fill="#132634"></rect>
+<rect x="265" y="130" width="75" height="80" rx="4" fill="#132634"></rect>
+<rect x="190" y="10" width="45" height="40" rx="4" fill="#132634"></rect>
+<path d="M0 125H350" stroke="#24404F" stroke-width="9"></path>
+<path d="M250 0V230" stroke="#2C4B5A" stroke-width="13"></path>
+<path d="M250 0V230" stroke="#3E6070" stroke-width="1" stroke-dasharray="6 6"></path>
+<path d="M0 60H350M90 0V230M175 125V230M305 0V125M0 190H250" stroke="#1B3443" stroke-width="5"></path>
+<path d="{{routeD}}" fill="none" stroke="{{accent}}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".25"></path>
+<path class="route" d="{{routeD}}" fill="none" stroke="{{accent}}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 4"></path>
+<text x="258" y="222" fill="#6F8C99" font-size="9" font-family="IBM Plex Sans Arabic">طريق الملك فهد</text>
+<text x="8" y="120" fill="#5E7B88" font-size="9" font-family="IBM Plex Sans Arabic">طريق العليا</text>
+</svg>
+<div style="position: absolute; left: 169px; top: 199px; width: 12px; height: 12px">
+<span class="me" style="position: absolute; inset: 0; border-radius: 50%; background: #56CFE1"></span>
+<span style="position: absolute; inset: 0; border-radius: 50%; background: #56CFE1; border: 2px solid #EEF4F1; box-sizing: border-box"></span>
+</div>
 <sc-for list="{{stations}}" as="st" hint-placeholder-count="3">
-<button onClick="{{st.pick}}" aria-pressed="{{st.on}}" style="flex-shrink: 0; width: 210px; min-height: 132px; border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; cursor: pointer; color: #EEF4F1; font-family: inherit; transition: all .25s; background: {{st.bg}}; border: 1.5px solid {{st.border}}">
+<button onClick="{{st.pick}}" aria-label="{{st.name}}" style="position: absolute; left: {{st.px}}; top: {{st.py}}; height: 30px; padding: 0 9px; border-radius: 10px; border: 1.5px solid {{st.pinBd}}; background: {{st.pinBg}}; color: {{st.pinFg}}; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; transform: scale({{st.scale}}); transform-origin: bottom center; transition: all .25s; box-shadow: 0 6px 16px rgba(0,0,0,.35)">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v17M4 22h11M15 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3"></path></svg>{{st.wait}}
+</button>
+</sc-for>
+<div style="position: absolute; top: 10px; left: 10px; font-size: 10px; color: #A9BCC4; background: rgba(10,22,32,.8); border-radius: 8px; padding: 3px 8px">خرائط Google · مباشر</div>
+<button aria-label="موقعي" style="position: absolute; bottom: 10px; right: 10px; width: 36px; height: 36px; border-radius: 12px; border: 1px solid #26485A; background: #102230; color: #56CFE1; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg></button>
+</div>
+
+<div class="scroll" style="display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; margin: 0 -20px; padding: 0 20px">
+<sc-for list="{{stations}}" as="st" hint-placeholder-count="3">
+<button onClick="{{st.pick}}" aria-pressed="{{st.on}}" style="flex-shrink: 0; width: 196px; border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; cursor: pointer; color: #EEF4F1; font-family: inherit; transition: all .25s; background: {{st.bg}}; border: 1.5px solid {{st.border}}">
 <div style="display: flex; align-items: center; justify-content: space-between; width: 100%">
-<span style="font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; color: #0A1620; background: {{st.crowdColor}}">ازدحام {{st.crowd}}</span>
+<span style="font-size: 11px; font-weight: 600; border-radius: 999px; padding: 3px 9px; color: #0A1620; background: {{st.crowdColor}}">ازدحام {{st.crowd}}</span>
 <span style="font-size: 12px; color: #93A9B3">{{st.dist}}</span>
 </div>
-<div style="font-family: Alexandria, sans-serif; font-weight: 600; font-size: 15px; text-align: right; line-height: 1.4">{{st.name}}</div>
-<div style="display: flex; gap: 14px; font-size: 12px; color: #A9BCC4">
-<span>كبائن شاغرة <b style="color: #EEF4F1">{{st.free}}</b></span>
-<span>انتظار <b style="color: #EEF4F1">{{st.wait}}</b></span>
-</div>
+<div style="font-family: Alexandria, sans-serif; font-weight: 600; font-size: 14px; text-align: right; line-height: 1.4">{{st.name}}</div>
+<div style="display: flex; gap: 6px; align-items: center; font-size: 12px"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{st.myC}}"></span><span style="color: {{st.myC}}; font-weight: 600">{{st.myT}}</span><span style="color: #93A9B3">· شاغرة {{st.free}}</span></div>
 </button>
 </sc-for>
 </div>
 
-<div class="rise" style="border-radius: 28px; background: #102230; border: 1px solid #1E3B4B; padding: 18px; display: flex; flex-direction: column; gap: 16px">
+<div class="rise" style="border-radius: 26px; background: #102230; border: 1px solid #1E3B4B; padding: 16px; display: flex; flex-direction: column; gap: 12px">
 <div style="display: flex; align-items: center; justify-content: space-between">
-<div style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">الوقود المتوفر الآن</div>
+<div style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">توفر وقود سيارتك</div>
 <span style="font-size: 12px; color: #93A9B3">{{sel.name}}</span>
 </div>
-<sc-for list="{{sel.fuel}}" as="f" hint-placeholder-count="3">
 <div style="display: flex; align-items: center; gap: 12px">
-<span style="width: 44px; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">{{f.t}}</span>
-<div style="flex-grow: 1; height: 10px; border-radius: 5px; background: #1E3B4B; overflow: hidden"><div style="height: 100%; border-radius: 5px; transition: width .5s; width: {{f.w}}; background: {{f.c}}"></div></div>
-<span style="width: 38px; font-size: 13px; color: #A9BCC4; text-align: left">{{f.p}}%</span>
+<span style="width: 52px; height: 52px; border-radius: 16px; background: {{car.fuelColor}}; color: #0A1620; display: flex; align-items: center; justify-content: center; font-family: Alexandria, sans-serif; font-weight: 800; font-size: 18px; flex-shrink: 0">{{car.fuel}}</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="font-weight: 600; color: {{sel.myC}}">{{sel.myT}}</span><span style="color: #A9BCC4">{{sel.myP}}%</span></div>
+<div style="height: 10px; border-radius: 5px; background: #1E3B4B; overflow: hidden"><div style="height: 100%; border-radius: 5px; transition: width .5s; width: {{sel.myW}}; background: {{sel.myC}}"></div></div>
 </div>
-</sc-for>
+</div>
+<sc-if value="{{sel.out}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; gap: 8px; align-items: center; border-radius: 12px; background: #3A1F1B; color: #FFB3A6; padding: 10px 12px; font-size: 12px; line-height: 1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>وقود سيارتك غير متوفر هنا حالياً؛ اختر محطة أخرى من الخريطة.</div>
+</sc-if>
 </div>
 
-<div style="border-radius: 28px; background: #102230; border: 1px solid #1E3B4B; padding: 18px; display: flex; flex-direction: column; gap: 14px">
-<div style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">الازدحام في المرافق</div>
+<div style="border-radius: 26px; background: #102230; border: 1px solid #1E3B4B; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">الازدحام في المرافق</div>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
 <sc-for list="{{sel.fac}}" as="fc" hint-placeholder-count="4">
-<div style="border-radius: 18px; background: #16303F; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 14px; font-weight: 600">{{fc.n}}</span><span style="font-size: 12px; color: {{fc.c}}">{{fc.lvl}}</span></div>
+<div style="border-radius: 16px; background: #16303F; padding: 11px 13px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 13px; font-weight: 600">{{fc.n}}</span><span style="font-size: 12px; color: {{fc.c}}">{{fc.lvl}}</span></div>
 <div style="height: 6px; border-radius: 3px; background: #0A1620; overflow: hidden"><div style="height: 100%; border-radius: 3px; transition: width .5s; width: {{fc.w}}; background: {{fc.c}}"></div></div>
 </div>
 </sc-for>
@@ -125,27 +171,49 @@ button{font-family:inherit}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  constructor(props) { super(props); this.state = { picked: 'a' }; }
+  constructor(props) { super(props); this.state = { picked: 'a', car: 0 }; }
   renderVals() {
     const accent = this.props.accent ?? '#C8F03C';
+    const cars = [
+      { brand: 'toyota', name: 'تويوتا كامري 2024', plate: '1234 أ ب ج', fuel: '91', tank: 14, range: 52 },
+      { brand: 'merc', name: 'مرسيدس C200 2023', plate: '5678 د هـ و', fuel: '95', tank: 18, range: 64 },
+      { brand: 'toyota', name: 'تويوتا هايلكس ديزل 2022', plate: '9012 ر س ص', fuel: 'ديزل', tank: 11, range: 70 },
+      { brand: 'hyundai', name: 'هيونداي توسان 2025', plate: '3456 ط ع ق', fuel: '91', tank: 16, range: 58 }
+    ];
+    const fuelColors = { '91': '#3DDC97', '95': '#FF7A66', 'ديزل': '#FFB547' };
+    const c = cars[this.state.car];
+    const car = { ...c, toyota: c.brand === 'toyota', merc: c.brand === 'merc', hyundai: c.brand === 'hyundai',
+      fuelColor: fuelColors[c.fuel], dash: (c.tank / 100 * 314).toFixed(0) + ' 314' };
     const lvl = { low: ['منخفض', accent], mid: ['متوسط', '#FFB547'], high: ['مرتفع', '#FF7A66'] };
     const facC = (w) => w < 40 ? ['هادئ', accent] : w < 70 ? ['متوسط', '#FFB547'] : ['مزدحم', '#FF7A66'];
+    const stock = (p) => p === 0 ? ['نفد', '#FF7A66'] : p < 30 ? ['كمية محدودة', '#FFB547'] : ['متوفر', accent];
     const raw = [
-      { id: 'a', name: 'محطة طريق الملك فهد', short: 'الملك فهد', dist: '1.2 كم', l: 'low', free: '6/8', wait: '2 د', fuel: [['91', 82], ['95', 64], ['ديزل', 45]], fac: [['البقالة', 30], ['المصلى', 55], ['دورات المياه', 20], ['المقهى', 82]] },
-      { id: 'b', name: 'محطة حي الياسمين', short: 'الياسمين', dist: '2.8 كم', l: 'mid', free: '3/6', wait: '6 د', fuel: [['91', 58], ['95', 22], ['ديزل', 70]], fac: [['البقالة', 62], ['المصلى', 35], ['دورات المياه', 48], ['المقهى', 40]] },
-      { id: 'c', name: 'محطة طريق أنس بن مالك', short: 'أنس بن مالك', dist: '4.1 كم', l: 'high', free: '1/8', wait: '14 د', fuel: [['91', 35], ['95', 80], ['ديزل', 15]], fac: [['البقالة', 88], ['المصلى', 74], ['دورات المياه', 66], ['المقهى', 91]] }
+      { id: 'a', name: 'محطة طريق الملك فهد', short: 'الملك فهد', dist: '1.2 كم', l: 'low', free: '6/8', wait: '2 د', x: 250, y: 95, route: 'M175 205V125H250V95', fuel: { '91': 82, '95': 64, 'ديزل': 0 }, fac: [['البقالة', 30], ['المصلى', 55], ['دورات المياه', 20], ['المقهى', 82]] },
+      { id: 'b', name: 'محطة حي الياسمين', short: 'الياسمين', dist: '2.8 كم', l: 'mid', free: '3/6', wait: '6 د', x: 90, y: 60, route: 'M175 205V125H90V60', fuel: { '91': 58, '95': 22, 'ديزل': 70 }, fac: [['البقالة', 62], ['المصلى', 35], ['دورات المياه', 48], ['المقهى', 40]] },
+      { id: 'c', name: 'محطة طريق أنس بن مالك', short: 'أنس بن مالك', dist: '4.1 كم', l: 'high', free: '1/8', wait: '14 د', x: 305, y: 28, route: 'M175 205V125H305V28', fuel: { '91': 35, '95': 80, 'ديزل': 25 }, fac: [['البقالة', 88], ['المصلى', 74], ['دورات المياه', 66], ['المقهى', 91]] }
     ];
     const stations = raw.map((s) => {
       const on = s.id === this.state.picked;
+      const p = s.fuel[c.fuel];
       return { ...s, crowd: lvl[s.l][0], crowdColor: lvl[s.l][1],
+        myT: c.fuel + ' ' + stock(p)[0], myC: stock(p)[1],
         pick: () => this.setState({ picked: s.id }),
-        on: on ? 'true' : 'false', bg: on ? '#16303F' : '#102230', border: on ? accent : '#1E3B4B' };
+        on: on ? 'true' : 'false', bg: on ? '#16303F' : '#102230', border: on ? accent : '#1E3B4B',
+        px: (s.x - 26) + 'px', py: (s.y - 30) + 'px', scale: on ? '1.12' : '1',
+        pinBg: on ? accent : '#102230', pinFg: on ? '#0A1620' : '#EEF4F1', pinBd: on ? accent : p === 0 ? '#FF7A66' : '#2C5163' };
     });
     const s = raw.find((x) => x.id === this.state.picked);
-    const sel = { name: s.name, short: s.short,
-      fuel: s.fuel.map(([t, p]) => ({ t, p, w: p + '%', c: p < 30 ? '#FF7A66' : p < 60 ? '#FFB547' : accent })),
+    const myP = s.fuel[c.fuel];
+    const sel = { name: s.name, short: s.short, myP, myW: myP + '%', myT: stock(myP)[0], myC: stock(myP)[1], out: myP === 0,
       fac: s.fac.map(([n, w]) => ({ n, lvl: facC(w)[0], c: facC(w)[1], w: w + '%' })) };
-    return { accent, stations, sel };
+    return { accent, car, stations, sel, routeD: s.route,
+      nextCar: () => {
+        const next = (this.state.car + 1) % cars.length;
+        const f = cars[next].fuel;
+        const cur = raw.find((x) => x.id === this.state.picked);
+        const picked = cur.fuel[f] > 0 ? cur.id : raw.find((x) => x.fuel[f] > 0).id;
+        this.setState({ car: next, picked });
+      } };
   }
 }
 </script>

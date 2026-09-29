@@ -37,17 +37,20 @@ button{font-family:inherit}
 </div>
 
 <section style="display: flex; flex-direction: column; gap: 12px">
-<h2 style="margin: 0; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">نوع الوقود</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
-<sc-for list="{{fuels}}" as="f" hint-placeholder-count="3">
-<button onClick="{{f.pick}}" aria-pressed="{{f.on}}" style="border-radius: 22px; padding: 16px 10px 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: {{f.fg}}; background: {{f.bg}}; border: 1.5px solid {{f.bd}}; transition: all .2s">
-<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 26px; line-height: 1">{{f.t}}</span>
-<span style="font-size: 12px; opacity: .8">{{f.label}}</span>
-<span style="font-size: 13px; font-weight: 600">{{f.price}} ر.س/لتر</span>
-</button>
-</sc-for>
+<h2 style="margin: 0; font-family: Alexandria, sans-serif; font-weight: 700; font-size: 16px">سيارتك ونوع الوقود</h2>
+<div style="border-radius: 24px; background: #102230; border: 1px solid #1E3B4B; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 12px">
+<div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(145deg, #1F3E4F, #0E1E29); border: 1px solid #2C5163; display: flex; align-items: center; justify-content: center; color: #EEF4F1; flex-shrink: 0"><svg width="36" height="24" viewBox="0 0 36 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-label="شعار تويوتا"><ellipse cx="18" cy="12" rx="16" ry="10.5"></ellipse><ellipse cx="18" cy="12.6" rx="5" ry="9.6"></ellipse><ellipse cx="18" cy="7.2" rx="11.5" ry="4.4"></ellipse></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-family: Alexandria, sans-serif; font-weight: 700; font-size: 15px">تويوتا كامري 2024</span><span style="font-size: 12px; color: #93A9B3">1234 أ ب ج · سعة الخزان 60 لتر</span></div>
+<a href="Home.dc.html" style="font-size: 12px; color: #56CFE1; text-decoration: none; padding: 8px 4px">تغيير</a>
 </div>
-<div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #93A9B3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#56CFE1" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>اقترحنا 91 حسب بيانات سيارتك</div>
+<div style="display: flex; align-items: center; gap: 12px; border-radius: 18px; background: {{accent}}; color: #0A1620; padding: 12px 14px">
+<span style="font-family: Alexandria, sans-serif; font-weight: 800; font-size: 30px; line-height: 1">91</span>
+<span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-weight: 700; font-size: 14px">بنزين 91 · {{price}} ر.س/لتر</span><span style="font-size: 12px; opacity: .8">محدد مسبقاً حسب نوع وموديل سيارتك</span></span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="مقفل"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #93A9B3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#56CFE1" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"></path></svg>متوفر في المحطة المختارة · حسب توصية الشركة المصنعة</div>
+</div>
 </section>
 
 <section style="display: flex; flex-direction: column; gap: 12px">
@@ -91,7 +94,7 @@ button{font-family:inherit}
 </section>
 
 <button onClick="{{togglePre}}" aria-pressed="{{preStr}}" style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 22px; cursor: pointer; text-align: right; color: #EEF4F1; background: #13303A; border: 1px solid #26485A">
-<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 700; font-size: 15px">الدفع المسبق</span><span style="font-size: 12px; color: #A9BCC4; line-height: 1.6">يفتح حاجز الكبينة تلقائياً عند التعرف على لوحتك، دون توقف.</span></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 700; font-size: 15px">الدفع المسبق</span><span style="font-size: 12px; color: #A9BCC4; line-height: 1.6">يُخصم المبلغ فور انتهاء التعبئة، ويفتح الحاجز أمام الكبينة تلقائياً دون توقف.</span></span>
 <span style="width: 52px; height: 30px; border-radius: 15px; background: {{tBg}}; position: relative; flex-shrink: 0; transition: background .2s"><span style="position: absolute; top: 3px; right: {{tKnob}}; width: 24px; height: 24px; border-radius: 12px; background: #EEF4F1; transition: right .2s"></span></span>
 </button>
 
@@ -106,17 +109,11 @@ button{font-family:inherit}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C8F03C","options":["#C8F03C","#56CFE1","#FFB547"]},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  constructor(props) { super(props); this.state = { fuel: '91', mode: 'amount', amount: 100, pay: 'apple', pre: true }; }
+  constructor(props) { super(props); this.state = { mode: 'amount', amount: 100, pay: 'apple', pre: true }; }
   renderVals() {
     const accent = this.props.accent ?? '#C8F03C';
     const st = this.state;
     const prices = { '91': 2.18, '95': 2.33, 'ديزل': 1.66 };
-    const labels = { '91': 'أخضر', '95': 'أحمر', 'ديزل': 'ديزل' };
-    const fuels = Object.keys(prices).map((t) => {
-      const on = st.fuel === t;
-      return { t, label: labels[t], price: prices[t].toFixed(2), on: String(on), pick: () => this.setState({ fuel: t }),
-        bg: on ? accent : '#102230', fg: on ? '#0A1620' : '#EEF4F1', bd: on ? accent : '#1E3B4B' };
-    });
     const modes = [['amount', 'بمبلغ محدد'], ['full', 'تعبئة كاملة']].map(([id, t]) => {
       const on = st.mode === id;
       return { t, on: String(on), pick: () => this.setState({ mode: id }), bg: on ? '#26485A' : 'transparent', fg: on ? '#EEF4F1' : '#93A9B3' };
@@ -133,13 +130,13 @@ class Component extends DCLogic {
       const on = st.pay === p.id;
       return { ...p, on: String(on), pick: () => this.setState({ pay: p.id }), bd: on ? accent : '#1E3B4B', dot: on ? accent : 'transparent' };
     });
-    const price = prices[st.fuel];
+    const price = prices['91'];
     const isAmount = st.mode === 'amount';
     const liters = (st.amount / price).toFixed(1);
-    const summary = isAmount ? ('وقود ' + st.fuel + ' · ' + liters + ' لتر') : ('وقود ' + st.fuel + ' · حتى الامتلاء');
+    const summary = isAmount ? ('بنزين 91 · ' + liters + ' لتر') : ('بنزين 91 · حتى الامتلاء');
     const cta = st.pre ? (isAmount ? 'ادفع ' + st.amount + ' ر.س وانطلق' : 'احجز وانطلق للمحطة') : 'تأكيد والدفع عند الكبينة';
     return {
-      accent, fuels, modes, chips, pays, isAmount, isFull: !isAmount, amount: st.amount, liters, summary, cta,
+      accent, price: price.toFixed(2), modes, chips, pays, isAmount, isFull: !isAmount, amount: st.amount, liters, summary, cta,
       fullHold: 200,
       inc: () => this.setState({ amount: Math.min(500, st.amount + 10) }),
       dec: () => this.setState({ amount: Math.max(10, st.amount - 10) }),
