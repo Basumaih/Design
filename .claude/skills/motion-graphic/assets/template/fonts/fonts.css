@@ -1,0 +1,9 @@
+/* Thmanyah (ثمانية) — https://font.thmanyah.com
+   Font files are NOT committed (license forbids redistribution).
+   Download the family from font.thmanyah.com and place the woff2 files next to this CSS
+   with the file names below. */
+@font-face { font-family: "Thmanyah Sans"; src: url(thmanyah-sans-Medium.woff2) format("woff2"); font-weight: 500; }
+@font-face { font-family: "Thmanyah Sans"; src: url(thmanyah-sans-Bold.woff2) format("woff2"); font-weight: 700; }
+@font-face { font-family: "Thmanyah Sans"; src: url(thmanyah-sans-Black.woff2) format("woff2"); font-weight: 900; }
+@font-face { font-family: "Thmanyah Serif Display"; src: url(thmanyah-serif-display-Bold.woff2) format("woff2"); font-weight: 700; }
+@font-face { font-family: "Thmanyah Serif Display"; src: url(thmanyah-serif-display-Black.woff2) format("woff2"); font-weight: 900; }
