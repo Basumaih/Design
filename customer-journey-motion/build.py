@@ -28,16 +28,30 @@ tts = sherpa_onnx.OfflineTts(sherpa_onnx.OfflineTtsConfig(
             data_dir=str(VOICE / "espeak-ng-data"), length_scale=LENGTH_SCALE),
         num_threads=4)))
 
+def load_recording(path, sr):
+    """Decode a human recording (any format ffmpeg reads) to mono float32 at sr."""
+    raw = subprocess.run([FFMPEG, "-loglevel", "error", "-i", str(path), "-ac", "1", "-ar", str(sr),
+                          "-f", "s16le", "-"], check=True, capture_output=True).stdout
+    return np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768
+
+
 segs = json.loads((HERE / "narration.json").read_text())
-SR = None
+SR = 22050
 for s in segs:
-    a = tts.generate(s["tts"], sid=0, speed=1.0)
-    SR = a.sample_rate
-    x = np.array(a.samples, dtype=np.float32)
+    # a recorded line in voice/<id>.<ext> replaces the synthetic voice for that line
+    rec = sorted((HERE / "voice").glob(f"{s['id']}.*")) if (HERE / "voice").is_dir() else []
+    if rec:
+        x = load_recording(rec[0], SR)
+        print("recorded:", rec[0].name)
+    else:
+        a = tts.generate(s["tts"], sid=0, speed=1.0)
+        x = np.array(a.samples, dtype=np.float32)
+        if a.sample_rate != SR:
+            x = np.interp(np.arange(0, len(x), a.sample_rate / SR), np.arange(len(x)), x).astype(np.float32)
     # trim silence at both ends
     win = SR // 50
     env = np.array([np.abs(x[i:i + win]).max() for i in range(0, len(x), win)])
-    idx = np.where(env > 0.02)[0]
+    idx = np.where(env > 0.04 * np.abs(x).max())[0]  # relative, so quiet recordings trim too
     x = x[max(0, idx[0] - 2) * win: min(len(env), idx[-1] + 3) * win]
     s["audio"], s["dur"] = x, len(x) / SR
 
