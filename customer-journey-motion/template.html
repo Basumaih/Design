@@ -59,8 +59,8 @@ svg text{font-family:var(--font)}
 .s2-quote{font:900 90px/1.4 var(--font);width:1500px;text-wrap:balance;margin:0}
 .mark{background:linear-gradient(transparent 58%,var(--lime) 58%,var(--lime) 92%,transparent 92%);background-repeat:no-repeat;background-size:var(--w,0%) 100%;background-position:right}
 /* S3 */
-.s3-text{right:110px;top:110px;width:860px;display:flex;flex-direction:column;gap:26px}
-.chal{display:flex;align-items:center;gap:26px;font:700 36px/1.4 var(--font);transition:none}
+.s3-text{right:110px;top:110px;width:800px;display:flex;flex-direction:column;gap:26px}
+.chal{display:flex;align-items:center;gap:26px;font:700 33px/1.4 var(--font)}
 .chal i{flex:none;width:44px;height:44px;border-radius:50%;background:var(--stop);box-shadow:0 0 0 var(--ring,8px) rgba(226,59,62,.18)}
 .chal b{font:900 22px var(--font);color:var(--stop);display:block;letter-spacing:.02em}
 .s3-art{left:70px;top:110px;width:880px;height:860px;border-radius:36px;background:#e9ece5;overflow:hidden}
@@ -257,8 +257,8 @@ svg text{font-family:var(--font)}
       <path id="link1" d="M290 480 H400" stroke="#1c9a52" stroke-width="10" stroke-dasharray="16 14" stroke-linecap="round"/>
       <path id="link2" d="M470 480 H550" stroke="#1c9a52" stroke-width="10" stroke-dasharray="16 14" stroke-linecap="round"/>
       <g id="breakX" transform="translate(435 480)"><circle r="36" fill="#e23b3e"/><path d="M-14 -14 L14 14 M14 -14 L-14 14" stroke="#fff" stroke-width="9" stroke-linecap="round"/></g>
-      <g class="qb" transform="translate(120 110)"><rect width="330" height="66" rx="22" fill="#fff"/><text x="165" y="43" text-anchor="middle" font-size="28" font-weight="700" fill="#14222a">هل يتوفر وقود ٩٥؟</text></g>
-      <g class="qb" transform="translate(420 190)"><rect width="340" height="66" rx="22" fill="#fff"/><text x="170" y="43" text-anchor="middle" font-size="28" font-weight="700" fill="#14222a">كم مدة الانتظار؟</text></g>
+      <g class="qb" transform="translate(330 100)"><rect width="330" height="66" rx="22" fill="#fff"/><text x="165" y="43" text-anchor="middle" font-size="28" font-weight="700" fill="#14222a">هل يتوفر وقود ٩٥؟</text></g>
+      <g class="qb" transform="translate(480 190)"><rect width="340" height="66" rx="22" fill="#fff"/><text x="170" y="43" text-anchor="middle" font-size="28" font-weight="700" fill="#14222a">كم مدة الانتظار؟</text></g>
       <g class="qb" transform="translate(150 700)"><rect width="330" height="66" rx="22" fill="#fff"/><text x="165" y="43" text-anchor="middle" font-size="28" font-weight="700" fill="#14222a">أي كبينة شاغرة؟</text></g>
     </svg>
     <!-- V4 crowd management -->
@@ -267,7 +267,7 @@ svg text{font-family:var(--font)}
       <g fill="#c4cbbf"><rect x="130" y="170" width="170" height="560" rx="12"/><rect x="355" y="170" width="170" height="560" rx="12"/><rect x="580" y="170" width="170" height="560" rx="12"/></g>
       <rect x="60" y="730" width="760" height="110" fill="#3a474f"/>
       <g id="loadBars"></g>
-      <g transform="translate(40 40)"><rect width="200" height="96" rx="14" fill="#14222a"/><rect x="92" y="96" width="16" height="40" fill="#14222a"/><text x="100" y="66" text-anchor="middle" font-size="54" font-weight="900" fill="#f2b632">؟</text></g>
+      <g transform="translate(690 14)"><rect width="160" height="84" rx="14" fill="#14222a"/><text x="80" y="62" text-anchor="middle" font-size="54" font-weight="900" fill="#f2b632">؟</text></g>
       <g id="crowdCars"></g><g id="crowdQ"></g>
     </svg>
     <!-- V5 low-skill manual service -->
@@ -283,10 +283,10 @@ svg text{font-family:var(--font)}
         <rect x="-20" y="-40" width="40" height="56" rx="12" fill="#1c9a52"/>
         <rect id="legL" x="-16" y="12" width="12" height="40" rx="6" fill="#14222a"/><rect id="legR" x="4" y="12" width="12" height="40" rx="6" fill="#14222a"/>
       </g>
-      <g id="waitBubble"><rect x="120" y="60" width="380" height="70" rx="24" fill="#fff"/><text x="310" y="106" text-anchor="middle" font-size="30" font-weight="700" fill="#14222a">بانتظار العامل…</text></g>
+      <g id="waitBubble"><rect x="260" y="40" width="380" height="70" rx="24" fill="#fff"/><text x="450" y="86" text-anchor="middle" font-size="30" font-weight="700" fill="#14222a">بانتظار العامل…</text></g>
       <g transform="translate(560 690)"><rect width="280" height="110" rx="18" fill="#14222a"/><text x="140" y="44" text-anchor="middle" font-size="24" font-weight="500" fill="#f4f7ee">سيارات في الطابور</text><text id="qCount" x="140" y="92" text-anchor="middle" font-size="40" font-weight="900" fill="#ff8b8d">٣</text></g>
     </svg>
-    <div class="abs clock"><span>وقت الانتظار</span><b id="waitClock">00:00</b></div>
+    <div class="abs clock" id="clockBox"><span>وقت الانتظار</span><b id="waitClock">00:00</b></div>
   </div>
 </section>
 
@@ -599,7 +599,7 @@ for (let i=0;i<34;i++){
   chaos.push({g: useCar(chaosG, palette[i%palette.length], 1.35), tx, ty, fx: tx+(rnd()-.5)*300, fy: 950+rnd()*200, a:(rnd()-.5)*160, delay:rnd()*4, ph:rnd()*6});
 }
 const pings = []; for (let i=0;i<7;i++){ pings.push({c:mk('circle',{r:20,fill:'none',stroke:'#e23b3e','stroke-width':6},pingG), x:100+rnd()*680, y:170+rnd()*600, o:rnd()*2}); }
-const waitClock = document.getElementById('waitClock');
+const waitClock = document.getElementById('waitClock'), clockBox = document.getElementById('clockBox');
 // V2
 const longRoute = document.getElementById('longRoute'), routeCar = document.getElementById('routeCar'), distTxt = document.getElementById('distTxt');
 const LR = longRoute.getTotalLength();
@@ -692,11 +692,12 @@ function render(t){
     for (const c of chals){
       const appear = eo(clamp((t-c.s)/0.6)), active = t>=c.s && t<c.e;
       c.el.style.opacity = t<c.s ? 0 : (active ? 1 : 0.38);
-      c.el.style.transform = `translateX(${-(1-appear)*80}px) scale(${active?1.03:1})`;
+      c.el.style.transform = `translateX(${-(1-appear)*80}px)`;
       c.el.style.transformOrigin = 'right center';
       c.el.style.setProperty('--ring', active ? `${8+6*Math.abs(Math.sin(t*4))}px` : '0px');
     }
     for (const v of vigs){ const o=win(t,v.s,v.e,.45); v.el.style.opacity=o; v.el.style.visibility=o>0?'visible':'hidden'; v.on=o>0; }
+    clockBox.style.opacity = vigs[0].el.style.opacity;
     const secs = Math.floor(clamp(lt-0.5,0,S3.e-S3.s)*22);
     waitClock.textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
     if (vigs[0].on){
