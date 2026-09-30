@@ -1,141 +1,157 @@
 <title>العادات السبع - موشن</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Arabic:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Arabic:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-/* Layout: 1920x1080 stage scaled to fit; scenes are absolutely-positioned paper cutouts driven by one timeline. */
+/* Layout: vertical 1080x1920 stage scaled to fit; every scene is a flex column of torn-paper cutouts, animated from one clock so frames render deterministically. */
 :root{
-  --ink:#101a2b; --paper:#f1ebdd; --paper2:#e2d9c4; --yellow:#ffd21f; --coral:#ff5a45; --teal:#12b5a2; --blue:#2f4bff;
-  --disp:"thmanyah Serif Display","Noto Serif Arabic",serif;
-  --text:"thmanyah Serif Text","Noto Serif Arabic",serif;
+  --ink:#101a2b; --paper:#f1ebdd; --paper2:#ded3bb; --yellow:#ffd21f; --coral:#ff5a45; --teal:#12b5a2; --blue:#2f4bff; --white:#ffffff;
+  --disp:"Thmanyah Serif Display","thmanyah Serif Display","Noto Serif Arabic",serif;
+  --text:"Thmanyah Serif Text","thmanyah Serif Text","Noto Serif Arabic",serif;
   color-scheme:dark;
 }
-body{background:var(--ink);color:var(--paper);font-family:var(--text);padding-inline:16px;padding-block:20px;display:flex;flex-direction:column;align-items:center;gap:14px}
-.frame{width:100%;max-width:1280px;aspect-ratio:16/9;position:relative;overflow:hidden;background:var(--ink);box-shadow:0 10px 40px rgba(0,0,0,.45)}
-.stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;direction:rtl;font-family:var(--text);font-weight:500}
-.sc{position:absolute;inset:0;background:var(--bg);color:var(--fg);opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;overflow:hidden}
-.sc.act{opacity:1;visibility:visible}
+body{background:var(--ink);color:var(--paper);font-family:var(--text);padding-inline:16px;padding-block:20px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.frame{width:100%;max-width:min(460px,calc((100vh - 130px) * 9 / 16));min-width:0;aspect-ratio:9/16;position:relative;overflow:hidden;background:var(--ink);box-shadow:0 10px 40px rgba(0,0,0,.45)}
+.stage{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;direction:rtl;font-family:var(--text);font-weight:500}
+.sc{position:absolute;inset:0;background:var(--bg);color:var(--fg);visibility:hidden;overflow:hidden}
 .sc::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.16) 22%,transparent 24%) 0 0/16px 16px;opacity:.5;pointer-events:none}
+.col{position:absolute;left:60px;right:60px;top:170px;display:flex;flex-direction:column;gap:30px}
 .abs{position:absolute}
-.disp{font-family:var(--disp);font-weight:900;line-height:1.15}
-.r{opacity:0;transform:translateY(46px) rotate(var(--rot,0deg));transition:opacity .6s,transform .7s cubic-bezier(.2,.9,.3,1.15)}
-.r.on{opacity:1;transform:translateY(0) rotate(var(--rot,0deg))}
-.r.pop{transform:scale(.4) rotate(var(--rot,0deg))}
-.r.pop.on{transform:scale(1) rotate(var(--rot,0deg))}
-.r.fade{transform:none}
-.card{position:absolute;filter:drop-shadow(0 14px 0 rgba(0,0,0,.28))}
-.paper{background:var(--paper);color:var(--ink);height:100%;box-sizing:border-box;padding:36px 40px;clip-path:polygon(0% 2%,6% 0%,14% 1.5%,23% 0%,33% 1.2%,44% 0%,55% 1.5%,66% 0%,77% 1.2%,88% 0%,100% 1.5%,99% 12%,100% 25%,98.8% 38%,100% 52%,99% 66%,100% 80%,98.8% 92%,100% 100%,92% 98.6%,82% 100%,70% 98.8%,58% 100%,46% 98.6%,35% 100%,22% 98.8%,11% 100%,0% 98.5%,1.2% 88%,0% 74%,1% 60%,0% 46%,1.2% 32%,0% 18%);position:relative}
-.paper.y{background:var(--yellow)} .paper.c{background:var(--coral)} .paper.t{background:var(--teal)} .paper.b{background:var(--blue);color:#fff}
-.tag{display:inline-block;background:var(--ink);color:var(--yellow);font-size:26px;font-weight:800;padding:2px 16px;transform:rotate(-2deg)}
-.ul{background:linear-gradient(var(--yellow),var(--yellow)) no-repeat right 100%/0% 10px;transition:background-size .9s .35s;padding-bottom:6px}
-.on .ul,.ul.on{background-size:100% 10px}
+.disp{font-family:var(--disp);font-weight:900;line-height:1.2;text-wrap:balance;margin:0}
+p{margin:0}
+svg g.r{transform-box:fill-box;transform-origin:center}
+.card{position:relative;filter:drop-shadow(0 12px 0 rgba(0,0,0,.28))}
+.paper{background:var(--paper);color:var(--ink);box-sizing:border-box;padding:34px 40px;clip-path:polygon(0% 2%,6% 0%,14% 1.5%,23% 0%,33% 1.2%,44% 0%,55% 1.5%,66% 0%,77% 1.2%,88% 0%,100% 1.5%,99% 12%,100% 25%,98.8% 38%,100% 52%,99% 66%,100% 80%,98.8% 92%,100% 100%,92% 98.6%,82% 100%,70% 98.8%,58% 100%,46% 98.6%,35% 100%,22% 98.8%,11% 100%,0% 98.5%,1.2% 88%,0% 74%,1% 60%,0% 46%,1.2% 32%,0% 18%)}
+.paper.y{background:var(--yellow)} .paper.c{background:var(--coral);color:var(--white)} .paper.t{background:var(--teal)} .paper.b{background:var(--blue);color:var(--white)} .paper.k{background:var(--ink);color:var(--paper)}
+.tag{display:inline-block;background:var(--ink);color:var(--yellow);font-size:30px;font-weight:700;padding:4px 18px;transform:rotate(-2deg)}
+.ul{background:linear-gradient(var(--yellow),var(--yellow)) no-repeat right 100%/0% 12px;padding-bottom:4px}
 svg text{font-family:var(--text);fill:var(--ink);font-weight:700}
 svg .d{font-family:var(--disp);font-weight:900}
-.draw{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.6s ease-in-out}
-.draw.on{stroke-dashoffset:0}
-.badge{width:100px;height:100px;border-radius:50%;background:var(--yellow);color:var(--ink);display:grid;place-items:center;font-family:var(--disp);font-weight:900;font-size:70px;line-height:1;box-shadow:0 8px 0 rgba(0,0,0,.28)}
-.pulse{animation:pl 2.4s ease-in-out infinite;transform-origin:350px 270px}
-@keyframes pl{50%{transform:scale(1.14)}}
-.float{animation:fl 3.4s ease-in-out infinite alternate}
-@keyframes fl{to{translate:0 -14px}}
-.dots{display:flex;gap:18px;align-items:center;font-size:24px;font-weight:700}
-.dots i{width:22px;height:22px;border-radius:50%;background:currentColor;opacity:.3;display:block}
-.dots i.cur{opacity:1;background:var(--yellow);box-shadow:0 0 0 5px rgba(255,210,31,.35)}
-.dots b{opacity:.75;margin-inline-end:14px}
-.ctrl{width:100%;max-width:1280px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.ctrl button{background:var(--yellow);color:var(--ink);border:0;font:800 16px var(--text);padding:8px 18px;cursor:pointer}
-.ctrl button:focus-visible,.ctrl input:focus-visible{outline:3px solid #fff;outline-offset:2px}
-.ctrl input{flex:1;min-width:140px;accent-color:var(--yellow)}
-.ctrl span{font-variant-numeric:tabular-nums;min-width:96px;text-align:center}
-.note{max-width:1280px;width:100%;font-size:15px;opacity:.75;line-height:1.7}
-@media (prefers-reduced-motion:reduce){.pulse,.float{animation:none}}
+.draw{stroke-dasharray:1;stroke-dashoffset:1}
+.badge{width:110px;height:110px;border-radius:50%;background:var(--yellow);color:var(--ink);display:grid;place-items:center;font-family:var(--disp);font-weight:900;font-size:76px;line-height:1;box-shadow:0 8px 0 rgba(0,0,0,.28);flex:none}
+.dots{position:absolute;left:60px;right:60px;top:1760px;display:flex;gap:16px;align-items:center;justify-content:center;font-size:28px;font-weight:700}
+.dots i{width:24px;height:24px;border-radius:50%;background:currentColor;opacity:.3;display:block}
+.dots i.cur{opacity:1;width:56px;border-radius:12px}
+.ctrl{width:100%;max-width:460px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrl button{background:var(--yellow);color:var(--ink);border:0;font:700 15px var(--text);padding:8px 14px;cursor:pointer}
+.ctrl button:focus-visible,.ctrl input:focus-visible{outline:3px solid var(--white);outline-offset:2px}
+.ctrl input{flex:1 1 100%;min-width:0;accent-color:var(--yellow);order:2}
+.ctrl span{font-variant-numeric:tabular-nums;margin-inline-start:auto}
+.note{max-width:460px;width:100%;font-size:14px;opacity:.7;line-height:1.7;margin:0}
+body.render{padding:0;gap:0;background:var(--ink)}
+body.render .frame{max-width:none;width:1080px;box-shadow:none}
+body.render .ctrl,body.render .note{display:none}
 </style>
 
 <div class="frame" id="frame"><div class="stage" id="stage">
 
 <!-- 1 HOOK 0-9 -->
 <section class="sc" data-s="0" data-e="9" style="--bg:var(--ink);--fg:var(--paper)">
-  <h1 class="abs disp r fade on" data-at="0" style="left:100px;top:90px;width:1720px;text-align:center;font-size:150px;margin:0">فعالية الفرد<br><span class="ul">في بيئات العمل</span></h1>
-  <div class="abs disp r" data-at="2" style="left:100px;top:470px;width:1720px;text-align:center;font-size:56px">لكل تخصص وادٍ. ولا أثر حتى تلتقي الوديان في وادٍ كبير</div>
-  <svg class="abs" style="left:0;top:560px" width="1920" height="520" viewBox="0 0 1920 520" fill="none" stroke-linecap="round">
-    <path class="draw r fade" data-at="2.6" pathLength="1" d="M300 40 C300 220 760 250 960 400" stroke="var(--teal)" stroke-width="26"/>
-    <path class="draw r fade" data-at="3.4" pathLength="1" d="M960 40 C960 200 960 300 960 400" stroke="var(--yellow)" stroke-width="26"/>
-    <path class="draw r fade" data-at="4.2" pathLength="1" d="M1620 40 C1620 220 1160 250 960 400" stroke="var(--coral)" stroke-width="26"/>
-    <path class="draw r fade" data-at="5.4" pathLength="1" d="M960 400 L960 520" stroke="var(--blue)" stroke-width="70"/>
-    <g class="r pop" data-at="2.4"><rect x="230" y="0" width="140" height="44" fill="var(--paper)"/><text x="300" y="32" text-anchor="middle" font-size="28">هندسة</text></g>
-    <g class="r pop" data-at="3.2"><rect x="890" y="0" width="140" height="44" fill="var(--paper)"/><text x="960" y="32" text-anchor="middle" font-size="28">مالية</text></g>
-    <g class="r pop" data-at="4"><rect x="1550" y="0" width="140" height="44" fill="var(--paper)"/><text x="1620" y="32" text-anchor="middle" font-size="28">تسويق</text></g>
+  <div class="col" style="top:230px;align-items:center;text-align:center">
+    <h1 class="disp r" data-a="fade" data-at="0" style="font-size:150px">فعالية الفرد<br><span class="ul r" data-a="ul" data-at="0.6">في بيئات العمل</span></h1>
+    <p class="r" data-at="1.8" style="font-size:50px;line-height:1.5;font-weight:700">لكل تخصص وادٍ،<br>ولا أثر حتى تلتقي الوديان</p>
+  </div>
+  <svg class="abs" style="left:0;top:860px" width="1080" height="900" viewBox="0 0 1080 900" fill="none" stroke-linecap="round">
+    <path class="draw r" data-a="draw" data-at="2.6" pathLength="1" d="M190 80 C190 330 460 380 540 560" stroke="var(--teal)" stroke-width="30"/>
+    <path class="draw r" data-a="draw" data-at="3.2" pathLength="1" d="M540 80 C540 300 540 420 540 560" stroke="var(--yellow)" stroke-width="30"/>
+    <path class="draw r" data-a="draw" data-at="3.8" pathLength="1" d="M890 80 C890 330 620 380 540 560" stroke="var(--coral)" stroke-width="30"/>
+    <path class="draw r" data-a="draw" data-at="4.9" data-d="1" pathLength="1" d="M540 560 L540 900" stroke="var(--blue)" stroke-width="90"/>
+    <g class="r" data-a="pop" data-at="2.4"><rect x="100" y="10" width="180" height="60" fill="var(--paper)"/><text x="190" y="52" text-anchor="middle" font-size="34">هندسة</text></g>
+    <g class="r" data-a="pop" data-at="3.0"><rect x="450" y="10" width="180" height="60" fill="var(--paper)"/><text x="540" y="52" text-anchor="middle" font-size="34">مالية</text></g>
+    <g class="r" data-a="pop" data-at="3.6"><rect x="800" y="10" width="180" height="60" fill="var(--paper)"/><text x="890" y="52" text-anchor="middle" font-size="34">تسويق</text></g>
   </svg>
-  <div class="abs disp r" data-at="6" style="left:1000px;top:800px;width:800px;font-size:56px;color:var(--yellow)">تيار واحد، أثر واحد</div>
+  <div class="abs r" data-a="pop" data-at="5.8" style="--rot:-3deg;left:140px;top:1560px;width:800px"><div class="card"><div class="paper y" style="text-align:center;padding:24px"><div class="disp" style="font-size:68px">تيار واحد، أثر واحد</div></div></div></div>
 </section>
 
 <!-- 2 FIELD TO ORGANISATION 9-19 -->
-<section class="sc" data-s="9" data-e="19" style="--bg:var(--blue);--fg:#fff">
-  <h2 class="abs disp r" data-at="0" style="left:100px;top:70px;width:1720px;text-align:center;font-size:96px;margin:0">من الميدان إلى المنظمة</h2>
-  <div class="card r" data-at="0.6" style="--rot:-2deg;left:1300px;top:260px;width:520px;height:470px"><div class="paper">
-    <div class="disp" style="font-size:46px">الميدان</div><div style="font-size:28px">ميمنة وميسرة ورأس حربة</div>
-    <svg viewBox="0 0 440 250" width="440" height="250"><rect x="10" y="130" width="130" height="90" fill="var(--teal)"/><text class="d" x="75" y="185" text-anchor="middle" font-size="30">ميسرة</text><rect x="300" y="130" width="130" height="90" fill="var(--coral)"/><text class="d" x="365" y="185" text-anchor="middle" font-size="30">ميمنة</text><polygon points="220,10 290,100 150,100" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="220" y="90" text-anchor="middle" font-size="24">رأس الحربة</text></svg>
-  </div></div>
-  <div class="card r" data-at="3" style="--rot:1.5deg;left:700px;top:260px;width:520px;height:470px"><div class="paper">
-    <div class="disp" style="font-size:46px">الهيكل التنظيمي</div><div style="font-size:28px">خيط عمودي يوجّه ويدير</div>
-    <svg viewBox="0 0 440 250" width="440" height="250" fill="none" stroke="var(--ink)" stroke-width="5"><rect x="160" y="10" width="120" height="50" fill="var(--yellow)"/><path class="draw r fade" data-at="3.4" pathLength="1" d="M220 60 V100 M70 100 H370 M70 100 V130 M220 100 V130 M370 100 V130"/><rect x="10" y="130" width="120" height="50" fill="var(--paper2)"/><rect x="160" y="130" width="120" height="50" fill="var(--paper2)"/><rect x="310" y="130" width="120" height="50" fill="var(--paper2)"/><path d="M70 180 V210 M220 180 V210 M370 180 V210" stroke-dasharray="8 8"/></svg>
-  </div></div>
-  <div class="card r" data-at="5" style="--rot:-1.5deg;left:100px;top:260px;width:520px;height:470px"><div class="paper">
-    <div class="disp" style="font-size:46px">إجراءات العمل</div><div style="font-size:28px">خيط أفقي يصنع المنتج</div>
-    <svg viewBox="0 0 440 250" width="440" height="250" fill="none" stroke="var(--ink)" stroke-width="5"><rect x="330" y="90" width="100" height="70" fill="var(--teal)"/><rect x="225" y="90" width="80" height="70" fill="var(--paper2)"/><rect x="130" y="90" width="70" height="70" fill="var(--paper2)"/><rect x="10" y="90" width="90" height="70" fill="var(--yellow)"/><path class="draw r fade" data-at="5.4" pathLength="1" d="M325 125 H310 M220 125 H205 M125 125 H105"/><path class="draw r fade" data-at="5.4" pathLength="1" d="M430 200 H10" stroke-dasharray="1"/></svg>
-  </div></div>
-  <div class="card r pop" data-at="7.2" style="--rot:-1deg;left:260px;top:790px;width:1400px;height:190px"><div class="paper y" style="display:flex;align-items:center;justify-content:center;gap:30px"><svg width="100" height="80" viewBox="0 0 100 80"><polygon points="20,0 80,0 100,80 0,80" fill="var(--ink)"/></svg><div class="disp" style="font-size:70px">حجر الزاوية: الفرد الفعال في الفريق</div></div></div>
+<section class="sc" data-s="9" data-e="19" style="--bg:var(--blue);--fg:var(--white)">
+  <div class="col" style="top:150px;gap:34px">
+    <h2 class="disp r" data-at="0" style="font-size:100px;text-align:center">من الميدان<br>إلى المنظمة</h2>
+    <div class="card r" data-at="0.7" style="--rot:-1.5deg"><div class="paper" style="display:flex;gap:30px;align-items:center">
+      <div style="flex:1;min-width:0"><div class="disp" style="font-size:56px">الميدان</div><div style="font-size:34px;line-height:1.5">ميمنة وميسرة<br>ورأس حربة</div></div>
+      <svg viewBox="0 0 440 250" width="400" height="227" style="flex:none"><rect x="10" y="130" width="130" height="90" fill="var(--teal)"/><text class="d" x="75" y="187" text-anchor="middle" font-size="32">ميسرة</text><rect x="300" y="130" width="130" height="90" fill="var(--coral)"/><text class="d" x="365" y="187" text-anchor="middle" font-size="32">ميمنة</text><polygon points="220,10 290,110 150,110" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="220" y="160" text-anchor="middle" font-size="26">رأس الحربة</text></svg>
+    </div></div>
+    <div class="card r" data-at="3" style="--rot:1deg"><div class="paper" style="display:flex;gap:30px;align-items:center">
+      <div style="flex:1;min-width:0"><div class="disp" style="font-size:56px">الهيكل التنظيمي</div><div style="font-size:34px;line-height:1.5">خيط عمودي<br>يوجّه ويدير</div></div>
+      <svg viewBox="0 0 440 230" width="400" height="209" style="flex:none" fill="none" stroke="var(--ink)" stroke-width="5"><rect x="160" y="10" width="120" height="50" fill="var(--yellow)"/><path class="draw r" data-a="draw" data-at="3.4" pathLength="1" d="M220 60 V100 M70 100 H370 M70 100 V130 M220 100 V130 M370 100 V130"/><rect x="10" y="130" width="120" height="50" fill="var(--paper2)"/><rect x="160" y="130" width="120" height="50" fill="var(--paper2)"/><rect x="310" y="130" width="120" height="50" fill="var(--paper2)"/><path d="M70 180 V215 M220 180 V215 M370 180 V215" stroke-dasharray="8 8"/></svg>
+    </div></div>
+    <div class="card r" data-at="5" style="--rot:-1deg"><div class="paper" style="display:flex;gap:30px;align-items:center">
+      <div style="flex:1;min-width:0"><div class="disp" style="font-size:56px">إجراءات العمل</div><div style="font-size:34px;line-height:1.5">خيط أفقي<br>يصنع المنتج</div></div>
+      <svg viewBox="0 0 440 200" width="400" height="182" style="flex:none" fill="none" stroke="var(--ink)" stroke-width="5"><rect x="330" y="60" width="100" height="70" fill="var(--teal)"/><rect x="225" y="60" width="80" height="70" fill="var(--paper2)"/><rect x="130" y="60" width="70" height="70" fill="var(--paper2)"/><rect x="10" y="60" width="90" height="70" fill="var(--yellow)"/><path class="draw r" data-a="draw" data-at="5.4" pathLength="1" d="M430 170 H10"/><path d="M40 155 L10 170 L40 185"/></svg>
+    </div></div>
+    <div class="card r" data-a="pop" data-at="7.2" style="--rot:-2deg;margin-top:10px"><div class="paper y" style="text-align:center;padding:30px">
+      <div style="font-size:36px;font-weight:700">وفي قلب كل فريق</div><div class="disp" style="font-size:80px">حجر الزاوية:<br>الفرد الفعّال</div>
+    </div></div>
+  </div>
 </section>
 
 <!-- 3 AUTHOR 19-30 -->
 <section class="sc" data-s="19" data-e="30" style="--bg:var(--teal);--fg:var(--ink)">
-  <div class="card r" data-at="0.2" style="--rot:3deg;left:1200px;top:90px;width:590px;height:800px"><div class="paper" style="padding:30px">
-    <svg viewBox="0 0 500 500" width="520" height="520" style="display:block"><defs><pattern id="ht" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="2.6" fill="var(--ink)" opacity=".35"/></pattern></defs><rect width="500" height="500" fill="var(--yellow)"/><rect width="500" height="500" fill="url(#ht)"/><path d="M60 500 C70 400 150 370 250 370 C350 370 430 400 440 500Z" fill="var(--ink)"/><path d="M215 370 L250 450 L285 370Z" fill="var(--paper)"/><path d="M240 400 L250 470 L260 400Z" fill="var(--coral)"/><rect x="222" y="300" width="56" height="80" fill="#c98e62"/><ellipse cx="250" cy="215" rx="88" ry="105" fill="#d9a077"/><path d="M162 200 C160 120 220 100 250 105 C285 100 342 125 338 200 C320 150 290 140 250 140 C210 140 180 150 162 200Z" fill="#9a9a9a"/><circle cx="218" cy="220" r="8" fill="var(--ink)"/><circle cx="282" cy="220" r="8" fill="var(--ink)"/><path d="M215 268 Q250 296 285 268" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
-    <div class="disp" style="font-size:66px;margin-top:14px">ستيفن ر. كوفي</div><div style="font-size:28px;font-weight:700">Stephen R. Covey · ١٩٣٢ – ٢٠١٢</div>
-  </div></div>
-  <div class="card r" data-at="0.8" style="--rot:-1.5deg;left:80px;top:80px;width:1060px;height:620px"><div class="paper" style="padding:24px">
-    <svg viewBox="0 0 700 400" width="980" height="560" fill="none">
+  <div class="abs r" data-at="0" style="left:60px;top:150px;width:390px">
+    <span class="tag">من هو المؤلف؟</span>
+    <div class="disp" style="font-size:78px;margin-top:24px">ستيفن<br>ر. كوفي</div>
+    <div style="font-size:32px;font-weight:700;margin-top:14px;direction:ltr;text-align:right">Stephen R. Covey</div>
+    <div class="disp" style="font-size:56px;margin-top:14px">١٩٣٢ – ٢٠١٢</div>
+  </div>
+  <div class="abs r" data-at="0.3" style="--rot:4deg;left:480px;top:130px;width:540px"><div class="card"><div class="paper" style="padding:26px 26px 20px">
+    <svg viewBox="0 0 500 500" width="488" height="488" style="display:block"><defs><pattern id="ht" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="2.6" fill="var(--ink)" opacity=".35"/></pattern></defs><rect width="500" height="500" fill="var(--yellow)"/><rect width="500" height="500" fill="url(#ht)"/><path d="M60 500 C70 400 150 370 250 370 C350 370 430 400 440 500Z" fill="var(--ink)"/><path d="M215 370 L250 450 L285 370Z" fill="var(--paper)"/><path d="M240 400 L250 470 L260 400Z" fill="var(--coral)"/><rect x="222" y="300" width="56" height="80" fill="#c98e62"/><ellipse cx="250" cy="215" rx="88" ry="105" fill="#d9a077"/><path d="M162 200 C160 120 220 100 250 105 C285 100 342 125 338 200 C320 150 290 140 250 140 C210 140 180 150 162 200Z" fill="#9a9a9a"/><circle cx="218" cy="220" r="8" fill="var(--ink)"/><circle cx="282" cy="220" r="8" fill="var(--ink)"/><path d="M215 268 Q250 296 285 268" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+    <div style="font-size:26px;text-align:center;margin-top:10px;font-weight:700">خبير الإدارة والقيادة</div>
+  </div></div></div>
+  <div class="abs r" data-at="1" style="--rot:-1deg;left:40px;top:800px;width:1000px"><div class="card"><div class="paper" style="padding:18px">
+    <svg viewBox="0 0 700 400" width="964" height="551" fill="none">
       <path d="M40 60 L200 50 L390 58 L440 72 L500 60 L560 52 L610 60 L660 100 L640 150 L620 210 L604 260 L620 320 L580 336 L545 310 L490 300 L440 335 L400 320 L330 326 L290 348 L230 336 L160 322 L110 290 L70 250 L46 200 L34 130Z" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/>
-      <path class="draw r fade" data-at="3.6" pathLength="1" d="M170 165 C300 60 450 60 605 95" stroke="var(--coral)" stroke-width="6" stroke-dasharray="1"/>
-      <path class="draw r fade" data-at="5.6" pathLength="1" d="M605 95 C470 150 300 230 185 200" stroke="var(--blue)" stroke-width="6"/>
-      <g class="r pop" data-at="1.2" style="transform-origin:170px 165px"><circle cx="170" cy="165" r="15" fill="var(--coral)" stroke="var(--ink)" stroke-width="4"/><text x="170" y="125" text-anchor="middle" font-size="26">سولت ليك سيتي</text><text x="170" y="100" text-anchor="middle" font-size="20">الميلاد · جامعة يوتا</text></g>
-      <g class="r pop" data-at="3.8" style="transform-origin:605px 95px"><circle cx="605" cy="95" r="15" fill="var(--blue)" stroke="var(--ink)" stroke-width="4"/><text x="560" y="150" text-anchor="middle" font-size="26">كامبريدج · هارفارد</text></g>
-      <g class="r pop" data-at="5.8" style="transform-origin:185px 200px"><circle cx="185" cy="205" r="15" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="185" y="252" text-anchor="middle" font-size="26">بروفو · بريغهام يونغ</text></g>
+      <text x="360" y="385" text-anchor="middle" font-size="22" style="font-weight:500">الولايات المتحدة الأمريكية</text>
+      <path class="draw r" data-a="draw" data-at="3.6" pathLength="1" d="M170 165 C300 60 450 60 605 95" stroke="var(--coral)" stroke-width="6"/>
+      <path class="draw r" data-a="draw" data-at="5.6" pathLength="1" d="M605 95 C470 150 300 230 185 205" stroke="var(--blue)" stroke-width="6"/>
+      <g class="r" data-a="pop" data-at="1.6"><circle cx="170" cy="165" r="15" fill="var(--coral)" stroke="var(--ink)" stroke-width="4"/><text x="170" y="128" text-anchor="middle" font-size="28">سولت ليك سيتي</text></g>
+      <g class="r" data-a="pop" data-at="3.9"><circle cx="605" cy="95" r="15" fill="var(--blue)" stroke="var(--ink)" stroke-width="4"/><text x="575" y="150" text-anchor="middle" font-size="28">بوسطن · هارفارد</text></g>
+      <g class="r" data-a="pop" data-at="5.9"><circle cx="185" cy="205" r="15" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="200" y="255" text-anchor="middle" font-size="28">بروفو · بريغهام يونغ</text></g>
     </svg>
-  </div></div>
-  <div class="card r" data-at="1.2" style="--rot:1deg;left:80px;top:750px;width:520px;height:130px"><div class="paper y" style="padding:16px 30px"><div class="disp" style="font-size:36px">الميلاد</div><div style="font-size:26px">٢٤ أكتوبر ١٩٣٢ · سولت ليك سيتي، يوتا</div></div></div>
-  <div class="card r" data-at="2.4" style="--rot:-1deg;left:620px;top:750px;width:520px;height:130px"><div class="paper" style="padding:16px 30px"><div class="disp" style="font-size:36px">جامعة يوتا</div><div style="font-size:26px">بكالوريوس في إدارة الأعمال</div></div></div>
-  <div class="card r" data-at="3.8" style="--rot:-1deg;left:80px;top:900px;width:520px;height:130px"><div class="paper" style="padding:16px 30px"><div class="disp" style="font-size:36px">جامعة هارفارد</div><div style="font-size:26px">ماجستير إدارة الأعمال (MBA)</div></div></div>
-  <div class="card r" data-at="5.8" style="--rot:1deg;left:620px;top:900px;width:520px;height:130px"><div class="paper" style="padding:16px 30px"><div class="disp" style="font-size:36px">بريغهام يونغ</div><div style="font-size:26px">دكتوراه، ثم التدريس والبحث</div></div></div>
+  </div></div></div>
+  <div class="abs" style="left:60px;right:60px;top:1420px;display:grid;grid-template-columns:1fr 1fr;gap:22px">
+    <div class="card r" data-at="1.6" style="--rot:1deg"><div class="paper y" style="padding:18px 26px"><div class="disp" style="font-size:40px">الميلاد</div><div style="font-size:28px;line-height:1.4">٢٤ أكتوبر ١٩٣٢<br>سولت ليك سيتي، يوتا</div></div></div>
+    <div class="card r" data-at="2.6" style="--rot:-1deg"><div class="paper" style="padding:18px 26px"><div class="disp" style="font-size:40px">جامعة يوتا</div><div style="font-size:28px;line-height:1.4">بكالوريوس<br>إدارة الأعمال</div></div></div>
+    <div class="card r" data-at="3.9" style="--rot:-1deg"><div class="paper" style="padding:18px 26px"><div class="disp" style="font-size:40px">جامعة هارفارد</div><div style="font-size:28px;line-height:1.4">ماجستير<br>إدارة الأعمال MBA</div></div></div>
+    <div class="card r" data-at="5.9" style="--rot:1deg"><div class="paper" style="padding:18px 26px"><div class="disp" style="font-size:40px">بريغهام يونغ</div><div style="font-size:28px;line-height:1.4">دكتوراه<br>ثم التدريس والبحث</div></div></div>
+  </div>
 </section>
 
 <!-- 4 BOOK 30-40 -->
 <section class="sc" data-s="30" data-e="40" style="--bg:var(--yellow);--fg:var(--ink)">
-  <div class="card r" data-at="0.4" style="--rot:-10deg;left:70px;top:150px;width:330px;height:470px"><div class="paper" style="background:var(--ink);color:var(--paper);padding:26px"><div style="font-size:24px;color:var(--yellow)">The New York Times<br>#1 Bestseller</div><div class="disp" style="font-family:Georgia,serif;font-size:44px;margin-top:70px;direction:ltr;text-align:left;line-height:1.1">The 7 Habits of Highly Effective People</div><div style="direction:ltr;margin-top:60px;font-size:26px">Stephen R. Covey</div></div></div>
-  <div class="card r" data-at="1.4" style="--rot:8deg;left:700px;top:170px;width:330px;height:470px"><div class="paper c" style="color:#fff;padding:26px"><div class="disp" style="font-size:44px;margin-top:70px;line-height:1.2">Los 7 hábitos de la gente altamente efectiva</div><div style="margin-top:80px;font-size:26px">Stephen R. Covey</div></div></div>
-  <div class="card r" data-at="0.9" style="--rot:-2deg;left:330px;top:90px;width:400px;height:560px"><div class="paper b" style="padding:30px"><div style="font-size:26px;color:var(--yellow)">الأكثر مبيعاً عالمياً</div><div class="disp" style="font-size:66px;margin-top:40px;line-height:1.25">العادات السبع للأشخاص الأكثر فعالية</div><svg viewBox="0 0 280 60" width="280" height="60" style="margin-top:40px"><g fill="var(--yellow)"><rect x="0" y="40" width="30" height="20"/><rect x="40" y="34" width="30" height="26"/><rect x="80" y="26" width="30" height="34"/><rect x="120" y="18" width="30" height="42"/><rect x="160" y="12" width="30" height="48"/><rect x="200" y="6" width="30" height="54"/><rect x="240" y="0" width="30" height="60"/></g></svg><div style="margin-top:24px;font-size:30px">ستيفن كوفي</div></div></div>
-  <div class="abs" style="left:70px;top:730px;width:1000px;display:flex;flex-wrap:wrap;gap:16px;direction:ltr">
-    <span class="r pop tag" data-at="6" style="font-size:30px;background:var(--ink)">日本語 · 7つの習慣</span><span class="r pop tag" data-at="6.3" style="font-size:30px;background:var(--coral);color:#fff">中文 · 高效能人士的七个习惯</span><span class="r pop tag" data-at="6.6" style="font-size:30px;background:var(--teal);color:var(--ink)">Français · Les 7 habitudes</span><span class="r pop tag" data-at="6.9" style="font-size:30px;background:var(--blue);color:#fff">Türkçe · Etkili İnsanların 7 Alışkanlığı</span><span class="r pop tag" data-at="7.2" style="font-size:30px">Deutsch · Die 7 Wege zur Effektivität</span>
-  </div>
-  <div class="abs" style="left:1150px;top:70px;width:700px">
-    <div class="r" data-at="0" style="margin-bottom:14px"><span class="tag">قصة الكتاب</span></div>
-    <div class="disp r" data-at="0.3" style="font-size:78px">مئتا عام من <span class="ul">أدبيات النجاح</span></div>
-    <p class="r" data-at="2" style="font-size:38px;line-height:1.6;margin:24px 0 0">درس كوفي أدبيات النجاح لنحو مئتي عام، فوجد أن الأقدم منها يقوم على الشخصية والمبادئ لا على الحيل السريعة.</p>
-    <p class="r" data-at="4" style="font-size:38px;line-height:1.6;margin:14px 0 0">ومن هذا البحث خرج كتابه عام ١٩٨٩.</p>
-    <div style="display:flex;gap:26px;margin-top:38px">
-      <div class="r pop" data-at="5.4" style="background:var(--ink);color:var(--yellow);padding:14px 24px;text-align:center"><div class="disp" style="font-size:74px"><span data-count="40" data-at="5.4">٠</span>+</div><div style="font-size:26px;color:var(--paper)">مليون نسخة</div></div>
-      <div class="r pop" data-at="5.9" style="background:var(--ink);color:var(--yellow);padding:14px 24px;text-align:center"><div class="disp" style="font-size:74px"><span data-count="50" data-at="5.9">٠</span>+</div><div style="font-size:26px;color:var(--paper)">لغة</div></div>
+  <div class="col" style="top:150px;gap:26px">
+    <div class="r" data-at="0"><span class="tag">قصة الكتاب</span></div>
+    <h2 class="disp r" data-at="0.2" style="font-size:92px">مئتا عام من<br><span class="ul r" data-a="ul" data-at="0.8">أدبيات النجاح</span></h2>
+    <div style="position:relative;height:640px">
+      <div class="abs r" data-at="1.2" style="--rot:-9deg;left:0;top:70px;width:320px"><div class="card"><div class="paper k" style="height:460px;padding:26px"><div style="font-size:24px;color:var(--yellow);direction:ltr;text-align:left">#1 Bestseller</div><div style="font-family:Georgia,serif;font-weight:700;font-size:42px;margin-top:60px;direction:ltr;text-align:left;line-height:1.1">The 7 Habits of Highly Effective People</div><div style="direction:ltr;text-align:left;margin-top:50px;font-size:24px">Stephen R. Covey</div></div></div></div>
+      <div class="abs r" data-at="1.8" style="--rot:8deg;left:640px;top:90px;width:320px"><div class="card"><div class="paper c" style="height:460px;padding:26px"><div style="font-family:Georgia,serif;font-weight:700;font-size:40px;margin-top:80px;line-height:1.2;direction:ltr;text-align:left">Los 7 hábitos de la gente altamente efectiva</div><div style="margin-top:70px;font-size:24px;direction:ltr;text-align:left">Stephen R. Covey</div></div></div></div>
+      <div class="abs r" data-a="pop" data-at="1.5" style="--rot:-2deg;left:280px;top:0;width:400px"><div class="card"><div class="paper b" style="height:600px;padding:32px"><div style="font-size:28px;color:var(--yellow)">الأكثر مبيعاً عالمياً</div><div class="disp" style="font-size:64px;margin-top:40px;line-height:1.3">العادات السبع للأشخاص الأكثر فعالية</div><svg viewBox="0 0 280 60" width="280" height="60" style="margin-top:36px;display:block"><g fill="var(--yellow)"><rect x="0" y="40" width="30" height="20"/><rect x="40" y="34" width="30" height="26"/><rect x="80" y="26" width="30" height="34"/><rect x="120" y="18" width="30" height="42"/><rect x="160" y="12" width="30" height="48"/><rect x="200" y="6" width="30" height="54"/><rect x="240" y="0" width="30" height="60"/></g></svg><div style="margin-top:22px;font-size:30px">ستيفن ر. كوفي</div></div></div></div>
+    </div>
+    <p class="r" data-at="2.8" style="font-size:40px;line-height:1.55">درس كوفي ما كُتب عن النجاح منذ ١٧٧٦، فوجد أن الأقدم يبني الشخصية والمبادئ، والأحدث يبيع الحيل السريعة. فكتب كتابه عام ١٩٨٩.</p>
+    <div style="display:flex;gap:22px">
+      <div class="r" data-a="pop" data-at="5" style="flex:1;background:var(--ink);color:var(--yellow);padding:14px;text-align:center"><div class="disp" style="font-size:76px;line-height:1.1"><span data-count="40" data-at="5">٠</span>+</div><div style="font-size:30px;color:var(--paper)">مليون نسخة</div></div>
+      <div class="r" data-a="pop" data-at="5.5" style="flex:1;background:var(--ink);color:var(--yellow);padding:14px;text-align:center"><div class="disp" style="font-size:76px;line-height:1.1"><span data-count="50" data-at="5.5">٠</span>+</div><div style="font-size:30px;color:var(--paper)">لغة</div></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;direction:ltr;justify-content:center">
+      <span class="r tag" data-a="pop" data-at="6.6" style="font-size:30px">日本語 · 7つの習慣</span><span class="r tag" data-a="pop" data-at="6.9" style="font-size:30px;background:var(--coral);color:var(--white)">中文 · 七个习惯</span><span class="r tag" data-a="pop" data-at="7.2" style="font-size:30px;background:var(--teal);color:var(--ink)">Français · Les 7 habitudes</span><span class="r tag" data-a="pop" data-at="7.5" style="font-size:30px;background:var(--blue);color:var(--white)">Türkçe · 7 Alışkanlık</span><span class="r tag" data-a="pop" data-at="7.8" style="font-size:30px">Deutsch · Die 7 Wege</span>
     </div>
   </div>
 </section>
 
 <!-- 5 FRAMEWORK 40-48 -->
-<section class="sc" data-s="40" data-e="48" style="--bg:var(--blue);--fg:#fff">
-  <h2 class="abs disp r" data-at="0.2" style="left:100px;top:70px;width:1720px;text-align:center;font-size:84px;margin:0">إطار الكتاب: من <span class="ul">الاعتماد</span> إلى التكامل</h2>
-  <div class="card r" data-at="1.2" style="--rot:-1deg;left:1240px;top:650px;width:520px;height:230px"><div class="paper" style="background:var(--paper2)"><div class="disp" style="font-size:56px">الاعتماد</div><div style="font-size:30px">تنتظر التوجيه والآخرين</div></div></div>
-  <div class="card r" data-at="2.6" style="--rot:1deg;left:690px;top:500px;width:520px;height:380px"><div class="paper"><div class="disp" style="font-size:56px">الاستقلال</div><div style="font-size:30px">النصر الشخصي</div><div style="margin-top:22px"><span class="tag">العادات ١ – ٣</span></div><div style="font-size:30px;margin-top:14px">عادات الفرد</div></div></div>
-  <div class="card r" data-at="4.2" style="--rot:-1deg;left:140px;top:350px;width:520px;height:530px"><div class="paper y"><div class="disp" style="font-size:56px">التكامل</div><div style="font-size:30px">النصر العام</div><div style="margin-top:22px"><span class="tag">العادات ٤ – ٦</span></div><div style="font-size:30px;margin-top:14px">عادات الفريق</div></div></div>
-  <div class="card r" data-at="6" style="left:140px;top:910px;width:1620px;height:110px"><div class="paper t" style="display:flex;align-items:center;justify-content:center;padding:0"><div class="disp" style="font-size:50px">العادة ٧ · التجديد المستمر: وقود الفرد والفريق</div></div></div>
+<section class="sc" data-s="40" data-e="48" style="--bg:var(--blue);--fg:var(--white)">
+  <div class="col" style="top:150px;text-align:center;gap:14px">
+    <div class="r" data-at="0"><span class="tag">إطار الكتاب</span></div>
+    <h2 class="disp r" data-at="0.2" style="font-size:88px">سُلّم النضج</h2>
+    <p class="r" data-at="0.5" style="font-size:38px">من <span class="ul r" data-a="ul" data-at="1">الاعتماد</span> إلى التكامل</p>
+  </div>
+  <svg class="abs" style="left:0;top:560px" width="1080" height="1000" viewBox="0 0 1080 1000" fill="none" stroke="var(--yellow)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path class="draw r" data-a="draw" data-at="2.2" data-d="1" pathLength="1" d="M760 760 C760 700 620 690 600 640"/>
+    <path class="draw r" data-a="draw" data-at="3.8" data-d="1" pathLength="1" d="M560 400 C560 330 420 320 400 280"/>
+  </svg>
+  <div class="abs r" data-at="1.2" style="--rot:-1.5deg;left:430px;top:1340px;width:590px"><div class="card"><div class="paper" style="background:var(--paper2)"><div class="disp" style="font-size:60px">الاعتماد</div><div style="font-size:34px">«أنت» تفعل لي</div></div></div></div>
+  <div class="abs r" data-at="2.8" style="--rot:1deg;left:245px;top:940px;width:590px"><div class="card"><div class="paper"><div class="disp" style="font-size:60px">الاستقلال</div><div style="font-size:34px">«أنا» أستطيع · النصر الشخصي</div><div style="margin-top:16px"><span class="tag">العادات ١ – ٣ · للفرد</span></div></div></div></div>
+  <div class="abs r" data-at="4.4" style="--rot:-1deg;left:60px;top:540px;width:590px"><div class="card"><div class="paper y"><div class="disp" style="font-size:60px">التكامل</div><div style="font-size:34px">«نحن» نصنع معاً · النصر العام</div><div style="margin-top:16px"><span class="tag">العادات ٤ – ٦ · للفريق</span></div></div></div></div>
+  <div class="abs r" data-a="pop" data-at="6" style="--rot:2deg;left:690px;top:520px;width:330px"><div class="card"><div class="paper t" style="text-align:center;padding:26px 20px"><div class="disp" style="font-size:44px">العادة ٧</div><div style="font-size:30px;line-height:1.4">التجديد:<br>وقود السُّلّم كله</div></div></div></div>
 </section>
 
 <!-- 6 HABITS (generated) 48 - 85.1 -->
@@ -143,84 +159,116 @@ svg .d{font-family:var(--disp);font-weight:900}
 
 <!-- 7 CLOSE -->
 <section class="sc" data-s="85.1" data-e="90.01" style="--bg:var(--ink);--fg:var(--paper)">
-  <div class="abs disp r" data-at="0.3" style="left:120px;top:190px;width:1680px;text-align:center;font-size:150px;line-height:1.3">«قليلٌ دائمٌ<br><span class="ul" style="color:var(--yellow)">خيرٌ من كثيرٍ منقطع»</span></div>
-  <div class="abs r" data-at="1.6" style="left:120px;top:630px;width:1680px;text-align:center;font-size:48px">العادات مشروع عمر، لا مشروع ينتهي بانتهاء أجله</div>
-  <div class="card r" data-at="2.6" style="--rot:-1.5deg;left:360px;top:770px;width:1200px;height:150px"><div class="paper y" style="display:flex;align-items:center;justify-content:center;padding:0 30px;text-align:center;font-size:34px;font-weight:700">جيمس كلير · قوة العادات: عادات صغيرة مستدامة تدوم أكثر من أهداف تنقضي</div></div>
+  <div class="col" style="top:330px;text-align:center;gap:50px">
+    <div class="disp r" data-at="0.2" style="font-size:132px;line-height:1.35">«قليلٌ دائمٌ<br><span class="ul r" data-a="ul" data-at="0.9" style="color:var(--yellow)">خيرٌ من</span><br><span style="color:var(--yellow)">كثيرٍ منقطع»</span></div>
+    <p class="r" data-at="1.5" style="font-size:48px;line-height:1.5">العادات مشروع عمر،<br>لا مشروع ينتهي بانتهاء أجله</p>
+    <div class="card r" data-at="2.4" style="--rot:-2deg"><div class="paper y" style="padding:30px 40px"><div class="disp" style="font-size:46px">جيمس كلير · العادات الذرية</div><div style="font-size:34px;line-height:1.5;margin-top:6px">عادات صغيرة مستدامة تمدّ الفريق بالطاقة كتيار كهربائي لا ينقطع</div></div></div>
+  </div>
 </section>
 
 </div></div>
 
 <div class="ctrl" dir="rtl">
-  <button id="pp" type="button">إيقاف</button><button id="rs" type="button">من البداية</button><button id="sp" type="button">السرعة ١×</button>
-  <input id="sk" type="range" min="0" max="90" step="0.05" value="0" aria-label="الشريط الزمني"><span id="tl">٠:٠٠ / ١:٣٠</span>
+  <button id="pp" type="button">إيقاف</button><button id="rs" type="button">من البداية</button><button id="sp" type="button">السرعة ١×</button><span id="tl">٠:٠٠ / ١:٣٠</span>
+  <input id="sk" type="range" min="0" max="90" step="0.05" value="0" aria-label="الشريط الزمني">
 </div>
-<p class="note">مدة الفيديو ٩٠ ثانية (الحد الأعلى الذي طلبته). خطا ثمانية غير متاحين على الإنترنت العام، فتظهر الصفحة بخط احتياطي قريب، وتُستخدم خطوطكم تلقائياً إن كانت مثبتة على الجهاز. صورة المؤلف والأغلفة رسوم توضيحية بديلة إلى أن تُضاف الصور الأصلية.</p>
+<p class="note">مقطع طولي ٩:١٦ مدته ٩٠ ثانية. يظهر بخطي ثمانية إن كانا مثبتين على جهازك، وإلا فبخط عربي احتياطي.</p>
 
 <script>
 var AD="٠١٢٣٤٥٦٧٨٩";function ar(n){return String(n).replace(/\d/g,function(d){return AD[d]})}
 var ORD=["الأولى","الثانية","الثالثة","الرابعة","الخامسة","السادسة","السابعة"];
-var GRP=["فردية","فردية","فردية","للفريق","للفريق","للفريق","وقود"];
-var BG=[["var(--teal)","var(--ink)"],["var(--coral)","#fff"],["var(--yellow)","var(--ink)"],["var(--blue)","#fff"],["var(--teal)","var(--ink)"],["var(--coral)","#fff"],["var(--ink)","var(--paper)"]];
+var GRP=["عادة فردية","عادة فردية","عادة فردية","عادة الفريق","عادة الفريق","عادة الفريق","الوقود"];
+var BG=[["var(--teal)","var(--ink)"],["var(--coral)","var(--white)"],["var(--yellow)","var(--ink)"],["var(--blue)","var(--white)"],["var(--teal)","var(--ink)"],["var(--coral)","var(--white)"],["var(--ink)","var(--paper)"]];
 var T=[
-`<circle cx="350" cy="240" r="215" fill="none" stroke="var(--ink)" stroke-width="4" stroke-dasharray="14 12"/><circle class="pulse" cx="350" cy="270" r="120" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="350" y="90" text-anchor="middle" font-size="34">دائرة الاهتمام</text><text x="350" y="265" text-anchor="middle" font-size="32">دائرة التأثير</text><text x="350" y="305" text-anchor="middle" font-size="24">ما أستطيع فعله الآن</text>`,
-`<path class="draw r fade" data-at="3.2" pathLength="1" d="M90 400 C160 250 80 200 250 190 C420 180 440 100 560 90" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-dasharray="1"/><circle cx="90" cy="405" r="26" fill="var(--coral)" stroke="var(--ink)" stroke-width="4"/><path d="M590 30 V110" stroke="var(--ink)" stroke-width="6"/><path d="M590 30 L660 55 L590 80Z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="120" y="460" text-anchor="middle" font-size="30">رسالتي</text><text x="590" y="150" text-anchor="middle" font-size="30">الغاية</text><text x="350" y="300" text-anchor="middle" font-size="26">بيان الرسالة الشخصي</text>`,
-`<rect x="60" y="50" width="270" height="180" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><rect x="330" y="50" width="270" height="180" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><rect x="60" y="230" width="270" height="180" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><rect x="330" y="230" width="270" height="180" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><text x="195" y="30" text-anchor="middle" font-size="26">غير عاجل</text><text x="465" y="30" text-anchor="middle" font-size="26">عاجل</text><text x="645" y="150" text-anchor="middle" font-size="26">مهم</text><text x="645" y="335" text-anchor="middle" font-size="24">غير مهم</text><text class="d" x="195" y="125" text-anchor="middle" font-size="34">٢ التخطيط</text><text x="195" y="165" text-anchor="middle" font-size="24">هنا يبدأ الأهم</text><text x="465" y="140" text-anchor="middle" font-size="30">١ أزمات</text><text x="195" y="325" text-anchor="middle" font-size="30">٤ مضيعة</text><text x="465" y="325" text-anchor="middle" font-size="30">٣ مقاطعات</text>`,
-`<rect x="30" y="60" width="210" height="150" fill="var(--teal)" stroke="var(--ink)" stroke-width="4"/><rect x="460" y="60" width="210" height="150" fill="var(--coral)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="135" y="145" text-anchor="middle" font-size="36">فريقك</text><text class="d" x="565" y="145" text-anchor="middle" font-size="36">فريق آخر</text><path d="M250 110 H450 M250 160 H450" stroke="var(--ink)" stroke-width="6"/><path d="M430 90 L455 110 L430 130 M270 140 L245 160 L270 180" fill="none" stroke="var(--ink)" stroke-width="6"/><circle cx="350" cy="135" r="46" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="350" y="145" text-anchor="middle" font-size="26">ربح ‏· ربح</text><text x="350" y="290" text-anchor="middle" font-size="30">الحساب العاطفي: رصيد الثقة</text><rect x="90" y="320" width="520" height="44" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><rect x="90" y="320" width="380" height="44" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/>`,
-`<path d="M340 40 H640 V150 H540 L510 185 L500 150 H340Z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="490" y="105" text-anchor="middle" font-size="27">«هذا الموعد غير واقعي»</text><path d="M360 220 H60 V330 H150 L180 365 L190 330 H360Z" fill="var(--teal)" stroke="var(--ink)" stroke-width="4"/><text x="210" y="285" text-anchor="middle" font-size="27">«تقصد أن الوقت لا يكفي؟»</text><text x="350" y="430" text-anchor="middle" font-size="30">أعد الصياغة حتى يقول: نعم</text>`,
-`<circle cx="260" cy="230" r="150" fill="var(--coral)" opacity=".9" stroke="var(--ink)" stroke-width="4"/><circle cx="440" cy="230" r="150" fill="var(--teal)" opacity=".85" stroke="var(--ink)" stroke-width="4"/><text x="190" y="235" text-anchor="middle" font-size="30">قوتي</text><text x="510" y="235" text-anchor="middle" font-size="30">قوتك</text><text class="d" x="350" y="225" text-anchor="middle" font-size="30">بديل</text><text class="d" x="350" y="262" text-anchor="middle" font-size="30">ثالث</text><text class="d" x="350" y="50" text-anchor="middle" font-size="46">١ + ١ = ٣</text><text x="350" y="450" text-anchor="middle" font-size="28">تقدير الاختلاف</text>`,
-`<circle cx="350" cy="240" r="84" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="350" y="232" text-anchor="middle" font-size="30">شحذ</text><text class="d" x="350" y="268" text-anchor="middle" font-size="30">المنشار</text><rect x="220" y="15" width="260" height="100" fill="var(--teal)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="350" y="80" text-anchor="middle" font-size="38">جسدي</text><rect x="20" y="190" width="240" height="100" fill="var(--coral)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="140" y="252" text-anchor="middle" font-size="34">اجتماعي</text><rect x="440" y="190" width="240" height="100" fill="var(--blue)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="560" y="252" text-anchor="middle" font-size="38" style="fill:#fff">ذهني</text><rect x="220" y="365" width="260" height="100" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="350" y="430" text-anchor="middle" font-size="38">روحي</text>`
+'<circle cx="350" cy="250" r="220" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4" stroke-dasharray="14 12"/><circle class="pulse" cx="350" cy="280" r="125" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="350" y="95" text-anchor="middle" font-size="34">دائرة الاهتمام</text><text x="350" y="140" text-anchor="middle" font-size="24" style="font-weight:500">الطقس، قرارات الإدارة، مزاج الآخرين</text><text class="d" x="350" y="280" text-anchor="middle" font-size="38">دائرة التأثير</text><text x="350" y="322" text-anchor="middle" font-size="26">ما أستطيع فعله الآن</text>',
+'<path class="draw r" data-a="draw" data-at="3.1" pathLength="1" d="M110 400 C180 250 90 210 260 195 C430 180 450 110 570 95" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round"/><circle cx="110" cy="405" r="28" fill="var(--coral)" stroke="var(--ink)" stroke-width="4"/><path d="M590 30 V120" stroke="var(--ink)" stroke-width="6"/><path d="M590 30 L665 55 L590 80Z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="120" y="465" text-anchor="middle" font-size="32">اليوم</text><text x="590" y="165" text-anchor="middle" font-size="32">الغاية</text><text x="360" y="320" text-anchor="middle" font-size="28">كل خطوة تُقاس بقربها من الراية</text>',
+'<rect x="60" y="60" width="270" height="180" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><rect x="330" y="60" width="270" height="180" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><rect x="60" y="240" width="270" height="180" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><rect x="330" y="240" width="270" height="180" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><text x="195" y="40" text-anchor="middle" font-size="26">غير عاجل</text><text x="465" y="40" text-anchor="middle" font-size="26">عاجل</text><text x="648" y="158" text-anchor="middle" font-size="26">مهم</text><text x="648" y="330" text-anchor="middle" font-size="22">غير مهم</text><text class="d" x="195" y="140" text-anchor="middle" font-size="36">٢ · التخطيط</text><text x="195" y="185" text-anchor="middle" font-size="24">هنا تُصنع الفعالية</text><text x="465" y="160" text-anchor="middle" font-size="30">١ · الأزمات</text><text x="195" y="340" text-anchor="middle" font-size="30">٤ · المضيعة</text><text x="465" y="340" text-anchor="middle" font-size="30">٣ · المقاطعات</text>',
+'<rect x="20" y="60" width="220" height="150" fill="var(--teal)" stroke="var(--ink)" stroke-width="4"/><rect x="460" y="60" width="220" height="150" fill="var(--coral)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="130" y="148" text-anchor="middle" font-size="38">فريقك</text><text class="d" x="570" y="148" text-anchor="middle" font-size="38">فريق آخر</text><path d="M250 110 H450 M250 160 H450" stroke="var(--ink)" stroke-width="6"/><path d="M430 90 L455 110 L430 130 M270 140 L245 160 L270 180" fill="none" stroke="var(--ink)" stroke-width="6"/><circle class="pulse" cx="350" cy="135" r="52" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="350" y="145" text-anchor="middle" font-size="28">ربح/ربح</text><text x="350" y="300" text-anchor="middle" font-size="30">الحساب البنكي العاطفي: رصيد الثقة</text><rect x="90" y="330" width="520" height="50" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><rect class="r" data-a="grow" data-at="3.2" x="90" y="330" width="400" height="50" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="350" y="430" text-anchor="middle" font-size="24" style="font-weight:500">كل وعد تفي به إيداع · كل تجاهل سحب</text>',
+'<path d="M330 30 H660 V150 H550 L515 190 L505 150 H330Z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><text x="495" y="102" text-anchor="middle" font-size="30">«هذا الموعد غير واقعي»</text><g class="r" data-a="pop" data-at="3.2"><path d="M370 220 H40 V340 H140 L175 380 L185 340 H370Z" fill="var(--teal)" stroke="var(--ink)" stroke-width="4"/><text x="205" y="292" text-anchor="middle" font-size="28">«تقصد أن الوقت لا يكفي؟»</text></g><text x="350" y="450" text-anchor="middle" font-size="30">أنصت لتفهم، لا لترد</text>',
+'<circle cx="255" cy="250" r="160" fill="var(--coral)" opacity=".9" stroke="var(--ink)" stroke-width="4"/><circle cx="445" cy="250" r="160" fill="var(--teal)" opacity=".85" stroke="var(--ink)" stroke-width="4"/><text x="175" y="258" text-anchor="middle" font-size="32">قوتي</text><text x="525" y="258" text-anchor="middle" font-size="32">قوتك</text><g class="r" data-a="pop" data-at="3.1"><text class="d" x="350" y="245" text-anchor="middle" font-size="32">البديل</text><text class="d" x="350" y="285" text-anchor="middle" font-size="32">الثالث</text></g><text class="d" x="350" y="60" text-anchor="middle" font-size="50">١ + ١ = ٣</text>',
+'<circle class="saw" cx="350" cy="245" r="92" fill="var(--yellow)" stroke="var(--ink)" stroke-width="5" stroke-dasharray="14 8"/><text class="d" x="350" y="238" text-anchor="middle" font-size="32">اشحذ</text><text class="d" x="350" y="276" text-anchor="middle" font-size="32">المنشار</text><rect x="220" y="20" width="260" height="100" fill="var(--teal)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="350" y="84" text-anchor="middle" font-size="40">جسدي</text><rect x="10" y="195" width="230" height="100" fill="var(--coral)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="125" y="244" text-anchor="middle" font-size="30">اجتماعي</text><text class="d" x="125" y="278" text-anchor="middle" font-size="24">عاطفي</text><rect x="460" y="195" width="230" height="100" fill="var(--blue)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="575" y="258" text-anchor="middle" font-size="40" style="fill:var(--white)">ذهني</text><rect x="220" y="370" width="260" height="100" fill="var(--paper2)" stroke="var(--ink)" stroke-width="4"/><text class="d" x="350" y="434" text-anchor="middle" font-size="40">روحي</text>'
 ];
 var H=[
-["كن مبادراً","لا تنتظر الآخرين. اصنع ما تستطيع، وأضف للفريق ما تتقنه.","ترى خللاً في إجراء العمل، فتقترح الحل وتجربه بدل أن تنتظر تكليفاً.","دائرة الاهتمام ودائرة التأثير"],
-["ابدأ والغاية في ذهنك","لا تخطُ أولى الخطوات إلا وأنت تعرف مآل ما تعمله اليوم.","قبل كتابة تقرير اليوم تسأل: أي قرار سيخدمه هذا التقرير؟","بيان الرسالة الشخصي"],
-["ضع الأهم أولاً","اضبط أولوياتك لكي لا تبعثر جهدك فيما لا طائل منه.","تحجز ساعة صباحية للعمل المهم قبل أن تبتلعك الرسائل.","مصفوفة الأولويات: عاجل ومهم"],
-["فكّر بمنطق الربح المتبادل","لا فريق يعمل وحده. اطلب اتفاقاً يكسب منه الجميع.","فريقك يحتاج بيانات من فريق مشغول، فتعرض عليه أتمتة جزء من عمله.","اتفاقيات الربح للجميع"],
-["اسعَ أن تفهم قبل أن تُفهم","كم من عمل ضاع لأننا استعجلنا ولم نفهم مراد الآخر.","قبل الاعتراض على الطلب تعيد صياغته بكلماتك حتى يؤكد قصده.","الإصغاء بتعاطف"],
-["التعاون والتكامل","لا أحد يتقن كل شيء. تجمع القوى المختلفة قيمة تفوق مجموعها.","محلل بيانات ومصمم ومسوّق يبنون معاً لوحة قرار لا يبنيها أحدهم وحده.","تقدير الاختلاف والبديل الثالث"],
-["التجديد المستمر: اشحذ المنشار","جدّد نفسك في أربعة أبعاد: جسدي وذهني وروحي واجتماعي عاطفي.","نوم كافٍ، وقراءة أسبوعية، ولحظة تأمل، وجلسة صادقة مع الزملاء.","أبعاد التجديد الأربعة"]
+["كن مبادراً","لا تنتظر الآخرين. اصنع ما تستطيع، وأضف للفريق ما تتقنه.","ترى خللاً في إجراء العمل، فتقترح الحل وتجرّبه بدل أن تنتظر التكليف.","دائرة التأثير ودائرة الاهتمام"],
+["ابدأ والغاية في ذهنك","لا تخطُ أولى خطواتك إلا وأنت تعرف مآل ما تعمله اليوم.","قبل أن تكتب التقرير تسأل: أيّ قرار سيخدمه؟","بيان الرسالة الشخصي"],
+["ابدأ بالأهم قبل المهم","اضبط أولوياتك لكيلا تبعثر جهدك فيما لا طائل منه.","تحجز ساعة صباحية للعمل المهم قبل أن تبتلعك الرسائل.","مصفوفة إدارة الوقت"],
+["فكّر بمنطق المكسب للجميع","لا فريق يعمل وحده. ابحث عن أرضية يكسب منها الطرفان.","تحتاج بيانات من فريق مشغول، فتعرض عليه أتمتة جزء من عمله.","ربح/ربح والحساب العاطفي"],
+["افهم أولاً، ثم اطلب أن تُفهَم","كم من عمل ضاع لأننا استعجلنا ولم نفهم مراد الآخر.","قبل أن تعترض، تعيد صياغة الطلب بكلماتك حتى يقول صاحبه: نعم.","الإنصات التعاطفي"],
+["التعاون والتكامل","لا أحد يتقن كل شيء. اجتماع القدرات المختلفة يصنع ما لا يصنعه الفرد.","محلل بيانات ومصمم ومسوّق يبنون معاً لوحة قرار لا يبنيها أحدهم وحده.","تقدير الاختلاف والبديل الثالث"],
+["اشحذ المنشار","التجديد المستمر في أربعة أبعاد: الجسد، والعقل، والروح، والعلاقات.","نوم كافٍ، وقراءة أسبوعية، ولحظة تأمل، وحديث صادق مع الزملاء.","أبعاد التجديد الأربعة"]
 ];
 var D=5.3,S0=48,html="";
 H.forEach(function(h,i){
-  var s=S0+i*D,e=s+D,dots="";
+  var s=S0+i*D,e=i==6?85.1:s+D,dots="";
   for(var k=0;k<7;k++)dots+='<i'+(k==i?' class="cur"':'')+'></i>';
-  html+='<section class="sc" data-s="'+s+'" data-e="'+(i==6?85.1:e)+'" style="--bg:'+BG[i][0]+';--fg:'+BG[i][1]+'">'
-  +'<div class="abs r pop" data-at="0" style="left:1740px;top:80px"><div class="badge">'+ar(i+1)+'</div></div>'
-  +'<div class="abs r" data-at="0" style="left:1000px;top:105px;width:700px;font-size:34px;font-weight:800">العادة '+ORD[i]+' · '+GRP[i]+'</div>'
-  +'<h2 class="abs disp r" data-at="0.1" style="left:1000px;top:215px;width:840px;font-size:'+(h[0].length>16?96:112)+'px;margin:0">'+h[0]+'</h2>'
-  +'<p class="abs r" data-at="0.5" style="left:1000px;top:'+(h[0].length>16?470:400)+'px;width:840px;font-size:42px;line-height:1.55;margin:0">'+h[1]+'</p>'
-  +'<div class="card r" data-at="1.7" style="--rot:-1deg;left:1000px;top:715px;width:840px;height:230px"><div class="paper" style="padding:22px 40px"><span class="tag">مثال</span><div style="font-size:34px;line-height:1.5;margin-top:6px">'+h[2]+'</div></div></div>'
-  +'<div class="card r" data-at="2.7" style="--rot:1.5deg;left:80px;top:130px;width:800px;height:790px"><div class="paper" style="padding:40px 50px"><svg viewBox="0 0 700 480" width="700" height="480" style="display:block">'+T[i].replace(/data-at="([\d.]+)"/g,function(m,a){return 'data-at="'+(+a)+'"'})+'</svg><div style="margin-top:22px"><span class="tag">الأداة</span></div><div class="disp" style="font-size:44px;margin-top:8px">'+h[3]+'</div></div></div>'
-  +'<div class="abs dots" style="left:1000px;top:990px">'+'<b>'+GRP[i]+'</b>'+dots+'</div>'
-  +'</section>';
+  html+='<section class="sc" data-s="'+s+'" data-e="'+e+'" style="--bg:'+BG[i][0]+';--fg:'+BG[i][1]+'">'
+  +'<div class="col" style="top:150px;gap:26px">'
+  +'<div class="r" data-at="0" style="display:flex;align-items:center;gap:24px"><div class="badge">'+ar(i+1)+'</div><div style="font-size:36px;font-weight:700;line-height:1.3">العادة '+ORD[i]+'<br><span style="opacity:.75">'+GRP[i]+'</span></div></div>'
+  +'<h2 class="disp r" data-at="0.15" style="font-size:'+(h[0].length>18?88:104)+'px">'+h[0]+'</h2>'
+  +'<p class="r" data-at="0.5" style="font-size:42px;line-height:1.5">'+h[1]+'</p>'
+  +'<div class="card r" data-at="1.2" style="--rot:1.2deg"><div class="paper" style="padding:26px 40px 30px"><svg viewBox="0 0 700 480" width="880" height="604" style="display:block;max-width:100%;height:auto">'+T[i]+'</svg><div style="display:flex;align-items:center;gap:16px;margin-top:8px"><span class="tag">الأداة</span><span class="disp" style="font-size:44px">'+h[3]+'</span></div></div></div>'
+  +'<div class="card r" data-at="2.3" style="--rot:-1deg"><div class="paper k" style="padding:24px 40px"><span class="tag" style="background:var(--yellow);color:var(--ink)">مثال</span><div style="font-size:36px;line-height:1.5;margin-top:8px">'+h[2]+'</div></div></div>'
+  +'</div><div class="dots">'+dots+'</div></section>';
 });
 document.getElementById("habits").outerHTML=html;
 
+/* one clock drives every frame */
 var frame=document.getElementById("frame"),stage=document.getElementById("stage");
-function fit(){stage.style.transform="scale("+frame.clientWidth/1920+")"}
+function fit(){stage.style.transform="scale("+frame.clientWidth/1080+")"}
 addEventListener("resize",fit);fit();
+function cl(x){return x<0?0:x>1?1:x}
+function eo(x){return 1-Math.pow(1-x,3)}
+function eb(x){var c=1.7;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)}
 var scenes=[].map.call(document.querySelectorAll(".sc"),function(el){
   var s=+el.dataset.s;
-  return{el:el,s:s,e:+el.dataset.e,rs:[].map.call(el.querySelectorAll(".r"),function(r){return{el:r,at:s+(+r.dataset.at||0)}}),cs:[].map.call(el.querySelectorAll("[data-count]"),function(c){return{el:c,at:s+(+c.dataset.at||0),v:+c.dataset.count}})}
+  return{el:el,s:s,e:+el.dataset.e,
+    rs:[].map.call(el.querySelectorAll(".r"),function(r){var a=r.dataset.a||"up";return{el:r,a:a,at:s+(+r.dataset.at||0),d:+r.dataset.d||(a=="draw"?1.5:a=="ul"||a=="grow"?0.9:0.7),svg:r instanceof SVGElement}}),
+    cs:[].map.call(el.querySelectorAll("[data-count]"),function(c){return{el:c,at:s+(+c.dataset.at||0),v:+c.dataset.count}}),
+    pulse:[].slice.call(el.querySelectorAll(".pulse,.saw"))}
 });
-var t=0,playing=true,speed=1,last=0,END=90;
-var sk=document.getElementById("sk"),tl=document.getElementById("tl"),pp=document.getElementById("pp"),sp=document.getElementById("sp");
-function fmt(x){var m=Math.floor(x/60),s=Math.floor(x%60);return ar(m)+":"+ar(("0"+s).slice(-2))}
-function render(){
+function paint(r,p){
+  var e=r.el,st=e.style,rot=" rotate(var(--rot,0deg))";
+  if(r.a=="draw"){st.strokeDashoffset=1-eo(p);return}
+  if(r.a=="ul"){st.backgroundSize=(eo(p)*100)+"% 12px";return}
+  if(r.a=="grow"){st.transform="scaleX("+eo(p)+")";st.transformOrigin="left";st.transformBox="fill-box";return}
+  st.opacity=cl(p*1.6);
+  if(r.a=="fade")return;
+  if(r.a=="pop")st.transform="scale("+(0.4+0.6*eb(p))+")"+(r.svg?"":rot);
+  else st.transform="translateY("+((1-eb(p))*70)+"px)"+(r.svg?"":rot);
+}
+var t=0;
+function seek(x){
+  t=x;
   scenes.forEach(function(sc){
     var act=t>=sc.s&&t<sc.e;
-    sc.el.classList.toggle("act",act);
-    sc.rs.forEach(function(r){r.el.classList.toggle("on",act&&t>=r.at)});
-    sc.cs.forEach(function(c){var p=act?Math.max(0,Math.min(1,(t-c.at)/1.4)):0;c.el.textContent=ar(Math.round(c.v*p))});
+    sc.el.style.visibility=act?"visible":"hidden";
+    if(!act)return;
+    var fi=cl((t-sc.s)/0.3),fo=cl((sc.e-t)/0.3);
+    sc.el.style.clipPath=fi<1?"circle("+(eo(fi)*120)+"% at 50% 50%)":"none";
+    sc.el.style.opacity=sc.e>=90?Math.max(fo,0.0):1;
+    sc.rs.forEach(function(r){paint(r,cl((t-r.at)/r.d))});
+    sc.cs.forEach(function(c){c.el.textContent=ar(Math.round(c.v*eo(cl((t-c.at)/1.4))))});
+    sc.pulse.forEach(function(p){
+      if(p.classList.contains("saw")){p.style.strokeDashoffset=-(t*40)}
+      else{p.style.transformBox="fill-box";p.style.transformOrigin="center";p.style.transform="scale("+(1+0.06*Math.sin(t*3))+")"}
+    });
   });
   sk.value=t;tl.textContent=fmt(t)+" / "+fmt(END);
 }
+var END=90,playing=true,speed=1,last=0;
+var sk=document.getElementById("sk"),tl=document.getElementById("tl"),pp=document.getElementById("pp"),sp=document.getElementById("sp");
+var still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fmt(x){var m=Math.floor(x/60),s=Math.floor(x%60);return ar(m)+":"+ar(("0"+s).slice(-2))}
 function tick(ts){
-  if(playing){t+=(ts-last)/1000*speed;if(t>=END){t=END-0.01;playing=false;pp.textContent="تشغيل"}render()}
-  last=ts;requestAnimationFrame(tick);
+  if(playing){var nt=t+(ts-last)/1000*speed;if(nt>=END){nt=END-0.01;playing=false;pp.textContent="تشغيل"}seek(nt)}
+  last=ts;if(!window.__rendering)requestAnimationFrame(tick);
 }
 pp.onclick=function(){if(!playing&&t>=END-0.05)t=0;playing=!playing;pp.textContent=playing?"إيقاف":"تشغيل"};
-document.getElementById("rs").onclick=function(){t=0;playing=true;pp.textContent="إيقاف";render()};
-sp.onclick=function(){speed=speed==1?0.5:speed==0.5?2:1;sp.textContent="السرعة "+ar(speed)+"×"};
-sk.oninput=function(){t=+sk.value;render()};
-render();requestAnimationFrame(function(ts){last=ts;tick(ts)});
+document.getElementById("rs").onclick=function(){playing=true;pp.textContent="إيقاف";seek(0)};
+sp.onclick=function(){speed=speed==1?1.5:speed==1.5?0.5:1;sp.textContent="السرعة "+(speed==1.5?"١٫٥":speed==0.5?"٠٫٥":"١")+"×"};
+sk.oninput=function(){seek(+sk.value)};
+window.seek=seek;
+window.__renderMode=function(){window.__rendering=true;playing=false;document.body.classList.add("render");fit()};
+if(still){playing=false;pp.textContent="تشغيل";seek(3)}else seek(0);
+requestAnimationFrame(function(ts){last=ts;tick(ts)});
 </script>
