@@ -187,6 +187,12 @@ function marker(xr, y, w, h, color, prog, seed = 0) {
   ctx.lineTo(xr + 2, y + h / 2 - 3 + jit(seed + 3, 2));
   ctx.closePath(); ctx.fill();
 }
+// Sound-design logger: records the onset time of every kinetic word (used by sfxdump.js)
+const SFXSEEN = new Set();
+function sfxMark(key, t, kind, size, fam) {
+  if (SFXSEEN.has(key)) return; SFXSEEN.add(key);
+  window.SFXLOG.push([+t.toFixed(3), kind, size, fam]);
+}
 /* Kinetic text. Words animate individually (Arabic shaping stays intact per word).
    t is local time since the text started. Returns word boxes. */
 function kText(str, x, y, t, o = {}) {
@@ -207,6 +213,7 @@ function kText(str, x, y, t, o = {}) {
       boxes.push({ t: wd.t, cx, cy: ly, w: wd.w });
       if (t == null) continue;
       const lt = (t - i * st) / dur; if (lt <= 0) continue;
+      if (window.SFXLOG && lt < 0.1) sfxMark(`${str}|${i}|${x | 0}|${y | 0}`, T - lt * dur, o.anim || 'pop', size, fam);
       const p = clamp(lt);
       let s = 1, dy = 0, a = 1, rot = 0;
       switch (o.anim || 'pop') {
@@ -216,6 +223,7 @@ function kText(str, x, y, t, o = {}) {
         case 'drop': dy = -(1 - E.outB(p)) * size * 1.1; a = clamp(p * 3); break;
       }
       if (o.out != null && t > o.out) {
+        if (window.SFXLOG && i === 0 && t - o.out < 0.05) sfxMark(`${str}|out|${x | 0}|${y | 0}`, T - (t - o.out), 'out', size, fam);
         const q = clamp((t - o.out - i * 0.02) / 0.32); const qe = E.inC(q);
         a *= 1 - q; dy += qe * size * 0.9; s *= 1 - qe * 0.3; rot += qe * 0.2 * (i % 2 ? 1 : -1);
       }

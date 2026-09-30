@@ -1,239 +1,269 @@
-"""Procedural soundtrack + SFX for the motion piece.
-Usage: node -e "console.log(JSON.stringify(require('./cues.js').CUES))" > cues.json && python3 audio.py cues.json out.wav
-Music: 124 BPM upbeat pop groove (Am–F–C–G), arranged around the scene structure.
-SFX: whooshes, paper, pops, impacts, dings, ticks, risers — timed from cues.js.
+"""Motion-reactive sound design (no music).
+Usage:
+  node -e "console.log(JSON.stringify(require('./cues.js').CUES))" > build/cues.json
+  node sfxdump.js build/words.json          # onset of every kinetic word, logged from the animation itself
+  python3 audio.py build/cues.json build/words.json build/audio.wav
+
+Every sound is synthesised (numpy only) and placed on a cue: transitions, paper, pops,
+impacts, drawing, gears, the map flight, card flips, jumps, and every word that animates in.
 """
 import json, sys, wave
+from itertools import accumulate
 import numpy as np
 
 SR = 48000
 DUR = 180.0
 N = int(SR * DUR)
-rng = np.random.default_rng(7)
+rng = np.random.default_rng(11)
 
 cues = json.load(open(sys.argv[1]))
-out_path = sys.argv[2]
+words = json.load(open(sys.argv[2]))
+out_path = sys.argv[3]
 
 L = np.zeros(N); R = np.zeros(N)
 
 def place(sig, t, gain=1.0, pan=0.0):
     i = int(t * SR)
-    if i >= N or i + len(sig) <= 0:
+    if i >= N or i + len(sig) <= 0 or gain == 0:
         return
+    if i < 0:
+        sig = sig[-i:]; i = 0
     j = min(N, i + len(sig))
     s = sig[: j - i] * gain
     L[i:j] += s * np.sqrt(0.5 * (1 - pan)) * 1.414
     R[i:j] += s * np.sqrt(0.5 * (1 + pan)) * 1.414
 
-def env(n, a, d):
-    e = np.ones(n)
-    na = max(1, int(a * SR)); na = min(na, n)
-    e[:na] = np.linspace(0, 1, na)
-    e *= np.exp(-np.arange(n) / (d * SR))
-    return e
-
-def lowpass(x, fc):
+def lp(x, fc):
     a = np.exp(-2 * np.pi * fc / SR)
-    y = np.empty_like(x); acc = 0.0
-    for i in range(len(x)):
-        acc = (1 - a) * x[i] + a * acc
-        y[i] = acc
-    return y
-
-def onepole_lp_fast(x, fc):
-    # vectorised-ish one-pole via scipy-free filtering using cumulative approach in blocks
-    a = np.exp(-2 * np.pi * fc / SR)
-    from itertools import accumulate
     return np.fromiter(accumulate(x * (1 - a), lambda acc, v: acc * a + v), float, len(x))
+
+def hp(x, fc):
+    return x - lp(x, fc)
+
+def bp(x, lo, hi):
+    return lp(hp(x, lo), hi)
 
 def noise(n):
     return rng.standard_normal(n)
 
-# ------------------------------------------------------------ instruments
-def kick():
-    n = int(0.45 * SR); t = np.arange(n) / SR
-    f = 45 + 110 * np.exp(-t * 28)
-    ph = 2 * np.pi * np.cumsum(f) / SR
-    s = np.sin(ph) * np.exp(-t * 7.5)
-    s += 0.25 * noise(n) * np.exp(-t * 180)
-    return np.tanh(s * 1.6)
+def tvec(d):
+    n = max(1, int(d * SR)); return np.arange(n) / SR
 
-def clap():
-    n = int(0.3 * SR); t = np.arange(n) / SR
-    nz = noise(n)
-    nz = nz - onepole_lp_fast(nz, 900)
-    e = np.exp(-t * 22)
-    for d in (0.0, 0.011, 0.022):
-        e += np.where(t > d, np.exp(-(t - d) * 120), 0) * 0.6
-    return nz * e * 0.5
+def sweep_filter(x, f0, f1):
+    """one-pole low-pass with a cutoff that glides from f0 to f1 (log)."""
+    fc = np.exp(np.linspace(np.log(f0), np.log(f1), len(x)))
+    a = np.exp(-2 * np.pi * fc / SR)
+    y = np.empty_like(x); acc = 0.0
+    for i in range(len(x)):
+        acc = acc * a[i] + x[i] * (1 - a[i]); y[i] = acc
+    return y
 
-def hat(open_=False):
-    n = int((0.25 if open_ else 0.06) * SR); t = np.arange(n) / SR
-    nz = noise(n); nz = nz - onepole_lp_fast(nz, 6000)
-    return nz * np.exp(-t * (14 if open_ else 70)) * 0.35
+def chirp(f, t):
+    return np.sin(2 * np.pi * np.cumsum(f) / SR)
 
-def note_freq(m):
-    return 440.0 * 2 ** ((m - 69) / 12)
+# ------------------------------------------------------------ sound palette
+def whoosh(d=0.55, up=True):
+    t = tvec(d); x = t / d
+    s = sweep_filter(noise(len(t)), 300 if up else 5000, 5000 if up else 300)
+    e = np.sin(np.pi * np.clip(x * 1.1, 0, 1)) ** 2
+    return s * e * 0.9
 
-def saw(f, n, detune=0.0):
-    t = np.arange(n) / SR
-    s = 2 * ((t * f) % 1) - 1
-    if detune:
-        s = 0.5 * s + 0.5 * (2 * ((t * f * (1 + detune)) % 1) - 1)
-    return s
-
-def bass_note(m, dur):
-    n = int(dur * SR); t = np.arange(n) / SR
-    f = note_freq(m)
-    s = np.sin(2 * np.pi * f * t) + 0.35 * np.sign(np.sin(2 * np.pi * f * t)) * 0.5
-    s = onepole_lp_fast(s, 500)
-    return s * env(n, 0.004, dur * 0.7) * 0.9
-
-def pluck(m, dur=0.22):
-    n = int(dur * SR)
-    s = saw(note_freq(m), n, 0.004)
-    s = onepole_lp_fast(s, 2600)
-    return s * env(n, 0.002, 0.09) * 0.35
-
-def pad(ms, dur):
-    n = int(dur * SR); t = np.arange(n) / SR
-    s = np.zeros(n)
-    for m in ms:
-        s += saw(note_freq(m), n, 0.006)
-    s = onepole_lp_fast(s, 1200) / len(ms)
-    e = np.minimum(1, t / 0.25) * np.minimum(1, (dur - t) / 0.3).clip(0)
-    return s * e * 0.28
-
-# ------------------------------------------------------------ arrangement
-BPM = 124; BEAT = 60 / BPM; BAR = BEAT * 4
-CH = [(57, [69, 72, 76]), (53, [65, 69, 72]), (48, [67, 72, 76]), (55, [67, 71, 74])]  # Am F C G
-
-def section(t):
-    """intensity flags per time."""
-    if t < 2.0: return dict(k=0, h=0, b=0, c=0, p=1, pl=0.6)
-    if t < 9: return dict(k=1, h=0.5, b=1, c=0, p=1, pl=0.8)
-    if t < 24: return dict(k=1, h=1, b=1, c=1, p=1, pl=1)
-    if t < 46: return dict(k=1, h=0.6, b=1, c=1, p=1, pl=0.8)
-    if t < 64: return dict(k=1, h=1, b=1, c=1, p=1, pl=1)
-    if t < 78: return dict(k=0, h=0.4, b=0.6, c=0, p=1, pl=0.9)
-    if t < 172.6: return dict(k=1, h=1, b=1, c=1, p=1, pl=1)
-    if t < 177.6: return dict(k=1, h=0.7, b=1, c=1, p=1, pl=0.8)
-    return dict(k=0, h=0, b=0, c=0, p=0, pl=0)
-
-K = kick(); C = clap(); HC = hat(); HO = hat(True)
-music_L = np.zeros(N); music_R = np.zeros(N)
-def mplace(sig, t, g=1.0, pan=0.0):
-    i = int(t * SR)
-    if i >= N: return
-    j = min(N, i + len(sig)); s = sig[: j - i] * g
-    music_L[i:j] += s * (1 - max(0, pan)); music_R[i:j] += s * (1 + min(0, pan))
-
-nbars = int(DUR / BAR) + 1
-pad_cache = {}
-for b in range(nbars):
-    t0 = b * BAR
-    root, tri = CH[b % 4]
-    sec = section(t0)
-    if sec['p']:
-        key = b % 4
-        if key not in pad_cache: pad_cache[key] = pad(tri, BAR)
-        mplace(pad_cache[key], t0, 0.9)
-    for beat in range(4):
-        tb = t0 + beat * BEAT
-        s = section(tb)
-        if s['k']: mplace(K, tb, 0.95)
-        if s['c'] and beat in (1, 3): mplace(C, tb, 0.7, 0.1)
-        if s['h']:
-            mplace(HC, tb + BEAT / 2, 0.8 * s['h'], 0.35)
-            mplace(HC, tb + BEAT / 4 * 3, 0.35 * s['h'], -0.35)
-            if beat == 3: mplace(HO, tb + BEAT / 2, 0.5 * s['h'], 0.3)
-        if s['b']:
-            for e8 in range(2):
-                m = root - 12 + (12 if (beat * 2 + e8) % 4 == 3 else 0)
-                mplace(bass_note(m, BEAT / 2 * 0.9), tb + e8 * BEAT / 2, 0.55 * s['b'])
-        if s['pl']:
-            arp = [tri[0], tri[1], tri[2], tri[1] + 12 if beat % 2 else tri[2] + 12]
-            for k16 in range(4):
-                mplace(pluck(arp[k16] + (0 if b % 8 < 4 else 12 if k16 == 3 else 0)), tb + k16 * BEAT / 4, 0.5 * s['pl'], -0.4 + 0.25 * k16)
-
-# fade tail
-fade = np.ones(N); ft = np.arange(N) / SR
-fade *= np.clip((DUR - 0.2 - ft) / 2.2, 0, 1)
-fade *= np.clip(ft / 0.4, 0, 1)
-music_L *= fade; music_R *= fade
-
-# ------------------------------------------------------------ SFX
-def whoosh(g=1):
-    n = int(0.55 * SR); t = np.arange(n) / SR
-    nz = noise(n)
-    # sweep: blend low- & high-passed content over time
-    lo = onepole_lp_fast(nz, 700); hi = nz - onepole_lp_fast(nz, 2500)
-    x = t / t[-1]
-    s = lo * (1 - x) + hi * x
-    e = np.sin(np.pi * np.clip(x * 1.15, 0, 1)) ** 2
-    return s * e * 0.45 * g
+def swish():
+    t = tvec(0.22); x = t / t[-1]
+    s = hp(sweep_filter(noise(len(t)), 1500, 9000), 900)
+    return s * np.sin(np.pi * x) ** 1.5 * 0.9
 
 def impact():
-    n = int(0.9 * SR); t = np.arange(n) / SR
-    f = 40 + 90 * np.exp(-t * 16)
-    s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 4.5)
-    nz = onepole_lp_fast(noise(n), 1800) * np.exp(-t * 18) * 0.8
-    return np.tanh((s + nz) * 1.4) * 0.8
+    t = tvec(0.9)
+    s = chirp(42 + 95 * np.exp(-t * 16), t) * np.exp(-t * 4.5)
+    nz = lp(noise(len(t)), 1800) * np.exp(-t * 18) * 0.8
+    return np.tanh((s + nz) * 1.5) * 0.9
 
-def popsfx():
-    n = int(0.09 * SR); t = np.arange(n) / SR
-    f = 1100 * np.exp(-t * 30) + 280
-    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 45) * 0.35
+def thud():
+    t = tvec(0.25)
+    s = chirp(70 + 120 * np.exp(-t * 40), t) * np.exp(-t * 18)
+    return np.tanh(s * 1.3 + lp(noise(len(t)), 900) * np.exp(-t * 60) * 0.5) * 0.7
+
+def slam():  # chunky word slam
+    t = tvec(0.3)
+    body = chirp(95 + 160 * np.exp(-t * 35), t) * np.exp(-t * 14)
+    click = bp(noise(len(t)), 800, 4000) * np.exp(-t * 90) * 0.7
+    return np.tanh((body + click) * 1.4) * 0.8
+
+def bubble(f0=900):
+    t = tvec(0.1)
+    f = f0 * (1 + 0.9 * np.exp(-t * 60)) * (0.8 + 0.4 * t / t[-1])
+    return chirp(f, t) * np.exp(-t * 40) * 0.45
+
+def keytick():
+    t = tvec(0.03)
+    return (bp(noise(len(t)), 1500, 6000) * 0.8 + np.sin(2 * np.pi * 1900 * t) * 0.3) * np.exp(-t * 180) * 0.35
 
 def paper():
-    n = int(0.35 * SR); t = np.arange(n) / SR
-    nz = noise(n); nz = nz - onepole_lp_fast(nz, 1500)
-    crackle = (rng.random(n) < 0.02) * rng.standard_normal(n) * 3
-    e = np.exp(-t * 9) * (1 - np.exp(-t * 200))
-    return (nz * 0.35 + crackle) * e * 0.35
+    t = tvec(0.35)
+    nz = hp(noise(len(t)), 1500)
+    crackle = (rng.random(len(t)) < 0.02) * rng.standard_normal(len(t)) * 3
+    return (nz * 0.35 + crackle) * np.exp(-t * 9) * (1 - np.exp(-t * 200)) * 0.4
+
+def rip(d):
+    t = tvec(d); x = t / d
+    grains = (rng.random(len(t)) < 0.05 + 0.25 * x) * rng.standard_normal(len(t))
+    s = bp(grains * 2 + noise(len(t)) * 0.3, 700, 6000)
+    return s * np.sin(np.pi * np.clip(x * 1.05, 0, 1)) ** 0.7 * 0.55
+
+def flip():
+    out = np.zeros(int(0.3 * SR))
+    for k, off in enumerate((0.0, 0.11)):
+        t = tvec(0.12)
+        s = bp(noise(len(t)), 1200, 7000) * np.exp(-t * (45 + 25 * k))
+        s += chirp(np.full(len(t), 200 - 60 * k), t) * np.exp(-t * 60) * 0.4
+        i = int(off * SR); out[i:i + len(s)] += s * (0.8 - 0.2 * k)
+    return out * 0.7
 
 def ding():
-    n = int(1.2 * SR); t = np.arange(n) / SR
-    s = np.zeros(n)
+    t = tvec(1.2); s = np.zeros(len(t))
     for f, a, d in ((1318.5, 1, 2.2), (2637, 0.4, 3.5), (1975.5, 0.3, 2.8), (3951, 0.12, 5)):
         s += a * np.sin(2 * np.pi * f * t) * np.exp(-t * d)
-    return s * 0.18 * (1 - np.exp(-t * 400))
+    return s * 0.2 * (1 - np.exp(-t * 400))
+
+def sparkle():
+    out = np.zeros(int(0.6 * SR))
+    for k in range(7):
+        t = tvec(0.18); f = rng.uniform(2200, 6000)
+        s = np.sin(2 * np.pi * f * t) * np.exp(-t * 30) * (1 - np.exp(-t * 800))
+        i = int(rng.uniform(0, 0.4) * SR); out[i:i + len(s)] += s * rng.uniform(0.3, 0.7)
+    return out * 0.25
 
 def tick():
-    n = int(0.05 * SR); t = np.arange(n) / SR
-    return (np.sin(2 * np.pi * 2400 * t) + 0.5 * noise(n)) * np.exp(-t * 120) * 0.25
+    t = tvec(0.05)
+    return (np.sin(2 * np.pi * 2400 * t) + 0.5 * noise(len(t))) * np.exp(-t * 120) * 0.3
+
+def clunk():
+    t = tvec(0.12)
+    return (chirp(np.full(len(t), 180.0), t) * 0.6 + bp(noise(len(t)), 500, 3000)) * np.exp(-t * 50) * 0.5
 
 def scratch():
-    n = int(0.3 * SR); t = np.arange(n) / SR
-    nz = noise(n); nz = nz - onepole_lp_fast(nz, 3000)
+    t = tvec(0.3)
     am = 0.5 + 0.5 * np.sin(2 * np.pi * 38 * t)
-    return nz * am * np.sin(np.pi * t / t[-1]) * 0.3
+    return hp(noise(len(t)), 3000) * am * np.sin(np.pi * t / t[-1]) * 0.35
 
-def riser(dur):
-    n = int(dur * SR); t = np.arange(n) / SR; x = t / dur
-    f = 200 + 1400 * x ** 2
-    s = saw(1, 1)  # placeholder
-    tone = np.sin(2 * np.pi * np.cumsum(f) / SR) * 0.3
-    nz = noise(n); nz = nz - onepole_lp_fast(nz, 800 + 6000 * x.mean())
-    return (tone + nz * 0.4) * x ** 2 * 0.5
+def draw(d):  # marker on paper: squeaky band-limited noise, stroke-modulated
+    t = tvec(d); x = t / d
+    strokes = 0.55 + 0.45 * np.sin(2 * np.pi * (6 + 3 * x) * t) ** 2
+    s = bp(noise(len(t)), 1800, 5500) * strokes
+    s += np.sin(2 * np.pi * (1400 + 300 * np.sin(2 * np.pi * 5 * t)) * t) * 0.05
+    return s * np.sin(np.pi * np.clip(x, 0, 1)) ** 0.5 * 0.4
 
-W_ = whoosh(); IMPc = impact(); PAP = paper(); DING = ding(); TICK = tick(); SCR = scratch()
-for t, a in cues['whoosh']: place(whoosh(a), t, 0.9, rng.uniform(-0.3, 0.3))
-for t, a in cues['impact']: place(IMPc, t, 0.75 * a)
-for t, a in cues['pop']:
-    p = popsfx() if rng.random() < 0.5 else popsfx()[::1]
-    place(p * (0.9 + rng.random() * 0.3), t, 0.8 * a, rng.uniform(-0.5, 0.5))
-for t, a in cues['paper']: place(PAP, t, 0.9 * a, rng.uniform(-0.4, 0.4))
+def plane(d):  # flight: swelling air + doppler-ish tone
+    t = tvec(d); x = t / d
+    air = sweep_filter(noise(len(t)), 400, 2500)
+    tone = chirp(220 + 180 * np.sin(np.pi * x), t) * 0.12
+    return (air * 0.8 + tone) * np.sin(np.pi * x) ** 1.2 * 0.9
+
+def swell(d):  # zoom / iris: rising air that cuts off
+    t = tvec(d); x = t / d
+    s = sweep_filter(noise(len(t)), 200, 6000)
+    return s * x ** 2 * (1 - np.exp(-(1 - x) * 40)) * 0.8
+
+def rise(d):  # soft rising glissando (growth)
+    t = tvec(d); x = t / d
+    s = chirp(300 * 2 ** (1.6 * x), t) * 0.5 + chirp(450 * 2 ** (1.6 * x), t) * 0.25
+    return s * np.sin(np.pi * x) ** 0.8 * 0.22
+
+def boing():
+    t = tvec(0.35); x = t / t[-1]
+    f = 260 + 380 * np.sin(np.pi * x * 0.9)
+    return chirp(f, t) * np.exp(-t * 7) * (1 - np.exp(-t * 300)) * 0.3
+
+def whirl():
+    t = tvec(0.7)
+    am = 0.5 + 0.5 * np.sin(2 * np.pi * (4 + 8 * t / t[-1]) * t)
+    return whoosh(0.7) * am
+
+def riser(d):
+    t = tvec(d); x = t / d
+    tone = chirp(200 + 1400 * x ** 2, t) * 0.25
+    nz = sweep_filter(noise(len(t)), 500, 7000) * 0.5
+    return (tone + nz) * x ** 2 * 0.5
+
+def counter_ticks(t0, d, g):
+    # ticks follow the eased 0→200 counter (one tick every 5 numbers)
+    ts = np.arange(0, d, 1 / 600)
+    x = ts / d; e = np.where(x < .5, 4 * x ** 3, 1 - (-2 * x + 2) ** 3 / 2)
+    v = np.floor(e * 200 / 5)
+    for k in np.nonzero(np.diff(v) > 0)[0]:
+        place(TICK, t0 + ts[k + 1], g * 0.7, rng.uniform(-0.2, 0.2))
+    place(DING, t0 + d, 0.5 * g)
+
+def ratchet(t0, d, mode, g=1.0):
+    if mode == 0:  # stuck gear: irregular stutter with clunks
+        t = t0
+        while t < t0 + d:
+            place(TICK, t, 0.5 * g, -0.3); t += rng.uniform(0.22, 0.45)
+            if rng.random() < 0.3: place(CLUNK, t, 0.6 * g, 0.2); t += 0.25
+    else:          # spinning fast: rate ramps up then steady
+        t = t0
+        while t < t0 + d:
+            u = (t - t0) / d
+            place(TICK, t, (0.35 + 0.15 * rng.random()) * g * (1 - max(0, u - 0.85) * 5), rng.uniform(-0.4, 0.4))
+            t += 1 / (5 + 13 * min(1, (t - t0) / 0.6))
+
+def waves(t0, d, g):
+    k = 0
+    while k * 0.36 < d:
+        place(swell(0.3) * 0.5, t0 + k * 0.36, g * 0.35, -0.3); k += 1
+
+# ------------------------------------------------------------ place everything
+TICK = tick(); CLUNK = clunk(); DING = ding(); IMP = impact(); THUD = thud(); PAP = paper(); FLIP = flip()
+SLAM = slam(); KEY = keytick(); SCR = scratch()
+
+for t, a in cues['whoosh']: place(whoosh(0.55), t, 0.8 * a, rng.uniform(-0.3, 0.3))
+for t, a in cues['impact']: place(IMP, t, 0.8 * a)
+for t, a in cues['pop']: place(bubble(rng.uniform(700, 1200)), t, 0.8 * a, rng.uniform(-0.5, 0.5))
+for t, a in cues['paper']: place(PAP, t, a, rng.uniform(-0.4, 0.4))
 for t, a in cues['ding']: place(DING, t, a, 0.1)
 for t, a in cues['tick']: place(TICK, t, a, -0.2)
 for t, a in cues['scratch']: place(SCR, t, a, 0.2)
-for t, d in cues['riser']: place(riser(d), t, 0.8)
+for t, d in cues['riser']: place(riser(d), t, 0.7)
+for t, a in cues['swish']: place(swish(), t, 0.7 * a, rng.uniform(-0.5, 0.5))
+for t, a in cues['sparkle']: place(sparkle(), t, a, rng.uniform(-0.3, 0.3))
+for t, a in cues['flip']: place(FLIP, t, a, 0.15)
+for t, a in cues['boing']: place(boing(), t, a)
+for t, a in cues['thud']: place(THUD, t, a, rng.uniform(-0.3, 0.3))
+for t, a in cues['suck']: place(whoosh(0.6, up=False), t, 0.9 * a)
+for t, a in cues['whirl']: place(whirl(), t, 0.7 * a)
+for t, d, a in cues['draw']: place(draw(d), t, a, rng.uniform(-0.3, 0.3))
+for t, d, a in cues['rip']: place(rip(d), t, a, 0.2)
+for t, d, a in cues['plane']: place(plane(d), t, a, 0)
+for t, d, a in cues['swell']: place(swell(d), t, a)
+for t, d, a in cues['rise']: place(rise(d), t, a)
+for t, d, a in cues['counter']: counter_ticks(t, d, a)
+for t, d, m in cues['ratchet']: ratchet(t, d, m)
+for t, d, a in cues['waves']: waves(t, d, a)
 
-mixL = music_L * 0.42 + L; mixR = music_R * 0.42 + R
-mix = np.stack([mixL, mixR], 1)
-mix = np.tanh(mix * 1.1)
+# kinetic words — each word that animates in gets its own sound
+last = {}
+for t, kind, size, fam in words:
+    if kind == 'slam':
+        place(SLAM, t + 0.05, 0.55 * min(1.2, size / 130), rng.uniform(-0.3, 0.3))
+    elif kind == 'pop' or kind == 'drop':
+        f = 1400 - min(size, 140) * 5
+        place(bubble(f * rng.uniform(0.9, 1.1)), t + 0.03, 0.32 * min(1, size / 90), rng.uniform(-0.5, 0.5))
+    elif kind == 'rise':
+        if t - last.get('rise', -1) < 0.025: continue   # keep the typing texture light
+        place(KEY, t, 0.45 * rng.uniform(0.7, 1.0), rng.uniform(-0.4, 0.4)); last['rise'] = t
+    elif kind == 'out':
+        place(whoosh(0.35, up=False), t, 0.35, rng.uniform(-0.3, 0.3))
+
+# very quiet paper-room tone so silences never feel digitally dead
+room = lp(noise(N), 400) * 0.004
+L += room; R += room
+
+mix = np.stack([L, R], 1)
+mix = np.tanh(mix * 1.6) / np.tanh(1.6)
 mix /= np.max(np.abs(mix)) / 0.89
-pcm = (mix * 32767).astype('<i2')
+fade = np.clip((DUR - np.arange(N) / SR) / 0.5, 0, 1)[:, None]
+pcm = (mix * fade * 32767).astype('<i2')
 with wave.open(out_path, 'wb') as w:
     w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
 print('wrote', out_path)

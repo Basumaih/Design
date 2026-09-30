@@ -22,7 +22,8 @@ A 180-second vertical motion graphic (1080×1920, 60 fps) that tells the story o
 
 - `motion.js`: the whole animation. Every frame is a pure function of time, `renderFrame(t)`, drawn on a 2D canvas.
 - `cues.js`: the shared timeline of impacts, whooshes, pops and so on. It drives both the camera shake and the sound design.
-- `audio.py`: a procedural 124 BPM soundtrack and SFX (numpy only).
+- `audio.py`: motion-reactive sound design with no music. Every sound is synthesised (numpy only) and placed on a cue.
+- `sfxdump.js`: dry-runs the animation and logs the onset of every kinetic word, so each word gets its own sound.
 - `render.js`: a parallel headless-Chromium frame renderer that pipes frames to ffmpeg/x264.
 - `snap.js`: renders individual frames to JPEG for review.
 - `fonts/`: Lalezar and Cairo (SIL OFL, via Fontsource).
@@ -35,7 +36,8 @@ A 180-second vertical motion graphic (1080×1920, 60 fps) that tells the story o
 export NODE_PATH=$(npm root -g)          # needs playwright
 node render.js build 4                   # 10800 frames -> build/seg_*.mp4
 node -e "console.log(JSON.stringify(require('./cues.js').CUES))" > build/cues.json
-python3 audio.py build/cues.json build/audio.wav
+NODE_PATH=$(npm root -g) node sfxdump.js build/words.json
+python3 audio.py build/cues.json build/words.json build/audio.wav
 ls build/seg_*.mp4 | sed "s/.*/file '&'/" > build/list.txt
 ffmpeg -f concat -safe 0 -i build/list.txt -i build/audio.wav -c:v copy -c:a aac -b:a 192k -shortest out.mp4
 ```

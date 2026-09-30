@@ -81,6 +81,66 @@
   add('impact', 174.8, 1.2); add('ding', 174.85, 1);
   add('pop', 175.8); add('pop', 176.4, 0.6);
 
+  // ================= motion-reactive SFX layer (no music) =================
+  // duration cues: [t, dur, gain]
+  const D = (k, t, d, a = 1) => { (c[k] = c[k] || []).push([+t.toFixed(3), d, a]); };
+  ['sparkle', 'swish', 'flip', 'boing', 'thud', 'suck', 'whirl'].forEach(k => c[k] = c[k] || []);
+  ['draw', 'rip', 'plane', 'swell', 'rise', 'counter', 'ratchet', 'waves'].forEach(k => c[k] = c[k] || []);
+
+  // transitions by type
+  [24, 64, 91, 130].forEach(t => D('rip', t - 0.05, 0.7, 1));              // paper tear wipes
+  [9, 46, 117].forEach(t => [0.45, 0.33, 0.21].forEach((o, i) => add('swish', t - o, 0.8 - i * 0.15))); // stripes
+  [29, 104, 143, 169].forEach(t => D('swell', t - 0.1, 0.8, 0.9));        // iris
+  // intro
+  add('swish', 0.15, 0.9); add('sparkle', 0.2, 0.9);
+  D('draw', 1.95, 0.6, 1); D('draw', 4.5, 0.5, 0.7);
+  // team
+  D('draw', 9.85, 0.45, 0.6);
+  D('ratchet', 9.5, 5.0, 0); D('ratchet', 14.5, 4.3, 1);                 // stuck gears / spinning gears
+  add('sparkle', 14.5, 0.8); add('swish', 18.8, 0.9);
+  D('draw', 19.0, 0.4, 0.6);
+  for (let i = 0; i < 5; i++) add('thud', 19.45 + i * 0.15, 0.7 + i * 0.08);
+  D('draw', 19.9, 0.6, 0.8); D('rise', 19.9, 0.7, 0.6);
+  [21.2, 21.6, 22.0].forEach(t => add('swish', t, 0.5));
+  // portrait
+  add('swish', 24.2, 0.8); add('sparkle', 24.6, 0.7);
+  // map
+  add('pop', 29.3, 0.8);
+  for (let k = 1; k < 6; k++) {
+    const a = 29 + 0.6 + 2.7 * k;
+    add('swish', a - 1.1, 0.6);                                            // card leaves
+    if (k === 4) D('swell', a - 1.1, 1.1, 0.8);                            // zoom out to the world
+    else if (k === 5) { D('swell', a - 1.1, 0.7, 0.6); D('plane', a - 0.4, 0.5, 0.7); }
+    else D('plane', a - 1.1, 1.1, 1);
+  }
+  for (let k = 0; k < 6; k++) { const a = 29 + 0.6 + 2.7 * k; if (k !== 4) add('thud', a - 0.02, 0.6); add('swish', a + 0.05, 0.55); }
+  // book
+  D('counter', 46.4, 2.2, 1); D('draw', 46.5, 0.4, 0.6);
+  D('rise', 49.5, 1.0, 0.6); add('sparkle', 53.4, 0.8);
+  [53.9, 54.4].forEach(t => add('swish', t, 0.6));
+  D('rip', 57.3, 0.5, 0.7);
+  // framework
+  [65.8, 66.1, 66.4].forEach(t => D('draw', t, 0.5, 0.6));
+  add('pop', 66.6, 0.9); add('swish', 68.2, 0.8); add('swish', 68.7, 0.6);
+  add('swish', 71.6, 0.8); D('draw', 72.2, 0.4, 0.6);
+  add('boing', 72.8, 0.6); add('boing', 73.55, 1); add('boing', 74.55, 1);
+  add('whirl', 75.6, 0.9);
+  // habits
+  for (let i = 0; i < 7; i++) {
+    const T0 = 78 + 13 * i;
+    add('sparkle', T0 + 0.8, 0.6); add('swish', T0 + 1.6, 0.8);
+    add('flip', T0 + 5.14, 1); add('flip', T0 + 8.64, 1);
+    add('swish', T0 + 12.5, 0.8);
+    if (i === 0) D('rise', T0 + 3, 5, 0.3);
+    if (i === 2) add('sparkle', T0 + 2.0, 0.8);
+    if (i === 3) D('rise', T0 + 2.5, 0.8, 0.6);
+    if (i === 4) D('waves', T0 + 1.0, 11.4, 0.5);
+    if (i === 5) { add('swish', T0 + 1.3, 0.8); add('swish', T0 + 1.35, 0.7); for (let k = 0; k < 5; k++) add('pop', T0 + 2.5 + k * 0.12, 0.6); }
+    if (i === 6) for (let k = 0; k < 4; k++) add('pop', T0 + 2.3 + k * 0.2, 0.6);
+  }
+  // outro
+  add('suck', 172.0, 1); add('sparkle', 172.6, 1); add('swish', 174.5, 0.8);
+
   c.SCENES = SCENES;
   root.CUES = c;
 })(typeof window !== 'undefined' ? window : module.exports);
