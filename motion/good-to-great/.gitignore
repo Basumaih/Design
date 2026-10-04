@@ -1,0 +1,7 @@
+fonts/
+out/stills/
+out/parts/
+out/video_noaudio.mp4
+audio/mix_raw.wav
+audio/vo/*.mp3
+sheet.py
